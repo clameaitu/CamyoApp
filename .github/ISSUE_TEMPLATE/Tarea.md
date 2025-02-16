@@ -1,8 +1,15 @@
-```
+---
+name: Tarea
+about: Describe una tarea a realizar
+title: 'Tarea XX: '
+labels: ''
+assignees: ''
+
+---
+
+Tarea:
+
 Description:
 >  - <primer punto>
 >  - <segundo punto>
 >  [...]
-Issues Relacionadas:
-> - #<número_de_issue>
-```
