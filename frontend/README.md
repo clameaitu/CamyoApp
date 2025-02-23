@@ -14,7 +14,7 @@ Antes de comenzar, asegúrate de tener instaladas las siguientes herramientas:
 
 No es necesario meterse en la carpeta ya que está contemplado en los scripts del proyecto.
 
-1. Instala las dependencias:
+1. Instala las dependencias dentro de la carpeta de Frontend:
 
 ``` 
    npm install
