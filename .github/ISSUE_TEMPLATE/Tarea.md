@@ -1,15 +1,20 @@
 ---
 name: Tarea
 about: Describe una tarea a realizar
-title: 'Tarea XX: '
-labels: ''
+title: 'Tarea Backend/Frontend XX: '
+labels: 'task'
 assignees: ''
 
 ---
 
 Tarea:
+> Nombre Tarea
 
-Description:
+Descripción:
 >  - <primer punto>
 >  - <segundo punto>
 >  [...]
+>
+Issues Relacionadas:
+>  -  <numero issue>
+
