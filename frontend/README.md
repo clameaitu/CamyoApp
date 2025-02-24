@@ -12,20 +12,24 @@ Antes de comenzar, asegúrate de tener instaladas las siguientes herramientas:
 
 ## ⚙️ Instalación
 
-No es necesario meterse en la carpeta ya que está contemplado en los scripts del proyecto.
+No es necesario meterse en la carpeta frontend ya que está contemplado en los scripts del proyecto.
 
-1. Instala las dependencias dentro de la carpeta de Frontend:
+1. Instala las dependencias (ejecuta esto desde el directorio raíz):
 
 ``` 
    npm install
+   cd frontend/
+   npm install
+   cd ..
 ```
 
 2. Para iniciar el frontend con Expo:
 ```
    npm run frontend
 ```
+> El proyecto estará disponible en http://localhost:8081
 
-3. Para iniciar el frontend con Android Studio:
+3. Para iniciar el frontend con Android Studio (opcional):
 
 ```
    npm run android:studio
