@@ -6,9 +6,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.camyo.backend.usuario.Usuario;
-import com.camyo.backend.usuario.UsuarioRepository;
-
 @Service
 public class OfertaService {
     
@@ -17,6 +14,10 @@ public class OfertaService {
 
     public List<Oferta> obtenerOfertas() {
         return ofertaRepository.findAll();
+    }
+
+    public List<Oferta> obtenerOfertasPorTipo(String tipo) {
+        return ofertaRepository.encontrarOfertasPorTipo(tipo);
     }
 
     public Optional<Oferta> obtenerOfertaPorId(Integer id) {

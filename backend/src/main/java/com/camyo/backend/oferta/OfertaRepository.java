@@ -12,10 +12,10 @@ public interface OfertaRepository extends CrudRepository<Oferta,Integer>{
 
     Optional<Oferta> findById(Integer id);
 
-    @Query("Select o FROM ofertas o WHERE o.tipo= 'GENERAL'")
+    @Query("Select o FROM Oferta o WHERE o.tipo= 'GENERAL'")
     List<Oferta> encontrarGenerales();
 
-    @Query("Select o FROM ofertas o WHERE o.tipo= 'CARGA'")
+    @Query("Select o FROM Oferta o WHERE o.tipo= 'CARGA'")
     List<Oferta> encontrarCargas();
 
 //TODO: Add more queries when the rest of the models are implemented
