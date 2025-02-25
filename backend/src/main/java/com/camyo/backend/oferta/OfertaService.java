@@ -16,8 +16,12 @@ public class OfertaService {
         return ofertaRepository.findAll();
     }
 
-    public List<Oferta> obtenerOfertasPorTipo(String tipo) {
-        return ofertaRepository.encontrarOfertasPorTipo(tipo);
+    public List<Oferta> obtenerOfertasPorTipo() {
+        return ofertaRepository.encontrarGenerales();
+    }
+
+    public List<Oferta> obtenerOfertasCarga() {
+        return ofertaRepository.encontrarCargas();
     }
 
     public Optional<Oferta> obtenerOfertaPorId(Integer id) {
