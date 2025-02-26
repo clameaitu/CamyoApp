@@ -32,7 +32,7 @@ public class OfertaService {
         return ofertaRepository.save(oferta);
     }
 
-    public void eliminarUsuario(Integer id) {
+    public void eliminarOferta(Integer id) {
         ofertaRepository.deleteById(id);
     }
 }
