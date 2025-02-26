@@ -26,31 +26,22 @@ Sigue los pasos a continuación para instalar y ejecutar el proyecto correctamen
 
 ## Ejecución del Proyecto
 
-### Iniciar backend y frontend juntos
-```sh
-npm start
-```
-- El **frontend** estará disponible en: `http://localhost:8081`
-- El **backend** se ejecutará en: `http://localhost:8080`
-- Para verificar si la base de datos funciona, ir a: `http://localhost:8080/usuarios` y comprobar que no da error.
-
-> Si hay problemas con el backend, iniciar por separado primero el backend y después el frontend como se indica a continuación.
-
----
-
-### Si se quiere iniciar por separado:
-
-#### Iniciar solo el backend
+### Iniciar backend y frontend por separado:
+#### Iniciar el backend
 ```sh
 npm run backend
 ```
 
-#### Iniciar solo el frontend
+#### Iniciar el frontend (en otra terminal)
 ```sh
 npm run frontend
 ```
 
-#### Abrir Android Studio y correr la app en un emulador
+- El **frontend** estará disponible en: `http://localhost:8081`
+- El **backend** se ejecutará en: `http://localhost:8080`
+- Para verificar si la base de datos funciona, ir a: `http://localhost:8080/usuarios` y comprobar que no da error.
+
+#### Abrir Android Studio y correr la app en un emulador (opcional)
 ```sh
 npm run android:studio
 ```
