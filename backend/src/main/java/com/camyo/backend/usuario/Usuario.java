@@ -1,5 +1,6 @@
 package com.camyo.backend.usuario;
 
+import java.util.Set;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +13,9 @@ public class Usuario {
 
     private String nombre;
     private String email;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<Reseña> reseñas;
 
     public Usuario() {}
 
