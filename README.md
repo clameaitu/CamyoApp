@@ -26,6 +26,8 @@ Camyo es una **Progressive Web App (PWA)** desarrollada con:
 - ⚛️ **React Native** para una experiencia fluida y moderna.
 - ☕ **Spring Boot** para un backend rápido y escalable.
 
+📌 Para instrucciones de instalación y ejecución, revisa [INSTALLATION.md](./INSTALLATION.md).
+
 ## 🌍 Más Información
 - 🔗 **Landing Page**: [Camyo Landing Page](https://sites.google.com/view/camyo-landing-page/)
 - ✉️ **Contacto**: [camyo.team@gmail.com](mailto:camyo.team@gmail.com)

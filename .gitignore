@@ -1,3 +1,7 @@
 node_modules
-.vscode/settings.json
-backend/src/main/resources/application.properties
+
+.vscode/
+.idea/
+
+.DS_Store
+Thumbs.db
