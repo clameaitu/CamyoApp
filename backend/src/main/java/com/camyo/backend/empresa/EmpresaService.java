@@ -28,12 +28,12 @@ public class EmpresaService {
     }
 
     @Transactional(readOnly = true)
-    public Empresa obtenerEmpresaPorId(Long id) throws DataAccessException {
+    public Empresa obtenerEmpresaPorId(int id) throws DataAccessException {
         return empresaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Empresa", "ID", id));
     }
 
     @Transactional(readOnly = true)
-	public Optional<Empresa> obtenerEmpresaPorUsuario(Long usuarioId) throws DataAccessException {
+	public Optional<Empresa> obtenerEmpresaPorUsuario(int usuarioId) throws DataAccessException {
 		return empresaRepository.obtenerPorUsuario(usuarioId);
 	}
 
@@ -44,14 +44,14 @@ public class EmpresaService {
     }
 
 	@Transactional
-	public Empresa actualizarEmpresa(Empresa empresa, Long id) throws DataAccessException {
+	public Empresa actualizarEmpresa(Empresa empresa, int id) throws DataAccessException {
 		Empresa toUpdate = obtenerEmpresaPorId(id);
 		BeanUtils.copyProperties(empresa, toUpdate, "id", "usuario");
 		return guardarEmpresa(toUpdate);
 	}
 
 	@Transactional
-	public void eliminarEmpresa(Long id) throws DataAccessException {
+	public void eliminarEmpresa(int id) throws DataAccessException {
 		Empresa toDelete = obtenerEmpresaPorId(id);
 		empresaRepository.delete(toDelete);
 	}
