@@ -1,4 +1,9 @@
 const typography = {
+  title: 26,
+  subtitle: 20,
+  body: 16,
+  button: 18,
+
   h1: {
     fontSize: 32,
     fontWeight: 'bold',

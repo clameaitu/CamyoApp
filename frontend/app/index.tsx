@@ -8,12 +8,29 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Home Screen</Text>
+
       <TouchableOpacity
         style={styles.button}
         onPress={() => router.push("/ExampleScreen")}
       >
         <Text style={styles.buttonText}>Go to About</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push("/register")}
+      >
+        <Text style={styles.buttonText}>Registro</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push("/login")}
+      >
+        <Text style={styles.buttonText}>Iniciar sesión</Text>
+      </TouchableOpacity>
+      
+
     </View>
   );
 }
