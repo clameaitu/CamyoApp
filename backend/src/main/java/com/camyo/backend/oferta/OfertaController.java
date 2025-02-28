@@ -7,10 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @RequestMapping("/api/ofertas")
-@CrossOrigin(origins = "http://localhost:3000") // Para permitir peticiones desde React
+@CrossOrigin(origins = "http://localhost:3000") // Permite peticiones desde React u otro front local
 public class OfertaController {
 
     @Autowired
@@ -36,10 +35,12 @@ public class OfertaController {
         return ofertaService.obtenerOfertasPorTipo();
     }
 
+
     @GetMapping("/cargas")
     public List<Oferta> obtenerOfertasCarga() {
         return ofertaService.obtenerOfertasCarga();
     }
+
 
     @PostMapping
     public ResponseEntity<Oferta> crearOferta(@RequestBody Oferta oferta) {
@@ -47,34 +48,35 @@ public class OfertaController {
         return ResponseEntity.ok(nuevaOferta);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Oferta> actualizarOferta(
-            @PathVariable Integer id,
-            @RequestBody Oferta ofertaDetalles) {
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Oferta> actualizarOferta(@PathVariable Integer id,
+                                                   @RequestBody Oferta ofertaDetalles) {
         Optional<Oferta> ofertaOpt = ofertaService.obtenerOfertaPorId(id);
-        if (!ofertaOpt.isPresent()) {
+        if (ofertaOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
         Oferta ofertaExistente = ofertaOpt.get();
         ofertaExistente.setTitulo(ofertaDetalles.getTitulo());
-        ofertaExistente.setTipo(ofertaDetalles.getTipo());
         ofertaExistente.setExperiencia(ofertaDetalles.getExperiencia());
         ofertaExistente.setLicencia(ofertaDetalles.getLicencia());
         ofertaExistente.setNotas(ofertaDetalles.getNotas());
         ofertaExistente.setEstado(ofertaDetalles.getEstado());
         ofertaExistente.setSueldo(ofertaDetalles.getSueldo());
+
         Oferta ofertaActualizada = ofertaService.guardarOferta(ofertaExistente);
         return ResponseEntity.ok(ofertaActualizada);
     }
 
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarOferta(@PathVariable Integer id) {
         Optional<Oferta> ofertaOpt = ofertaService.obtenerOfertaPorId(id);
-        if (!ofertaOpt.isPresent()) {
+        if (ofertaOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+
         ofertaService.eliminarOferta(id);
         return ResponseEntity.noContent().build();
     }
