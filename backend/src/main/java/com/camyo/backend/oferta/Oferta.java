@@ -1,5 +1,9 @@
 package com.camyo.backend.oferta;
 
+import java.time.LocalDateTime;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,7 +24,7 @@ public class Oferta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name="titulo")
     @NotBlank
@@ -40,6 +44,10 @@ public class Oferta {
     @Column(name="estado")
     OfertaEstado estado;
 
+    @Column(name="fecha_publicación")
+    @DateTimeFormat(pattern = "yyyy/MM/dd HH/mm")
+    LocalDateTime fechaPublicacion;
+    
     @Column(name="sueldo")
     @DecimalMin(value = "0.0", inclusive = false, message = "El sueldo debe ser mayor a 0")
     Double sueldo;
