@@ -7,38 +7,59 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Table(name= "cargas")
+@Getter
+@Setter
 public class Carga{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name="mercancia")
+    @NotBlank
     String mercancia;
 
-    Semirremolque semirremolque;
-
+    @Column(name="peso")
+    @DecimalMin(value="0.0",inclusive=false, message="La carga no puede pesar igual o menos de 0.0 Kg")
     Double peso;
 
-    String Origen;
+    @Column(name="origen")
+    @NotBlank
+    String origen;
 
-    String Destino;
+    @Column(name="destino")
+    @NotBlank
+    String destino;
 
+    @Column(name="distancia")
+    @Min(value = 0, message="La distancia no puede ser negativa o ")
     Integer distancia;
 
+    @Column(name="inicio")
     @DateTimeFormat(pattern = "yyyy/MM/dd HH/mm")
     LocalDateTime inicio;
 
+    @Column(name="fin_minimo")
     @DateTimeFormat(pattern = "yyyy/MM/dd HH/mm")
     LocalDateTime finMinimo;
 
+    @Column(name="fin_maximo")
     @DateTimeFormat(pattern = "yyyy/MM/dd HH/mm")
     LocalDateTime finMaximo;
 

@@ -1,36 +1,47 @@
 package com.camyo.backend.oferta;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name= "ofertas")
+@Getter
+@Setter
 public class Oferta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name="titulo")
+    @NotBlank
     String titulo;
 
-    @Enumerated(EnumType.STRING)
-    OfertaTipo tipo;
-
+    @Column(name="experiencia")
+    @Min(value = 0, message="Los años de experiencia no pueden ser negativos")
     Integer experiencia;
 
-    @Enumerated(EnumType.STRING)
+    @Column(name="licencia")
     Licencia licencia;
 
+    @Column(name="notas")
+    @NotBlank
     String notas;
 
-    @Enumerated(EnumType.STRING)
+    @Column(name="estado")
     OfertaEstado estado;
 
+    @Column(name="sueldo")
+    @DecimalMin(value = "0.0", inclusive = false, message = "El sueldo debe ser mayor a 0")
     Double sueldo;
 
     public Long getId() {

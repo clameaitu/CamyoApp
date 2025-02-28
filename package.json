@@ -1,11 +1,8 @@
 {
   "scripts": {
-    "start": "concurrently \"npm run backend\" \"npm run frontend\"",
     "backend": "cd backend && mvn spring-boot:run",
     "frontend": "cd frontend && npx expo start",
-    "android:studio": "cd frontend && npm run android"    
-  },
-  "devDependencies": {
-    "concurrently": "^9.1.2"
+    "android:studio": "cd frontend && npm run android",
+    "postinstall": "cd frontend && npm install"
   }
 }

@@ -1,0 +1,12 @@
+target/
+*.log
+
+# Maven
+.mvn/
+build/
+
+# Configuración de IDEs
+*.iml
+
+src/main/resources/application.properties
+src/main/resources/application-*.properties

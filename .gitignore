@@ -1,2 +1,7 @@
 node_modules
-.vscode/settings.json
+
+.vscode/
+.idea/
+
+.DS_Store
+Thumbs.db
