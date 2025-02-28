@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/ofertas")
-@CrossOrigin(origins = "http://localhost:3000") // Permite peticiones desde React u otro front local
+@CrossOrigin(origins = "http://localhost:3000")
 public class OfertaController {
 
     @Autowired
@@ -23,11 +23,10 @@ public class OfertaController {
     @GetMapping("/{id}")
     public ResponseEntity<Oferta> obtenerOfertaPorId(@PathVariable Integer id) {
         Optional<Oferta> ofertaOpt = ofertaService.obtenerOfertaPorId(id);
-        if (ofertaOpt.isPresent()) {
-            return ResponseEntity.ok(ofertaOpt.get());
-        } else {
+        if (ofertaOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok(ofertaOpt.get());
     }
 
     @GetMapping("/generales")
@@ -35,12 +34,10 @@ public class OfertaController {
         return ofertaService.obtenerOfertasPorTipo();
     }
 
-
     @GetMapping("/cargas")
     public List<Oferta> obtenerOfertasCarga() {
         return ofertaService.obtenerOfertasCarga();
     }
-
 
     @PostMapping
     public ResponseEntity<Oferta> crearOferta(@RequestBody Oferta oferta) {
@@ -48,13 +45,14 @@ public class OfertaController {
         return ResponseEntity.ok(nuevaOferta);
     }
 
-
     @PutMapping("/{id}")
-    public ResponseEntity<Oferta> actualizarOferta(@PathVariable Integer id,
-                                                   @RequestBody Oferta ofertaDetalles) {
+    public ResponseEntity<Oferta> actualizarOferta(
+            @PathVariable Integer id,
+            @RequestBody Oferta ofertaDetalles) {
+
         Optional<Oferta> ofertaOpt = ofertaService.obtenerOfertaPorId(id);
         if (ofertaOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build(); 
         }
 
         Oferta ofertaExistente = ofertaOpt.get();
@@ -64,20 +62,19 @@ public class OfertaController {
         ofertaExistente.setNotas(ofertaDetalles.getNotas());
         ofertaExistente.setEstado(ofertaDetalles.getEstado());
         ofertaExistente.setSueldo(ofertaDetalles.getSueldo());
+        ofertaExistente.setFechaPublicacion(ofertaDetalles.getFechaPublicacion());
 
         Oferta ofertaActualizada = ofertaService.guardarOferta(ofertaExistente);
         return ResponseEntity.ok(ofertaActualizada);
     }
 
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarOferta(@PathVariable Integer id) {
         Optional<Oferta> ofertaOpt = ofertaService.obtenerOfertaPorId(id);
         if (ofertaOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build(); 
         }
-
         ofertaService.eliminarOferta(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build(); 
     }
 }
