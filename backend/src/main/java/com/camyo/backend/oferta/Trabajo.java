@@ -25,7 +25,7 @@ public class Trabajo {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name="fecha_incorporacion")
     LocalDate fechaIncorporacion;

@@ -29,7 +29,7 @@ public class Carga{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name="mercancia")
     @NotBlank
@@ -48,7 +48,7 @@ public class Carga{
     String destino;
 
     @Column(name="distancia")
-    @Min(value = 0, message="La distancia no puede ser negativa o ")
+    @Min(value = 1, message="La distancia no puede ser negativa o cero")
     Integer distancia;
 
     @Column(name="inicio")
