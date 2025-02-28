@@ -1,15 +1,17 @@
 package com.camyo.backend.usuario;
-import com.camyo.backend.empresa.Empresa;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.camyo.backend.empresa.Empresa;
 import jakarta.persistence.*;
 import lombok.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Getter
 @Setter
 @Entity
+@Table(name = "usuarios")
 public class Usuario {
     
     @Id
@@ -21,8 +23,12 @@ public class Usuario {
 
     @Pattern(regexp = "\\d{9}", message = "El número de teléfono debe tener 9 dígitos")
     private String telefono;
+
+    @Column(unique = true)
+	String username;
     
     @Column(unique = true)
+    @Email
     private String email;
 
     @Size(max = 200, message = "La localización no puede tener más de 200 caracteres")
@@ -39,5 +45,23 @@ public class Usuario {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "empresa_id", referencedColumnName = "id")
     private Empresa empresa;
+
+	@NotNull
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "authority")
+	Authorities authority;
+
+    public Boolean hasAuthority(String auth) {
+		return authority.getAuthority().equals(auth);
+	}
+
+	public Boolean hasAnyAuthority(String... authorities) {
+		Boolean cond = false;
+		for (String auth : authorities) {
+			if (auth.equals(authority.getAuthority()))
+				cond = true;
+		}
+		return cond;
+	}
 
 }
