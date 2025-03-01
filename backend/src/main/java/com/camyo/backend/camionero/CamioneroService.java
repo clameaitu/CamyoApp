@@ -25,49 +25,49 @@ public class CamioneroService {
     }
 
     @Transactional(readOnly = true)
-    public List<Camionero> findAll() {
+    public List<Camionero> obtenerTodosCamioneros() {
         return camioneroRepository.findAll();
     }
 
     @Transactional(readOnly = true)
-    public Camionero findById(Integer id) {
+    public Camionero obtenerCamioneroPorId(Integer id) {
         Optional<Camionero> optionalCamionero = camioneroRepository.findById(id);
         return optionalCamionero.orElseThrow(
                 () -> new ResourceNotFoundException("Camionero", "ID", id));
     }
 
     @Transactional(readOnly = true)
-    public Camionero findByUserId(Integer id) {
-        Optional<Camionero> optionalCamionero = camioneroRepository.findByUserId(id);
+    public Camionero obtenerCamioneroPorUsuario(Integer id) {
+        Optional<Camionero> optionalCamionero = camioneroRepository.obtenerCamioneroPorUsuario(id);
         return optionalCamionero.orElseThrow(
                 () -> new ResourceNotFoundException("Camionero", "ID", id));
     }
 
 
     @Transactional()
-    public Camionero create(Camionero camionero) {
+    public Camionero guardarCamionero(Camionero camionero) {
         return camioneroRepository.save(camionero);
     }
 
 
     @Transactional()
-    public Camionero update(Integer id, Camionero camioneroUpdated) {
-        Camionero existingCamionero = findById(id);
+    public Camionero actualizCamionero(Integer id, Camionero camioneroUpdated) {
+        Camionero existingCamionero = obtenerCamioneroPorId(id);
         BeanUtils.copyProperties(camioneroUpdated, existingCamionero, "id, usuario");
 
-    return create(camioneroUpdated);
+    return guardarCamionero(camioneroUpdated);
 
     }
 
     @Transactional()
-    public void delete(Integer id) {
-        Camionero camionero = findById(id);
+    public void eliminarCamionero(Integer id) {
+        Camionero camionero = obtenerCamioneroPorId(id);
         camioneroRepository.delete(camionero);
     }
 
     @Transactional(readOnly = true)
-    public Float getValoracionMedia(Integer id){
-        Usuario user = findById(id).getUsuario();        
-        return usuarioService.getValoracionMedia(user.getId());
+    public Float obtenerValoracionMedia(Integer id){
+        Usuario user = obtenerCamioneroPorId(id).getUsuario();        
+        return usuarioService.obtenerValoracionMedia(user.getId());
     }
 }

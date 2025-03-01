@@ -34,7 +34,7 @@ public class UsuarioService {
     }
 
     @Transactional
-    public Float getValoracionMedia(Long id){
+    public Float obtenerValoracionMedia(Long id){
         List<Reseña> list = usuarioRepository.obtenerReseñas(id);
         if (list.isEmpty()) {
             return 0.0f;
