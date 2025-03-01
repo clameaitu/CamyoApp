@@ -9,6 +9,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.camyo.backend.camion.Camion;
+import com.camyo.backend.oferta.Oferta;
 import com.camyo.backend.usuario.Usuario;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -68,5 +69,9 @@ public class Camionero{
 
     @OneToMany(mappedBy = "camionero", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Camion> camiones;
+
+    @OneToMany(mappedBy = "camionero", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Oferta> ofertas;
+
 
 }
