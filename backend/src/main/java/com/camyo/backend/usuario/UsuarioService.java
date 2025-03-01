@@ -1,73 +1,96 @@
 package com.camyo.backend.usuario;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.Authentication;
+
+import com.camyo.backend.exceptions.ResourceNotFoundException;
+
+import jakarta.validation.Valid;
 
 @Service
 public class UsuarioService {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+	private final PasswordEncoder encoder;
+	private UsuarioRepository usuarioRepository;
 
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+	public UsuarioService(PasswordEncoder encoder, UsuarioRepository usuarioRepository) {
+		this.encoder = encoder;
+		this.usuarioRepository = usuarioRepository;
+	}
 
-
+	@Transactional(readOnly = true)
     public List<Usuario> obtenerUsuarios() {
         Iterable<Usuario> usuariosIterable = usuarioRepository.findAll();
         return StreamSupport.stream(usuariosIterable.spliterator(), false)
                             .collect(Collectors.toList());
     }
 
-    public Optional<Usuario> obtenerUsuarioPorId(Integer id) {
-        return usuarioRepository.findById(id);
+    @Transactional(readOnly = true)
+	public Usuario obtenerUsuarioPorId(Integer id) {
+		return usuarioRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
+	}
+
+    @Transactional(readOnly = true)
+	public Usuario obtenerUsuarioPorEmail(String email) {
+		return usuarioRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("Usuario", "email", email));
+	}
+
+	@Transactional(readOnly = true)
+	public Usuario obtenerUsuarioPorUsername(String username) {
+		return usuarioRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("Usuario", "username", username));
+	}
+
+    public Boolean existeUsuarioPorUsername(String username) {
+		return usuarioRepository.existsByUsername(username);
+	}
+
+	public Boolean existeUsuarioPorEmail(String email) {
+		return usuarioRepository.existsByEmail(email);
+	}
+
+	@Transactional(readOnly = true)
+	public Usuario obtenerUsuarioActual() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth == null)
+			throw new ResourceNotFoundException("Nobody authenticated!");
+		else
+			return usuarioRepository.findByUsername(auth.getName())
+					.orElseThrow(() -> new ResourceNotFoundException("User", "Username", auth.getName()));
+	}
+
+    @Transactional
+    public Usuario guardarUsuario(Usuario usuario) throws DataAccessException {
+        usuario.setPassword(encoder.encode(usuario.getPassword()));
+		usuarioRepository.save(usuario);
+		return usuario;
     }
 
-    public Usuario guardarUsuario(Usuario usuario) {
-        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        return usuarioRepository.save(usuario);
+    @Transactional
+    public void eliminarUsuario(Integer id) {
+        Usuario usuarioABorrar = obtenerUsuarioPorId(id);
+        this.usuarioRepository.delete(usuarioABorrar);
     }
 
-    public void eliminarUsuario(Integer id) throws DataAccessException{
-        Optional<Usuario> usuarioToDelete = usuarioRepository.findById(id);
-        if (usuarioToDelete.isPresent()) {
-            usuarioRepository.delete(usuarioToDelete.get());
-        } else {
-            throw new DataAccessException("Usuario no encontrado con id: " + id) {};
-        }
-    }
+    @Transactional
+	public Usuario updateUser(@Valid Usuario usuario, Integer idToUpdate) {
+		Usuario toUpdate = obtenerUsuarioPorId(idToUpdate);
+		BeanUtils.copyProperties(usuario, toUpdate, "id");
+		toUpdate.setPassword(encoder.encode(toUpdate.getPassword()));
+		usuarioRepository.save(toUpdate);
 
-    public boolean autenticarUsuario(String email, String rawPassword) {
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(email);
-        if (usuarioOpt.isPresent()) {
-            Usuario usuario = usuarioOpt.get();
-            return passwordEncoder.matches(rawPassword, usuario.getPassword());
-        }
-        return false;
-    }
+		return toUpdate;
+	}
     
-    public Usuario actualizarUsuario(Integer id, Usuario usuarioActualizado) throws DataAccessException {
-        Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
-        if (usuarioOpt.isPresent()) {
-            Usuario usuarioExistente = usuarioOpt.get();
-            usuarioExistente.setNombre(usuarioActualizado.getNombre());
-            usuarioExistente.setTelefono(usuarioActualizado.getTelefono());
-            usuarioExistente.setEmail(usuarioActualizado.getEmail());
-            usuarioExistente.setLocalizacion(usuarioActualizado.getLocalizacion());
-            usuarioExistente.setDescripcion(usuarioActualizado.getDescripcion());
-            usuarioExistente.setFoto(usuarioActualizado.getFoto());
-            if (usuarioActualizado.getPassword() != null && !usuarioActualizado.getPassword().isEmpty()) {
-                usuarioExistente.setPassword(passwordEncoder.encode(usuarioActualizado.getPassword()));
-            }
-            return usuarioRepository.save(usuarioExistente);
-        } else {
-            throw new DataAccessException("Usuario no encontrado con id: " + id) {};
-        }
-    }
 }
