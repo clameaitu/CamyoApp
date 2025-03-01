@@ -31,7 +31,7 @@ public class UsuarioController {
         return new ResponseEntity<>(usuarios, HttpStatus.OK);
     }
 
-    @GetMapping("authorities")
+    @GetMapping("/authorities")
 	public ResponseEntity<List<Authorities>> obtenerAuthorities() {
 		List<Authorities> res = (List<Authorities>) authService.findAll();
 		return new ResponseEntity<>(res, HttpStatus.OK);
@@ -44,13 +44,13 @@ public class UsuarioController {
         return new ResponseEntity<>(usuario, HttpStatus.OK);
     }
 
-    @GetMapping(value = "{email}")
-	public ResponseEntity<Usuario> obtenerUsuarioPorEmail(@PathVariable("email") String email) {
+    @GetMapping("/email")
+	public ResponseEntity<Usuario> obtenerUsuarioPorEmail(@RequestParam("email") String email) {
 		return new ResponseEntity<>(usuarioService.obtenerUsuarioPorEmail(email), HttpStatus.OK);
 	}
 
-    @GetMapping(value = "{username}")
-	public ResponseEntity<Usuario> obtenerUsuarioPorUsername(@PathVariable("username") String username) {
+    @GetMapping("/username")
+	public ResponseEntity<Usuario> obtenerUsuarioPorUsername(@RequestParam("username") String username) {
 		return new ResponseEntity<>(usuarioService.obtenerUsuarioPorUsername(username), HttpStatus.OK);
 	}
 
@@ -77,12 +77,8 @@ public class UsuarioController {
 	public ResponseEntity<MessageResponse> delete(@PathVariable("id") int id) {
         Usuario usuario = usuarioService.obtenerUsuarioPorId(id);
         if (usuario != null) {
-            if (usuarioService.obtenerUsuarioActual().getId() != id) {
-                usuarioService.eliminarUsuario(id);
-                return new ResponseEntity<>(new MessageResponse("User deleted!"), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new MessageResponse("Cannot delete yourself!"), HttpStatus.FORBIDDEN);
-            }
+            usuarioService.eliminarUsuario(id);
+            return new ResponseEntity<>(new MessageResponse("User deleted!"), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new MessageResponse("User not found!"), HttpStatus.NOT_FOUND);
         }
