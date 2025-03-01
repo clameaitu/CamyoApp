@@ -50,9 +50,11 @@ public class SecurityConfiguration {
 			.headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.disable()))
 			.exceptionHandling((exepciontHandling) -> exepciontHandling.authenticationEntryPoint(unauthorizedHandler))			
 			
-			.authorizeHttpRequests(authorizeRequests ->	authorizeRequests
+			.authorizeHttpRequests(authorizeRequests -> authorizeRequests
 			.requestMatchers("/usuarios/**").permitAll()
-			.anyRequest().authenticated())		 			
+			.anyRequest().permitAll()
+			)
+							 
 			
 			.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);		
 		return http.build();
