@@ -1,12 +1,9 @@
 package com.camyo.backend.empresa;
 
-import java.util.List;
-
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.URL;
 
-import com.camyo.backend.camionero.Camionero;
 import com.camyo.backend.usuario.Usuario;
 
 import jakarta.persistence.CascadeType;
@@ -17,7 +14,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;

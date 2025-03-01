@@ -2,9 +2,6 @@ package com.camyo.backend.usuario;
 
 import java.util.Set;
 
-import com.camyo.backend.camionero.Camionero;
-import com.camyo.backend.empresa.Empresa;
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +19,7 @@ public class Usuario {
     private String nombre;
     private String email;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "usuario", cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true)
     private Set<Reseña> reseñas;
 
     public Usuario() {}

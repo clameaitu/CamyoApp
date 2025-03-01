@@ -4,9 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.camyo.backend.exceptions.ResourceNotFoundException;
-
-
 import java.util.List;
 import java.util.Optional;
 
@@ -39,23 +36,13 @@ public class UsuarioService {
     @Transactional
     public Float getValoracionMedia(Long id){
         List<Reseña> list = usuarioRepository.obtenerReseñas(id);
+        if (list.isEmpty()) {
+            return 0.0f;
+        }
         Integer media = 0;
         for (Reseña reseña : list) {
-            media =+ reseña.getValoracion();
+            media += reseña.getValoracion();
         }
-        return (float)media/list.size();     
+        return (float) media / list.size();     
     }
-
-    @Transactional(readOnly = true)
-    public Usuario getUsuarioByCamioneroId(Integer id){
-        Optional<Usuario> opt = usuarioRepository.obtenerUsuarioPorCamioneroId(id);
-        return opt.orElseThrow(() -> new ResourceNotFoundException("Usuario", "camioneroId", id)); 
-    }
-    
-    @Transactional(readOnly = true)
-    public Usuario getUsuarioByEmpresaId(Integer id){
-        Optional<Usuario> opt = usuarioRepository.obtenerUsuarioPorEmpresaId(id);
-        return opt.orElseThrow(() -> new ResourceNotFoundException("Usuario", "empresaId", id)); 
-    }
-
 }

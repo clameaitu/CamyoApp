@@ -49,6 +49,7 @@ public class CamioneroService {
         return camioneroRepository.save(camionero);
     }
 
+
     @Transactional()
     public Camionero update(Integer id, Camionero camioneroUpdated) {
         Camionero existingCamionero = findById(id);
@@ -65,14 +66,8 @@ public class CamioneroService {
     }
 
     @Transactional(readOnly = true)
-    public Usuario findUserById(Integer camioneroId){
-        Usuario user = usuarioService.getUsuarioByCamioneroId(camioneroId);
-        return user;
-    }
-
-    @Transactional(readOnly = true)
-    public Float getValoracionMedia(Integer camioneroId){
-        Usuario user = findUserById(camioneroId);        
+    public Float getValoracionMedia(Integer id){
+        Usuario user = findById(id).getUsuario();        
         return usuarioService.getValoracionMedia(user.getId());
     }
 }

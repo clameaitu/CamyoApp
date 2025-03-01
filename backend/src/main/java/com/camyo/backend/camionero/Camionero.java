@@ -1,19 +1,13 @@
 package com.camyo.backend.camionero;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.Year;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
-
-import com.camyo.backend.empresa.Empresa;
 import com.camyo.backend.usuario.Usuario;
-import com.fasterxml.jackson.datatype.jsr310.deser.YearDeserializer;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,20 +15,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "empresas")
+@Table(name = "camioneros")
 @Getter
 @Setter
 public class Camionero{
@@ -44,15 +36,17 @@ public class Camionero{
     private Integer id;
 
     @NotNull
-    private Year experiencia;
+    private Integer experiencia;
 
     @Column(name = "dni", unique = true)
     @NotBlank
     @Pattern(regexp = "^\\d{8}[A-Z]$")
     private String dni;
 
-    private List<Licencia> licencias;
+    @NotEmpty
+    private Set<Licencia> licencias;
 
+    @NotNull
     private Disponibilidad disponibilidad;
 
     @NotNull
