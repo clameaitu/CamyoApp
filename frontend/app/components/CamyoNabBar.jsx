@@ -7,6 +7,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 const ProyectoLogo = require('frontend/assets/images/camyo.png');
 
 export default function CamyoWebNavBar() {
+  const router = useRouter();
   const [isSidebar, setIsSidebar] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -64,6 +65,7 @@ export default function CamyoWebNavBar() {
               </View>
               <TouchableOpacity style={styles.shareButtonZoomed1}><Text style={styles.shareTextZoom1}>Iniciar Sesión</Text></TouchableOpacity>
               <TouchableOpacity style={styles.shareButtonZoomed2}><Text style={styles.shareTextZoom2}>Registrarse</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.buttonTextZoomed} onPress={() => router.push('/user/UserProfileScreen')}><Text style={styles.linkTextZoom}>Perfil</Text></TouchableOpacity>
               <TouchableOpacity style={styles.buttonTextZoomed}><Text style={styles.linkTextZoom}>Crear alerta</Text></TouchableOpacity>
               <TouchableOpacity style={styles.buttonTextZoomed}><Text style={styles.linkTextZoom}>Crear alerta</Text></TouchableOpacity>
               <TouchableOpacity style={styles.buttonTextZoomed}><Text style={styles.linkTextZoom}>Crear alerta</Text></TouchableOpacity>
@@ -78,6 +80,7 @@ export default function CamyoWebNavBar() {
             </View>
             <View style={styles.rightSection}>
               <TouchableOpacity style={styles.buttonText}><Text style={styles.linkText}>Crear alerta</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.buttonText} onPress={() => router.push('/user/UserProfileScreen')}><Text style={styles.linkText}>Perfil</Text></TouchableOpacity>
               <TouchableOpacity style={styles.buttonText}><Text style={styles.linkText}>Empresas</Text></TouchableOpacity>
               <View style={styles.searchWeb}>
                 <TextInput

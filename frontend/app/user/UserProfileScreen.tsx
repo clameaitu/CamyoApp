@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, Platform } from 'react-native';
+import { View, Text, Image, Platform, ScrollView } from 'react-native';
 import frontendData from '../../assets/frontendData.json'; // Adjust the path if necessary
 import styles from './css/UserProfileScreen'; // Adjust the path if necessary
-import { TextStyle } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import BottomBar from '../components/BottomBar.jsx';
+import CamyoWebNavBar from "../components/CamyoNabBar";
+import { useNavigation } from '@react-navigation/native';
 
 interface UserProfile {
     id: number;
@@ -34,8 +36,12 @@ const UserProfileScreen: React.FC = () => {
     const [user, setUser] = useState<UserProfile | null>(placeholderUser);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const navigation = useNavigation();
 
     useEffect(() => {
+        // Hide the default header
+        navigation.setOptions({ headerShown: false });
+
         // Simulate fetching user profile
         const fetchUserProfile = async () => {
             try {
@@ -64,41 +70,44 @@ const UserProfileScreen: React.FC = () => {
     const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 
     return (
-        <View style={isMobile ? styles.container : styles.desktopContainer}>
-            <View style={isMobile ? styles.profileContainer : styles.desktopProfileContainer}>
-                <Image 
-                    source={{ uri: user?.avatar }} 
-                    style={isMobile ? styles.avatar : styles.desktopAvatar} 
-                />
-                <View>
-                    <Text style={isMobile ? styles.name : styles.desktopName}>{user?.nombre}</Text>
-                    <View style={isMobile ? styles.infoContainer : styles.desktopInfoContainer}>
-                        <View style={isMobile ? styles.infoButton : styles.desktopInfoButton}>
-                            <Text style={isMobile ? styles.infoText : styles.desktopInfoText}>Tipo: {user?.tipo}</Text>
-                        </View>
-                        {user?.experiencia !== undefined && (
-                            <View style={isMobile ? styles.infoButton2 : styles.desktopInfoButton2}>
-                                <Text style={isMobile ? styles.infoText : styles.desktopInfoText}>{user.experiencia} años de experiencia</Text>
+        <>
+            {isMobile ? <BottomBar /> : <CamyoWebNavBar />}
+            <ScrollView contentContainerStyle={[isMobile ? styles.container : styles.desktopContainer, { paddingTop: isMobile ? 0 : 60 }]}>
+                <View style={isMobile ? styles.profileContainer : styles.desktopProfileContainer}>
+                    <Image 
+                        source={{ uri: user?.avatar }} 
+                        style={isMobile ? styles.avatar : styles.desktopAvatar} 
+                    />
+                    <View>
+                        <Text style={isMobile ? styles.name : styles.desktopName}>{user?.nombre}</Text>
+                        <View style={isMobile ? styles.infoContainer : styles.desktopInfoContainer}>
+                            <View style={isMobile ? styles.infoButton : styles.desktopInfoButton}>
+                                <Text style={isMobile ? styles.infoText : styles.desktopInfoText}>Tipo: {user?.tipo}</Text>
                             </View>
-                        )}
+                            {user?.experiencia !== undefined && (
+                                <View style={isMobile ? styles.infoButton2 : styles.desktopInfoButton2}>
+                                    <Text style={isMobile ? styles.infoText : styles.desktopInfoText}>{user.experiencia} años de experiencia</Text>
+                                </View>
+                            )}
+                        </View>
                     </View>
                 </View>
-            </View>
-            <View style={isMobile ? styles.phoneContainer : styles.desktopPhoneContainer}>
-                <FontAwesome name="phone" style={isMobile ? styles.phoneIcon : styles.desktopPhoneIcon} />
-                <Text style={isMobile ? styles.phoneText : styles.desktopPhoneText}>+1 (234) 567-890</Text>
-            </View>
-            <View style={isMobile ? styles.detailsContainer : styles.desktopDetailsContainer}>
-                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>Email: {user?.email}</Text>
-                {user?.licencias && (
-                    <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>Licencias: {user.licencias.join(', ')}</Text>
-                )}
-                {user?.vehiculo_propio !== undefined && (
-                    <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>Vehículo propio: {user.vehiculo_propio ? 'Sí' : 'No'}</Text>
-                )}
-                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>Ubicación: {user?.ubicacion}</Text>
-            </View>
-        </View>
+                <View style={isMobile ? styles.phoneContainer : styles.desktopPhoneContainer}>
+                    <FontAwesome name="phone" style={isMobile ? styles.phoneIcon : styles.desktopPhoneIcon} />
+                    <Text style={isMobile ? styles.phoneText : styles.desktopPhoneText}>+1 (234) 567-890</Text>
+                </View>
+                <View style={isMobile ? styles.detailsContainer : styles.desktopDetailsContainer}>
+                    <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>Email: {user?.email}</Text>
+                    {user?.licencias && (
+                        <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>Licencias: {user.licencias.join(', ')}</Text>
+                    )}
+                    {user?.vehiculo_propio !== undefined && (
+                        <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>Vehículo propio: {user.vehiculo_propio ? 'Sí' : 'No'}</Text>
+                    )}
+                    <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>Ubicación: {user?.ubicacion}</Text>
+                </View>
+            </ScrollView>
+        </>
     );
 };
 

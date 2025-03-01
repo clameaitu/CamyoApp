@@ -7,6 +7,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center',
         padding: 20,
+        paddingTop: 60,
     },
     desktopContainer: {
         flex: 1,
@@ -14,7 +15,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         padding: 40,
         maxWidth: 1200,
-        margin: '0 auto',
+        margin: 60,
     },
     profileContainer: {
         alignItems: 'center',
