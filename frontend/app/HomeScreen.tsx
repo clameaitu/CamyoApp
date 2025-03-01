@@ -12,35 +12,36 @@ export default function HomeScreen() {
   const router = useRouter();
 
   return (
-<>
-        {Platform.OS === 'web' ? (
-         <CamyoWebNavBar/>
-        ) : (
-          <View>
-            <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
-            <View style={styles.searchView}>
-              <Ionicons name="menu" size={30} color="black" style={styles.menuIcon} />
-              <View style={styles.barraSuperior}>
-                <TextInput
-                  style={styles.searchInput}
-                  placeholder="Buscar Ofertas"
-                  placeholderTextColor={colors.secondary}
-                />
-                <FontAwesome name="search" size={24} color="black" style={styles.searchIcon} />
-              </View>
-              <BottomBar/>
+    <>
+      {Platform.OS === 'web' ? (
+        <CamyoWebNavBar/>
+      ) : (
+        <View style={styles.phone}>
+          <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
+          <View style={styles.searchView}>
+            <Ionicons name="menu" size={30} color="black" style={styles.menuIcon} />
+            <View style={styles.barraSuperior}>
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Buscar Ofertas"
+                placeholderTextColor={colors.secondary}
+              />
+              <TouchableOpacity>  <FontAwesome name="search" size={24} color="black" style={styles.searchIcon} /></TouchableOpacity>
+            
             </View>
           </View>
-        )}
-     
-  </>
+          <BottomBar />
+        </View>
+      )}
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  phone: {
     flex: 1,
-    justifyContent: "flex-start",
+    flexDirection: "column",
+    justifyContent: "space-between",
     alignContent: "flex-start",
     alignItems: "center",
     backgroundColor: colors.white,
@@ -50,10 +51,9 @@ const styles = StyleSheet.create({
     height: 40,
     marginRight: 10,
   },
-  
-  searchIcon:{
-    color:colors.primary,
-    marginRight:10
+  searchIcon: {
+    color: colors.primary,
+    marginRight: 10,
   },
   searchView: {
     flexDirection: "row",
@@ -61,6 +61,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "100%",
     marginTop: "5%",
+    paddingRight:15,
+    paddingLeft:15,
     marginBottom: 20,
   },
   menuIcon: {
@@ -69,6 +71,7 @@ const styles = StyleSheet.create({
   barraSuperior: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent:"space-between",
     backgroundColor: colors.lightGray,
     flex: 1,
     borderRadius: 25,
