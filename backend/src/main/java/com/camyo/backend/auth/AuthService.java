@@ -35,7 +35,7 @@ public class AuthService {
 	public void createUser(@Valid SignupRequest request) throws DataAccessException, IOException {
 		Usuario usuario = new Usuario();
 		usuario.setUsername(request.getUsername());
-		usuario.setPassword(request.getPassword());
+		usuario.setPassword(encoder.encode(request.getPassword()));
 		String strRoles = request.getAuthority();
 		Authorities role;
 
