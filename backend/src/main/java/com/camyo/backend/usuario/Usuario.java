@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Size;
 @Getter
 @Setter
 @Entity
-@Table(name = "usuarios")
+@Table(name = "usuario")
 public class Usuario {
     
     @Id
@@ -41,10 +41,6 @@ public class Usuario {
     private byte[] foto;
     
     private String password;
-    
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "empresa_id", referencedColumnName = "id")
-    private Empresa empresa;
 
 	@NotNull
 	@ManyToOne(optional = false)
