@@ -73,11 +73,4 @@ public class Camionero{
     @OneToMany(mappedBy = "camionero", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Camion> camiones;
 
-    @ManyToMany()
-    @JoinTable(
-        name = "camioneros_empresas",
-        joinColumns = {@JoinColumn(name = "camionero_id")},
-        inverseJoinColumns = {@JoinColumn(name = "empresa_id")}
-    )
-    private List<Empresa> empresas;
 }

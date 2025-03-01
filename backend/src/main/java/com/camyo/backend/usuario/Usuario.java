@@ -1,9 +1,17 @@
 package com.camyo.backend.usuario;
 
 import java.util.Set;
+
+import com.camyo.backend.camionero.Camionero;
+import com.camyo.backend.empresa.Empresa;
+
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "usuarios")
 public class Usuario {
 
@@ -24,12 +32,5 @@ public class Usuario {
         this.email = email;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    
 }

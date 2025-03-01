@@ -50,8 +50,6 @@ public class Empresa {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Usuario usuario;
 
-    @ManyToMany(mappedBy = "empresas")
-    private List<Camionero> camioneros;
 
     
 }
