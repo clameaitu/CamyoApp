@@ -1,4 +1,6 @@
-package com.camyo.backend.camionero;
+package com.camyo.backend.camion;
+
+import com.camyo.backend.camionero.Camionero;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +23,8 @@ public class Camion {
     private Integer id;
 
     @NotNull
+    @Pattern(message = "Escribo un formato de matrícula válido (las letras deben estar en mayúscula)",
+                regexp = "^\\d{4}[A-Z]{3}$")
     private String matricula;
 
     @NotBlank

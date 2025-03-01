@@ -7,6 +7,8 @@ import java.util.Set;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.camyo.backend.camion.Camion;
 import com.camyo.backend.usuario.Usuario;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
