@@ -1,11 +1,12 @@
 package com.camyo.backend.oferta;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.camyo.backend.exceptions.ResourceNotFoundException;
 
 @RestController
 @RequestMapping("/api/ofertas")
@@ -15,29 +16,35 @@ public class OfertaController {
     @Autowired
     private OfertaService ofertaService;
 
+
     @GetMapping
     public List<Oferta> obtenerOfertas() {
         return ofertaService.obtenerOfertas();
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<Oferta> obtenerOfertaPorId(@PathVariable Integer id) {
-        Optional<Oferta> ofertaOpt = ofertaService.obtenerOfertaPorId(id);
-        if (ofertaOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        try {
+            Oferta oferta = ofertaService.obtenerOfertaPorId(id); 
+            return ResponseEntity.ok(oferta);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();  
         }
-        return ResponseEntity.ok(ofertaOpt.get());
     }
+
 
     @GetMapping("/generales")
     public List<Oferta> obtenerOfertasGenerales() {
         return ofertaService.obtenerOfertasPorTipo();
     }
 
+
     @GetMapping("/cargas")
     public List<Oferta> obtenerOfertasCarga() {
         return ofertaService.obtenerOfertasCarga();
     }
+
 
     @PostMapping
     public ResponseEntity<Oferta> crearOferta(@RequestBody Oferta oferta) {
@@ -45,36 +52,40 @@ public class OfertaController {
         return ResponseEntity.ok(nuevaOferta);
     }
 
+
     @PutMapping("/{id}")
-    public ResponseEntity<Oferta> actualizarOferta(
-            @PathVariable Integer id,
-            @RequestBody Oferta ofertaDetalles) {
-
-        Optional<Oferta> ofertaOpt = ofertaService.obtenerOfertaPorId(id);
-        if (ofertaOpt.isEmpty()) {
-            return ResponseEntity.notFound().build(); 
+    public ResponseEntity<Oferta> actualizarOferta(@PathVariable Integer id,
+                                                   @RequestBody Oferta ofertaDetalles) {
+        try {
+            Oferta ofertaActualizada = ofertaService.modificarOferta(ofertaDetalles, id);
+            return ResponseEntity.ok(ofertaActualizada);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
-
-        Oferta ofertaExistente = ofertaOpt.get();
-        ofertaExistente.setTitulo(ofertaDetalles.getTitulo());
-        ofertaExistente.setExperiencia(ofertaDetalles.getExperiencia());
-        ofertaExistente.setLicencia(ofertaDetalles.getLicencia());
-        ofertaExistente.setNotas(ofertaDetalles.getNotas());
-        ofertaExistente.setEstado(ofertaDetalles.getEstado());
-        ofertaExistente.setSueldo(ofertaDetalles.getSueldo());
-        ofertaExistente.setFechaPublicacion(ofertaDetalles.getFechaPublicacion());
-
-        Oferta ofertaActualizada = ofertaService.guardarOferta(ofertaExistente);
-        return ResponseEntity.ok(ofertaActualizada);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarOferta(@PathVariable Integer id) {
-        Optional<Oferta> ofertaOpt = ofertaService.obtenerOfertaPorId(id);
-        if (ofertaOpt.isEmpty()) {
-            return ResponseEntity.notFound().build(); 
+        try {
+            ofertaService.obtenerOfertaPorId(id);
+            ofertaService.eliminarOferta(id);
+            return ResponseEntity.noContent().build(); 
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
-        ofertaService.eliminarOferta(id);
-        return ResponseEntity.noContent().build(); 
     }
+
+    @PostMapping("/con-carga")
+    public ResponseEntity<Oferta> crearOfertaConCarga(@RequestBody OfertaConCargaDTO dto) {
+    Oferta nuevaOferta = ofertaService.crearOfertaConCarga(dto);
+    return ResponseEntity.ok(nuevaOferta);
+    }
+
+    @PostMapping("/con-trabajo")
+    public ResponseEntity<Oferta> crearOfertaConTrabajo(@RequestBody OfertaConTrabajoDTO dto) {
+    Oferta nuevaOferta = ofertaService.crearOfertaConTrabajo(dto);
+    return ResponseEntity.ok(nuevaOferta);
+    }
+
+
 }
