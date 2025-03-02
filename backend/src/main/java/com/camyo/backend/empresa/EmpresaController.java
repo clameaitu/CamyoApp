@@ -54,7 +54,7 @@ public class EmpresaController {
             Usuario usuario = usuarioService.obtenerUsuarioActual();
             empresa.setUsuario(usuario);
         } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new MessageResponse("Debe iniciar sesión para crear una empresa."), HttpStatus.FORBIDDEN);
         }
         
         // El usuario solo puede tener una empresa.
@@ -72,7 +72,18 @@ public class EmpresaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Empresa> actualizarEmpresa(@RequestBody Empresa empresa, @PathVariable Integer id) {
+    public ResponseEntity<Object> actualizarEmpresa(@RequestBody Empresa empresa, @PathVariable Integer id) {
+        try {
+            Usuario usuario = usuarioService.obtenerUsuarioActual();
+            Empresa empresaParaActualizar = empresaService.obtenerEmpresaPorId(id);
+            if (!empresaParaActualizar.getUsuario().equals(usuario)) {
+                return new ResponseEntity<>(new MessageResponse("No puede actualizar una empresa que no es suya."), HttpStatus.FORBIDDEN);
+            }     
+            empresa.setUsuario(usuario);
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(new MessageResponse("Debe iniciar sesión para actualizar una empresa."), HttpStatus.FORBIDDEN);
+        }
+
         try {
             Empresa empresaActualizada = empresaService.actualizarEmpresa(empresa, id);
             return new ResponseEntity<>(empresaActualizada, HttpStatus.OK);
@@ -82,7 +93,17 @@ public class EmpresaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarEmpresa(@PathVariable Integer id) {
+    public ResponseEntity<Object> eliminarEmpresa(@PathVariable Integer id) {
+        try {
+            Usuario usuario = usuarioService.obtenerUsuarioActual();
+            Empresa empresaParaEliminar = empresaService.obtenerEmpresaPorId(id);
+            if (!empresaParaEliminar.getUsuario().equals(usuario)) {
+                return new ResponseEntity<>(new MessageResponse("No puede eliminar una empresa que no es suya."), HttpStatus.FORBIDDEN);
+            }     
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(new MessageResponse("Debe iniciar sesión para eliminar una empresa."), HttpStatus.FORBIDDEN);
+        }
+
         try {
             empresaService.eliminarEmpresa(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
