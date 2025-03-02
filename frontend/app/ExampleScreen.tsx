@@ -1,15 +1,12 @@
 import { Text, View } from "react-native";
+import CamyoNavBar from 'frontend/app/components/CamyoNabBar.jsx'
+import React from "react";
 
-export default function AboutScreen() {
+export default function ExampleScreen() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
+   <>
+    <CamyoNavBar/>
       <Text>About Screen</Text>
-    </View>
+   </>
   );
 }

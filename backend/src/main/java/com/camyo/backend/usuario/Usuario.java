@@ -1,31 +1,63 @@
 package com.camyo.backend.usuario;
 
+import com.camyo.backend.empresa.Empresa;
 import jakarta.persistence.*;
+import lombok.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
+@Getter
+@Setter
 @Entity
-@Table(name = "usuarios")
+@Table(name = "usuario")
 public class Usuario {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    private Integer id;
+    
+    @Size(max = 100, message = "El nombre no puede tener más de 100 caracteres")
     private String nombre;
+
+    @Pattern(regexp = "\\d{9}", message = "El número de teléfono debe tener 9 dígitos")
+    private String telefono;
+
+    @Column(unique = true)
+	String username;
+    
+    @Column(unique = true)
+    @Email
     private String email;
 
-    public Usuario() {}
+    @Size(max = 200, message = "La localización no puede tener más de 200 caracteres")
+    private String localizacion;
 
-    public Usuario(String nombre, String email) {
-        this.nombre = nombre;
-        this.email = email;
-    }
+    @Column(length = 500)
+    private String descripcion;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    @Lob
+    private byte[] foto;
+    
+    private String password;
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+	@NotNull
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "authority")
+	Authorities authority;
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public Boolean hasAuthority(String auth) {
+		return authority.getAuthority().equals(auth);
+	}
+
+	public Boolean hasAnyAuthority(String... authorities) {
+		Boolean cond = false;
+		for (String auth : authorities) {
+			if (auth.equals(authority.getAuthority()))
+				cond = true;
+		}
+		return cond;
+	}
+
 }
