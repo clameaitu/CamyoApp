@@ -1,11 +1,15 @@
 package com.camyo.backend.oferta;
 
 import java.util.List;
-import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.camyo.backend.exceptions.ResourceNotFoundException;
+
+import jakarta.validation.Valid;
 
 @Service
 public class OfertaService {
@@ -38,8 +42,9 @@ public class OfertaService {
         return ofertaRepository.encontrarTrabajoPorOferta(oferta_id);
     }
     @Transactional(readOnly = true)
-    public Optional<Oferta> obtenerOfertaPorId(Integer id) {
-        return ofertaRepository.findById(id);
+    public Oferta obtenerOfertaPorId(Integer id) {
+        return ofertaRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Oferta", "id", id));
     }
 
     @Transactional
@@ -51,4 +56,12 @@ public class OfertaService {
     public void eliminarOferta(Integer id) {
         ofertaRepository.deleteById(id);
     }
+
+        @Transactional
+	public Oferta modificarOferta(@Valid Oferta oferta, Integer idToUpdate) {
+		Oferta toUpdate = obtenerOfertaPorId(idToUpdate);
+		BeanUtils.copyProperties(oferta, toUpdate, "id");
+		ofertaRepository.save(toUpdate);
+		return toUpdate;
+	}
 }
