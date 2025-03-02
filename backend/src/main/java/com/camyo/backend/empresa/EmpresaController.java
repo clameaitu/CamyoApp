@@ -9,7 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.camyo.backend.auth.payload.response.MessageResponse;
 import com.camyo.backend.exceptions.ResourceNotFoundException;
+import com.camyo.backend.usuario.Usuario;
+import com.camyo.backend.usuario.UsuarioService;
 
 @RestController
 @RequestMapping("/empresas")
@@ -18,6 +21,9 @@ public class EmpresaController {
     
     @Autowired
     private EmpresaService empresaService;
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     @GetMapping
     public List<Empresa> obtenerTodasEmpresas() {
@@ -41,7 +47,22 @@ public class EmpresaController {
     }
 
     @PostMapping
-    public ResponseEntity<Empresa> guardarEmpresa(@RequestBody Empresa empresa) {
+    public ResponseEntity<Object> guardarEmpresa(@RequestBody Empresa empresa) {
+        // La empresa se creará con el usuario que ha iniciado sesión.
+        // Si no hay un usuario autenticado, no se permitirá guardar una empresa.
+        try {
+            Usuario usuario = usuarioService.obtenerUsuarioActual();
+            empresa.setUsuario(usuario);
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        
+        // El usuario solo puede tener una empresa.
+        Optional<Empresa> empresaUsuario = empresaService.obtenerEmpresaPorUsuario(empresa.getUsuario().getId());
+        if (empresaUsuario.isPresent()) {
+            return new ResponseEntity<>(new MessageResponse("El usuario ya tiene una empresa."), HttpStatus.BAD_REQUEST);
+        }
+
         try {
             Empresa empresaGuardada = empresaService.guardarEmpresa(empresa);
             return new ResponseEntity<>(empresaGuardada, HttpStatus.CREATED);
