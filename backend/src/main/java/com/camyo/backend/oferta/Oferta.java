@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.camyo.backend.camionero.Camionero;
+import com.camyo.backend.empresa.Empresa;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -62,5 +63,5 @@ public class Oferta {
 
     @ManyToOne
     @JoinColumn(name = "empresa_id")
-    private Camionero empresa;
+    private Empresa empresa;
 }

@@ -44,7 +44,7 @@ public class CamionService {
     @Transactional
     public Camion actualizaCamion(Integer id, Camion camionNuevo){
         Camion camionViejo = obtenerCamionPorId(id);
-        BeanUtils.copyProperties(camionNuevo, camionViejo, "id", "usuario");
+        BeanUtils.copyProperties(camionNuevo, camionViejo, "id", "camionero");
         return guardarCamion(camionViejo);
     }
 

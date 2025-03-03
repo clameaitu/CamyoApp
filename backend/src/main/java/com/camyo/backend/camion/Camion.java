@@ -2,6 +2,7 @@ package com.camyo.backend.camion;
 
 import com.camyo.backend.camionero.Camionero;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,6 +24,7 @@ public class Camion {
     private Integer id;
 
     @NotNull
+    @Column(unique = true)
     @Pattern(message = "Escribo un formato de matrícula válido (las letras deben estar en mayúscula)",
                 regexp = "^\\d{4}[A-Z]{3}$")
     private String matricula;
