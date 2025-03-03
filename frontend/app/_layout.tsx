@@ -1,12 +1,22 @@
 import { Stack } from "expo-router";
+import { Platform } from "react-native";
+import CamyoWebNavBar from "./_components/CamyoNavBar";
+import BottomBar from "./_components/BottomBar";
 
 export default function RootLayout() {
+  const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
+
   return (
-    <Stack>
-      <Stack.Screen name="/" options={{ headerTitle: "HomeScreen" }} />
-      <Stack.Screen name="/ExampleScreen" options={{ headerTitle: "About" }} />
-      <Stack.Screen name="/register" options={{ headerTitle: "Registro" }} />
-      <Stack.Screen name="/login" options={{ headerTitle: "Iniciar Sesión" }} />
-    </Stack>
+    <>
+      {!isMobile && <CamyoWebNavBar />}
+      {/*name es el nombre que se usa para navegar y hacer router.push(name)*/}
+      {/*es el título de la pestaña en el navegador y se ve en la UI, tiene que ser bonito*/}
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false, title: "Inicio" }} />
+        <Stack.Screen name="/user/MiPerfil" options={{ headerShown: false, title: "Mi Perfil" }} />
+      </Stack>
+      {isMobile && <BottomBar />}
+    </>
+
   );
 }
