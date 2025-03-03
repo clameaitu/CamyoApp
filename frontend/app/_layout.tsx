@@ -13,6 +13,7 @@ export default function RootLayout() {
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="ExampleScreen" options={{ headerShown: false }} />
         <Stack.Screen name="UserProfileScreen" options={{ headerShown: false }} />
+        <Stack.Screen name="CreateOffer" options={{ headerShown: false }} />
       </Stack>
       {isMobile && <BottomBar />}
     </>
