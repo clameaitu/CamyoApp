@@ -3,11 +3,9 @@ import { useRouter } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { useState } from "react";
 
-
 export default function CompanyDetailScreen() {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
-
 
   return (
     <View style={styles.container}>
@@ -77,13 +75,6 @@ export default function CompanyDetailScreen() {
         </View>
       </ScrollView>
 
-      {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
-        <FontAwesome name="briefcase" size={24} color="white" />
-        <FontAwesome name="building" size={24} color="white" />
-        <FontAwesome name="comment" size={24} color="white" />
-        <FontAwesome name="user" size={24} color="#f15025"/>
-      </View>
     </View>
   );
 }

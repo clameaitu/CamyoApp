@@ -13,10 +13,9 @@ export default function RootLayout() {
       {/*es el título de la pestaña en el navegador y se ve en la UI, tiene que ser bonito*/}
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" options={{ title: "Inicio" }} />
-        <Stack.Screen name="miperfil" options={{ title: "Mi Perfil" }} />
         <Stack.Screen name="registro" options={{ title: "Registro" }} />
-        <Stack.Screen name="/CompanyProfile" options={{ headerShown: false, title: "Mi Perfil" }} />
-        <Stack.Screen name="/CompanyDetails" options={{ headerShown: false, title: "Detalle de empresa" }} />
+        <Stack.Screen name="miperfil" options={{ title: "Mi Perfil Camionero" }} />
+        <Stack.Screen name="miperfilempresa" options={{ title: "Mi Perfil Empresa" }} />
       </Stack>
       {isMobile && <BottomBar />}
     </>
