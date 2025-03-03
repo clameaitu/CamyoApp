@@ -7,26 +7,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.camyo.backend.camionero.Camionero;
+import com.camyo.backend.camionero.CamioneroRepository;
 import com.camyo.backend.exceptions.ResourceNotFoundException;
 
 import jakarta.validation.Valid;
 
 @Service
 public class OfertaService {
-    
+
     @Autowired
     private OfertaRepository ofertaRepository;
     @Autowired
     private CargaRepository cargaRepository;
     @Autowired
     private TrabajoRepository trabajoRepository;
+    @Autowired
+    private CamioneroRepository camioneroRepository;
 
     @Transactional(readOnly = true)
     public List<Oferta> obtenerOfertas() {
         return ofertaRepository.findAll();
     }
 
-    @Transactional(readOnly=true)
+    @Transactional(readOnly = true)
     public List<Oferta> obtenerOfertasPorTipo() {
         return ofertaRepository.encontrarGenerales();
     }
@@ -45,10 +49,25 @@ public class OfertaService {
     public Trabajo obtenerTrabajo(Integer oferta_id) {
         return ofertaRepository.encontrarTrabajoPorOferta(oferta_id);
     }
+
     @Transactional(readOnly = true)
     public Oferta obtenerOfertaPorId(Integer id) {
         return ofertaRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Oferta", "id", id));
+                .orElseThrow(() -> new ResourceNotFoundException("Oferta", "id", id));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Oferta> obtenerAplicadas(Integer camioneroId) {
+        camioneroRepository.findById(camioneroId)
+                .orElseThrow(() -> new ResourceNotFoundException("Camionero", "id", camioneroId));
+        return ofertaRepository.encontrarAplicadas(camioneroId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Oferta> obtenerAsignadas(Integer camioneroId) {
+        camioneroRepository.findById(camioneroId)
+                .orElseThrow(() -> new ResourceNotFoundException("Camionero", "id", camioneroId));
+        return ofertaRepository.encontrarAsignadas(camioneroId);
     }
 
     @Transactional
@@ -61,64 +80,99 @@ public class OfertaService {
         ofertaRepository.deleteById(id);
     }
 
-        @Transactional
-	public Oferta modificarOferta(@Valid Oferta oferta, Integer idToUpdate) {
-		Oferta toUpdate = obtenerOfertaPorId(idToUpdate);
-		BeanUtils.copyProperties(oferta, toUpdate, "id");
-		ofertaRepository.save(toUpdate);
-		return toUpdate;
-	}
+    @Transactional
+    public Oferta modificarOferta(@Valid Oferta oferta, Integer idToUpdate) {
+        Oferta toUpdate = obtenerOfertaPorId(idToUpdate);
+        BeanUtils.copyProperties(oferta, toUpdate, "id");
+        ofertaRepository.save(toUpdate);
+        return toUpdate;
+    }
 
     @Transactional
     public Oferta crearOfertaConCarga(OfertaConCargaDTO dto) {
-    Oferta oferta = new Oferta();
-    oferta.setTitulo(dto.getTitulo());
-    oferta.setExperiencia(dto.getExperiencia());
-    oferta.setLicencia(dto.getLicencia());
-    oferta.setNotas(dto.getNotas());
-    oferta.setEstado(dto.getEstado());
-    oferta.setFechaPublicacion(dto.getFechaPublicacion());
-    oferta.setSueldo(dto.getSueldo());
-    
-    Oferta ofertaGuardada = ofertaRepository.save(oferta);
-    
-    Carga carga = new Carga();
-    carga.setMercancia(dto.getMercancia());
-    carga.setPeso(dto.getPeso());
-    carga.setOrigen(dto.getOrigen());
-    carga.setDestino(dto.getDestino());
-    carga.setDistancia(dto.getDistancia());
-    carga.setInicio(dto.getInicio());
-    carga.setFinMinimo(dto.getFinMinimo());
-    carga.setFinMaximo(dto.getFinMaximo());
-    
-    carga.setOferta(ofertaGuardada);
+        Oferta oferta = new Oferta();
+        oferta.setTitulo(dto.getTitulo());
+        oferta.setExperiencia(dto.getExperiencia());
+        oferta.setLicencia(dto.getLicencia());
+        oferta.setNotas(dto.getNotas());
+        oferta.setEstado(dto.getEstado());
+        oferta.setFechaPublicacion(dto.getFechaPublicacion());
+        oferta.setSueldo(dto.getSueldo());
 
-    cargaRepository.save(carga);
-    return ofertaGuardada;
-}
+        Oferta ofertaGuardada = ofertaRepository.save(oferta);
+
+        Carga carga = new Carga();
+        carga.setMercancia(dto.getMercancia());
+        carga.setPeso(dto.getPeso());
+        carga.setOrigen(dto.getOrigen());
+        carga.setDestino(dto.getDestino());
+        carga.setDistancia(dto.getDistancia());
+        carga.setInicio(dto.getInicio());
+        carga.setFinMinimo(dto.getFinMinimo());
+        carga.setFinMaximo(dto.getFinMaximo());
+
+        carga.setOferta(ofertaGuardada);
+
+        cargaRepository.save(carga);
+        return ofertaGuardada;
+    }
 
     @Transactional
     public Oferta crearOfertaConTrabajo(OfertaConTrabajoDTO dto) {
 
-    Oferta oferta = new Oferta();
-    oferta.setTitulo(dto.getTitulo());
-    oferta.setExperiencia(dto.getExperiencia());
-    oferta.setLicencia(dto.getLicencia());
-    oferta.setNotas(dto.getNotas());
-    oferta.setEstado(dto.getEstado());
-    oferta.setFechaPublicacion(dto.getFechaPublicacion());
-    oferta.setSueldo(dto.getSueldo());
-    oferta = ofertaRepository.save(oferta);
+        Oferta oferta = new Oferta();
+        oferta.setTitulo(dto.getTitulo());
+        oferta.setExperiencia(dto.getExperiencia());
+        oferta.setLicencia(dto.getLicencia());
+        oferta.setNotas(dto.getNotas());
+        oferta.setEstado(dto.getEstado());
+        oferta.setFechaPublicacion(dto.getFechaPublicacion());
+        oferta.setSueldo(dto.getSueldo());
+        oferta = ofertaRepository.save(oferta);
 
- 
-    Trabajo trabajo = new Trabajo();
-    trabajo.setFechaIncorporacion(dto.getFechaIncorporacion());
-    trabajo.setJornada(dto.getJornada());
-    trabajo.setOferta(oferta); 
-    trabajo = trabajoRepository.save(trabajo);
+        Trabajo trabajo = new Trabajo();
+        trabajo.setFechaIncorporacion(dto.getFechaIncorporacion());
+        trabajo.setJornada(dto.getJornada());
+        trabajo.setOferta(oferta);
+        trabajo = trabajoRepository.save(trabajo);
 
-    return oferta;
-}
+        return oferta;
+    }
+
+    @Transactional
+    public void aplicarOferta(Integer ofertaId, Integer camioneroId) {
+        Oferta oferta = ofertaRepository.findById(ofertaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Oferta", "id", ofertaId));
+
+        Camionero cam = camioneroRepository.findById(camioneroId)
+                .orElseThrow(() -> new ResourceNotFoundException("Camionero", "id", camioneroId));
+
+        oferta.getAplicados().add(cam);
+        ofertaRepository.save(oferta);
+    }
+
+    @Transactional
+    public void desaplicarOferta(Integer ofertaId, Integer camioneroId) {
+        Oferta oferta = ofertaRepository.findById(ofertaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Oferta", "id", ofertaId));
+
+        Camionero cam = camioneroRepository.findById(camioneroId)
+                .orElseThrow(() -> new ResourceNotFoundException("Camionero", "id", camioneroId));
+
+        oferta.getAplicados().remove(cam);
+        ofertaRepository.save(oferta);
+    }
+
+    @Transactional
+    public void asignarOferta(Integer ofertaId, Integer camioneroId) {
+        Oferta oferta = ofertaRepository.findById(ofertaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Oferta", "id", ofertaId));
+
+        Camionero cam = camioneroRepository.findById(camioneroId)
+                .orElseThrow(() -> new ResourceNotFoundException("Camionero", "id", camioneroId));
+
+        oferta.setCamioneroAsignado(cam);
+        ofertaRepository.save(oferta);
+    }
 
 }

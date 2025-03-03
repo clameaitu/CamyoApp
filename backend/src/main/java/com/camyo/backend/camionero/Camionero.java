@@ -71,7 +71,7 @@ public class Camionero{
     private List<Camion> camiones;
 
     @OneToMany(mappedBy = "camionero", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Oferta> ofertas;
+    private List<Oferta> asignadas;
 
 
 }
