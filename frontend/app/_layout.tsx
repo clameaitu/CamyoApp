@@ -14,6 +14,7 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false, title: "Inicio" }} />
         <Stack.Screen name="/user/MiPerfil" options={{ headerShown: false, title: "Mi Perfil" }} />
+        <Stack.Screen name="/CurrentCompanyOffers" options={{ headerShown: false, title: "Ofertas Empresa Actuales" }} />
       </Stack>
       {isMobile && <BottomBar />}
     </>
