@@ -3,8 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, Image  } from "rea
 import * as ImagePicker from "expo-image-picker";
 import globalStyles from "../../assets/styles/globalStyles";
 import colors from "../../assets/styles/colors";
-import BooleanSelector from '../BooleanSelector';
-import Selector from '../Selector';
+import BooleanSelector from "../_components/BooleanSelector";
+import Selector from "../_components/Selector";
 
 const RegisterScreen = () => {
   const [userType, setUserType] = useState("camionero");
