@@ -170,7 +170,7 @@ export default function CreateOfferScreen() {
 
             handleSubmit();
         }}>
-        <Text style={styles.buttonText}>Crear Oferta</Text>
+        <Text style={styles.buttonText}>Publicar Oferta</Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -180,9 +180,10 @@ export default function CreateOfferScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.lightGray,
-    padding: 20,
+    padding: 30,
     justifyContent: "center",
+    margin: 60,
+    marginBottom: 30,
   },
   header: {
     fontSize: 24,
