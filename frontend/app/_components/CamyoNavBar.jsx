@@ -53,7 +53,9 @@ export default function CamyoWebNavBar() {
                 <Ionicons name="menu" size={30} color="white" />
               </TouchableOpacity>
             </View>
-            <Image source={ProyectoLogo} style={styles.logoZoomed} resizeMode="cover" />
+            <TouchableOpacity onPress={() => router.replace("/")}>
+              <Image source={ProyectoLogo} style={styles.logoZoomed} resizeMode="cover" />
+            </TouchableOpacity>
           </View>
           <Animated.View style={[styles.sidebar, { transform: [{ translateX: sidebarAnim }] }]}>
             <ScrollView>
@@ -66,9 +68,9 @@ export default function CamyoWebNavBar() {
                 <TouchableOpacity><FontAwesome name="search" size={12} color="black" style={styles.searchIconZoom} /></TouchableOpacity>
               </View>
               <TouchableOpacity style={styles.shareButtonZoomed1}><Text style={styles.shareTextZoom1}>Iniciar Sesión</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.shareButtonZoomed2}><Text style={styles.shareTextZoom2}>Registrarse</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.shareButtonZoomed2} onPress={() => router.push('/registro')}><Text style={styles.shareTextZoom2}>Registrarse</Text></TouchableOpacity>
 
-              <TouchableOpacity style={styles.buttonTextZoomed} onPress={() => router.push('/user/UserProfileScreen')}><Text style={styles.linkTextZoom}>Perfil</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.buttonTextZoomed} onPress={() => router.push('/miperfil')}><Text style={styles.linkTextZoom}>Perfil</Text></TouchableOpacity>
 
               <TouchableOpacity style={styles.buttonTextZoomed}><Text style={styles.linkTextZoom}>Crear alerta</Text></TouchableOpacity>
               <TouchableOpacity style={styles.buttonTextZoomed}><Text style={styles.linkTextZoom}>Crear alerta</Text></TouchableOpacity>
@@ -80,12 +82,14 @@ export default function CamyoWebNavBar() {
         <>
           <View style={styles.headerWeb}>
             <View style={[styles.leftSection, isZoomed && styles.centerSection]}>
-              <Image source={ProyectoLogo} style={styles.logo} resizeMode="cover" />
+            <TouchableOpacity onPress={() => router.replace("/")}>
+              <Image source={ProyectoLogo} style={styles.logoZoomed} resizeMode="cover" />
+            </TouchableOpacity>
             </View>
             <View style={styles.rightSection}>
               <TouchableOpacity style={styles.buttonText}><Text style={styles.linkText}>Crear alerta</Text></TouchableOpacity>
 
-              <TouchableOpacity style={styles.buttonText} onPress={() => router.push('/user/UserProfileScreen')}><Text style={styles.linkText}>Perfil</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.buttonText} onPress={() => router.push('/miperfil')}><Text style={styles.linkText}>Mi Perfil</Text></TouchableOpacity>
 
               <TouchableOpacity style={styles.buttonText}><Text style={styles.linkText}>Empresas</Text></TouchableOpacity>
               <View style={styles.searchWeb}>
@@ -97,7 +101,7 @@ export default function CamyoWebNavBar() {
                 <TouchableOpacity><FontAwesome name="search" size={24} color="black" style={styles.searchIcon} /></TouchableOpacity>
               </View>
               <TouchableOpacity style={styles.shareButton1}><Text style={styles.shareText}>Iniciar Sesión</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.shareButton2}><Text style={styles.shareText}>Regístrarse</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.shareButton2} onPress={() => router.push('/registro')}><Text style={styles.shareText}>Registrarse</Text></TouchableOpacity>
             </View>
           </View>
         </>

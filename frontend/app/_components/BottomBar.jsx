@@ -23,7 +23,10 @@ const BottomBar = () => {
               color={selectedIcon === 'work' ? colors.secondary : colors.primary}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setSelectedIcon('business')}>
+          <TouchableOpacity onPress={() => {
+            setSelectedIcon('business');
+            router.push('/registro');
+            }}>
             <Ionicons
               name="business"
               size={32}
@@ -33,7 +36,7 @@ const BottomBar = () => {
 
           <TouchableOpacity onPress={() => {
             setSelectedIcon('user');
-            router.push('/user/UserProfileScreen');
+            router.push('/miperfil');
           }}>
 
             <FontAwesome

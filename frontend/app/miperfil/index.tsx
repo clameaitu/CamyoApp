@@ -3,8 +3,8 @@ import { View, Text, Image, Platform, ScrollView } from 'react-native';
 import frontendData from '../../assets/frontendData.json'; // Adjust the path if necessary
 import styles from './css/UserProfileScreen'; // Adjust the path if necessary
 import { FontAwesome } from '@expo/vector-icons';
-import BottomBar from '../components/BottomBar.jsx';
-import CamyoWebNavBar from "../components/CamyoNabBar";
+import BottomBar from '../_components/BottomBar';
+import CamyoWebNavBar from "../_components/CamyoNavBar";
 import { useNavigation } from '@react-navigation/native';
 
 interface UserProfile {
