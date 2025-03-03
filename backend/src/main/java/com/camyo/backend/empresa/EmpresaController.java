@@ -16,7 +16,6 @@ import com.camyo.backend.usuario.UsuarioService;
 
 @RestController
 @RequestMapping("/empresas")
-@CrossOrigin(origins = "http://localhost:3000") // Para permitir peticiones desde React
 public class EmpresaController {
     
     @Autowired
