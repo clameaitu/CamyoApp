@@ -3,6 +3,7 @@ package com.camyo.backend.camionero;
 
 import java.util.List;
 
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,7 +26,7 @@ public class Autonomo {
     @NotBlank
     private String nif;
 
-    
+    @ElementCollection
     private List<Tarjetas> tarjetas;
     
     @OneToOne

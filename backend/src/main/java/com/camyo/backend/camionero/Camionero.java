@@ -13,6 +13,7 @@ import com.camyo.backend.oferta.Oferta;
 import com.camyo.backend.usuario.Usuario;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -47,6 +48,7 @@ public class Camionero{
     private String dni;
 
     @NotEmpty
+    @ElementCollection
     private Set<Licencia> licencias;
 
     @NotNull
