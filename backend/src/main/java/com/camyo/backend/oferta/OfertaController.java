@@ -10,7 +10,7 @@ import com.camyo.backend.exceptions.ResourceNotFoundException;
 
 @RestController
 @RequestMapping("/api/ofertas")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:8081")
 public class OfertaController {
 
     @Autowired
