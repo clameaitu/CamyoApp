@@ -53,7 +53,7 @@ const RegisterScreen = () => {
   };
 
   return (
-    <ScrollView style={globalStyles.container}>
+    <ScrollView style={[globalStyles.container, { paddingTop: 100 }]}>
       <Text style={globalStyles.title}>Registro de Nuevo Usuario</Text>
 
       <View style={{ borderBottomWidth: 1, borderBottomColor: colors.mediumGray, paddingBottom: 10, marginBottom: 20 }}>
@@ -259,7 +259,7 @@ const RegisterScreen = () => {
       <TouchableOpacity 
         style={[
           globalStyles.button, 
-          { marginBottom: 30, borderRadius: 12, elevation: 5 }
+          { marginBottom: 80, borderRadius: 12, elevation: 5 }
         ]}
       >
         <Text style={[globalStyles.buttonText, { fontSize: 30 }]}>Registrarse</Text>

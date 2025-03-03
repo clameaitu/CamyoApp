@@ -68,7 +68,7 @@ export default function CamyoWebNavBar() {
                 <TouchableOpacity><FontAwesome name="search" size={12} color="black" style={styles.searchIconZoom} /></TouchableOpacity>
               </View>
               <TouchableOpacity style={styles.shareButtonZoomed1}><Text style={styles.shareTextZoom1}>Iniciar Sesión</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.shareButtonZoomed2}><Text style={styles.shareTextZoom2}>Registrarse</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.shareButtonZoomed2} onPress={() => router.push('/registro')}><Text style={styles.shareTextZoom2}>Registrarse</Text></TouchableOpacity>
 
               <TouchableOpacity style={styles.buttonTextZoomed} onPress={() => router.push('/miperfil')}><Text style={styles.linkTextZoom}>Perfil</Text></TouchableOpacity>
 
@@ -101,7 +101,7 @@ export default function CamyoWebNavBar() {
                 <TouchableOpacity><FontAwesome name="search" size={24} color="black" style={styles.searchIcon} /></TouchableOpacity>
               </View>
               <TouchableOpacity style={styles.shareButton1}><Text style={styles.shareText}>Iniciar Sesión</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.shareButton2}><Text style={styles.shareText}>Regístrarse</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.shareButton2} onPress={() => router.push('/registro')}><Text style={styles.shareText}>Registrarse</Text></TouchableOpacity>
             </View>
           </View>
         </>
