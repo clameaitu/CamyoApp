@@ -21,6 +21,10 @@ Sigue los pasos a continuación para instalar y ejecutar el proyecto correctamen
      cp backend/src/main/resources/application.example.properties backend/src/main/resources/application.properties
      ```
    - Editar `backend/src/main/resources/application.properties` y añadir tu contraseña de la base de datos.
+   - Copiar el archivo `.env`:
+     ```sh
+     cp backend/.env.example backend/.env
+     ```
 
 ---
 
