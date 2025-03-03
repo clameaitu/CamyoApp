@@ -22,6 +22,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -40,6 +41,7 @@ public class Camionero{
     private Integer id;
 
     @NotNull
+    @Min(value = 0)
     private Integer experiencia;
 
     @Column(name = "dni", unique = true)
@@ -64,10 +66,6 @@ public class Camionero{
 	@JoinColumn(name = "usuario_id", referencedColumnName = "id")
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Usuario usuario;
-
-    @OneToOne(mappedBy = "camionero", cascade = CascadeType.REMOVE)
-    private Autonomo autonomo;
-    
 
     @OneToMany(mappedBy = "camionero", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Camion> camiones;
