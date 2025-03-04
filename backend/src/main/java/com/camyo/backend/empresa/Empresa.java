@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.URL;
 
 import com.camyo.backend.oferta.Oferta;
 import com.camyo.backend.usuario.Usuario;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -50,6 +51,7 @@ public class Empresa {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Usuario usuario;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Oferta> ofertas;
     

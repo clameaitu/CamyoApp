@@ -8,9 +8,12 @@ import org.springframework.web.bind.annotation.*;
 
 import com.camyo.backend.exceptions.ResourceNotFoundException;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
-@RequestMapping("/api/ofertas")
+@RequestMapping("/ofertas")
 @CrossOrigin(origins = "http://localhost:3000")
+@Tag(name = "Ofertas", description = "API para gestión de ofertas")
 public class OfertaController {
 
     @Autowired
@@ -122,7 +125,6 @@ public class OfertaController {
     public ResponseEntity<Trabajo> actualizarTrabajoDeOferta(@PathVariable Integer ofertaId,
                                                              @RequestBody Trabajo trabajoDetalles) {
         try {
-            Oferta oferta = ofertaService.obtenerOfertaPorId(ofertaId);
 
             Trabajo trabajoActual = ofertaService.obtenerTrabajo(ofertaId); 
             trabajoActual.setFechaIncorporacion(trabajoDetalles.getFechaIncorporacion());
@@ -190,7 +192,6 @@ public class OfertaController {
     public ResponseEntity<Carga> actualizarCargaDeOferta(@PathVariable Integer ofertaId,
                                                          @RequestBody Carga cargaDetalles) {
         try {
-            Oferta oferta = ofertaService.obtenerOfertaPorId(ofertaId);
             Carga cargaActual = ofertaService.obtenerCarga(ofertaId);
 
             cargaActual.setMercancia(cargaDetalles.getMercancia());

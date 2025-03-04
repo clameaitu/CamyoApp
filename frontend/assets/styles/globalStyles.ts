@@ -53,6 +53,19 @@ const globalStyles = StyleSheet.create({
     color: colors.white,
     fontWeight: "bold",
   },
+  formContainer: {
+    width: "80%",  // Ajusta según el tamaño deseado
+    alignSelf: "center",
+    backgroundColor: colors.white, // Opcional: para que resalte sobre el fondo
+    padding: 20,
+    borderRadius: 10,
+    shadowColor: "#000", // Opcional: un poco de sombra para resaltar el contenedor
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3, // Sombra en Android
+    marginVertical: 20,
+  },  
 });
 
 export default globalStyles;
