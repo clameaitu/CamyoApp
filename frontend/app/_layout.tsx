@@ -17,6 +17,7 @@ export default function RootLayout() {
         <Stack.Screen name="registro" options={{ title: "Registro" }} />
         <Stack.Screen name="miperfil" options={{ title: "Mi Perfil Camionero" }} />
         <Stack.Screen name="miperfilempresa" options={{ title: "Mi Perfil Empresa" }} />
+        <Stack.Screen name="oferta/crear" options={{ title: "Publicar Nueva Oferta" }} />
       </Stack>
       {isMobile && <BottomBar />}
     </>
