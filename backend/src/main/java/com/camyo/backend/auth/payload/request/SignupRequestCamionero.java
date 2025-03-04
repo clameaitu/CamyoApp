@@ -17,9 +17,6 @@ public class SignupRequestCamionero {
 	
 	@NotBlank
 	private String username;
-	
-	@NotBlank
-	private String authority;
 
 	@NotBlank
 	private String password;
@@ -36,7 +33,7 @@ public class SignupRequestCamionero {
 	@NotBlank
 	private String localizacion;
 
-	@NotBlank
+	@NotNull
 	private byte[] foto;
 
 	private String descripcion;
@@ -44,14 +41,17 @@ public class SignupRequestCamionero {
 	@NotBlank
 	private String dni;
 
-	@NotBlank
+    @NotNull
     private Set<Licencia> licencias;
 
     @NotNull
     private Disponibilidad disponibilidad;
 
-	@NotBlank
+	@NotNull
 	private Boolean tieneCAP;
+
+	@NotNull
+	private Integer experiencia;
 
 	private LocalDate expiracionCAP;
 
