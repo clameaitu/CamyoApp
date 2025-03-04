@@ -1,4 +1,3 @@
-import { create } from "react-test-renderer";
 
 const routes = {
     home: "/",
