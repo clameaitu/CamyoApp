@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, useWindowDimensions } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { FontAwesome5, MaterialIcons, Entypo, Feather } from "@expo/vector-icons";
+import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import globalStyles from "../../assets/styles/globalStyles";
 import colors from "../../assets/styles/colors";
 import BooleanSelector from "../_components/BooleanSelector";
@@ -12,6 +12,7 @@ const RegisterScreen = () => {
   const { width } = useWindowDimensions();
   const isWideScreen = width > 1074;  
   const [userType, setUserType] = useState("camionero");
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const [formData, setFormData] = useState({
     nombre: "",
     apellido: "",
@@ -75,6 +76,24 @@ const RegisterScreen = () => {
     </View>
   );
 
+  // Función específica para renderizar el input de contraseña con el ojito
+  const renderPasswordInput = () => (
+    <View style={{ width: "90%", marginBottom: 15 }}>
+      <Text style={{ fontSize: 12, color: colors.secondary, marginLeft: 8, marginBottom: -6, backgroundColor: colors.white, alignSelf: "flex-start", paddingHorizontal: 5, zIndex: 1 }}>Contraseña</Text>
+      <View style={{ flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: colors.mediumGray, borderRadius: 8, paddingHorizontal: 10, backgroundColor: colors.white }}>
+        <Entypo name="lock" size={20} color={colors.primary} />
+        <TextInput
+          style={{ flex: 1, height: 40, paddingLeft: 8, outline: "none", textAlignVertical: "center" }}
+          secureTextEntry={!passwordVisible}
+          onChangeText={(value) => handleInputChange("password", value)}
+        />
+        <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
+          <Entypo name={passwordVisible ? "eye" : "eye-with-line"} size={18} color={colors.mediumGray} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
   return (
     <ScrollView style={[globalStyles.container, { paddingTop: 100 }]}>
       <View style={{ flexDirection: isWideScreen ? "row" : "column", justifyContent: "center", alignItems: "center", width: "100%", marginTop: isWideScreen ? -25 : -100, marginBottom: isWideScreen ? -100 : 155 }}>
@@ -84,27 +103,36 @@ const RegisterScreen = () => {
         
         {/* Selector de Imagen */}
         <View style={{ alignItems: "center", marginBottom: 20, marginTop: 10 }}>
-          <Image source={formData.foto ? { uri: formData.foto } : defaultProfileImage}  style={{ width: 100, height: 100, borderRadius: 50, marginBottom: 8,  borderWidth: 1, borderColor: colors.mediumGray, }} />
+          <Image 
+            source={formData.foto ? { uri: formData.foto } : defaultProfileImage}  
+            style={{ width: 100, height: 100, borderRadius: 50, marginBottom: 8, borderWidth: 1, borderColor: colors.mediumGray }} 
+          />
+
           {!formData.foto ? (
-            <TouchableOpacity onPress={pickImage} style={[globalStyles.button, { backgroundColor: colors.secondary }]}>
+            <TouchableOpacity onPress={pickImage} style={[globalStyles.button, { backgroundColor: colors.secondary, flexDirection: "row", alignItems: "center", justifyContent: "center", width: 140, paddingHorizontal: 15 }]}>
+              <MaterialIcons name="add-a-photo" size={20} color={colors.white} style={{ marginRight: 8 }} />
               <Text style={globalStyles.buttonText}>Añadir Foto</Text>
             </TouchableOpacity>
           ) : (
             <View style={{ flexDirection: "row" }}>
-              <TouchableOpacity onPress={pickImage} style={[globalStyles.button, { backgroundColor: colors.green, marginRight: 7 }]}>
+              <TouchableOpacity onPress={pickImage} style={[globalStyles.button, { backgroundColor: colors.green, marginRight: 7, flexDirection: "row", alignItems: "center", justifyContent: "center", width: 120, paddingHorizontal: 15 }]}>
+                <MaterialIcons name="cached" size={20} color={colors.white} style={{ marginRight: 8 }} />
                 <Text style={globalStyles.buttonText}>Cambiar</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setFormData({ ...formData, foto: null })} style={[globalStyles.button, { backgroundColor: colors.red }]}>
-                <Text style={globalStyles.buttonText}>  Borrar  </Text>
+              
+              <TouchableOpacity onPress={() => setFormData({ ...formData, foto: null })} style={[globalStyles.button, { backgroundColor: colors.red, flexDirection: "row", alignItems: "center", justifyContent: "center", width: 120, paddingHorizontal: 15 }]}>
+                <FontAwesome5 name="trash" size={18} color={colors.white} style={{ marginRight: 8 }} />
+                <Text style={globalStyles.buttonText}>Borrar</Text>
               </TouchableOpacity>
             </View>
           )}
         </View>
 
+
         {renderInput("Nombre", "nombre", <FontAwesome5 name="user" size={20} color={colors.primary} />)}
         {renderInput("Apellidos", "apellido", <FontAwesome5 name="user-alt" size={20} color={colors.primary} />)}
         {renderInput("Email", "email", <MaterialIcons name="email" size={20} color={colors.primary} />, "email-address")}
-        {renderInput("Contraseña", "password", <Entypo name="lock" size={20} color={colors.primary} />, "default", true)}
+        {renderPasswordInput()}
         {renderInput("Teléfono", "telefono", <MaterialIcons name="phone" size={20} color={colors.primary} />, "phone-pad")}
         {renderInput("Localización", "localizacion", <MaterialIcons name="location-pin" size={20} color={colors.primary} />)}
         {renderInput("Descripción (Opcional)", "descripcion", <FontAwesome5 name="align-left" size={20} color={colors.primary} />, "default", false, true)}
