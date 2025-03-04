@@ -6,6 +6,8 @@ export default function OfertaDetalleScreen() {
     const [offerData, setOfferData] = useState<any>(null);
     const [empresaData, setEmpresaData] = useState<any>(null);
     const [usuarioEmpresaData, setUsuarioEmpresaData] = useState<any>(null);
+    const [offerTrabajoData, setOfferTrabajoData] = useState<any>(null);
+    const [offerCargaData, setOfferCargaData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const { ofertaid } = useLocalSearchParams();
 
@@ -16,10 +18,29 @@ export default function OfertaDetalleScreen() {
                     const response = await fetch(`http://localhost:8080/api/ofertas/${ofertaid}`);
                     const data = await response.json();
                     setOfferData(data);
+
+                    console.log(data);
+                    
+                    
+                    const trabajoResponse = await fetch(`http://localhost:8080/api/ofertas/${ofertaid}/trabajo`);
+                    const trabajoText = await trabajoResponse.text();
+                    const trabajoData = trabajoText ? JSON.parse(trabajoText) : null;
+                    setOfferTrabajoData(trabajoData);
+
+                    console.log(trabajoData);
+
+                    const cargaResponse = await fetch(`http://localhost:8080/api/ofertas/${ofertaid}/carga`);
+                    const cargaText = await cargaResponse.text();
+                    const cargaData = cargaText ? JSON.parse(cargaText) : null;
+                    setOfferCargaData(cargaData);
+
+                    console.log(cargaData);
+                    
                     const empresaResponse = await fetch(`http://localhost:8080/empresas/1`); //http://localhost:8080/empresas/${data.empresaId}
                     const empresaData = await empresaResponse.json();
                     setEmpresaData(empresaData);
                     console.log(empresaData);
+
                     const usuarioEmpresaResponse = await fetch(`http://localhost:8080/usuarios/1`); //http://localhost:8080/usuarios/${empresaData.usuarioId}
                     const usuarioEmpresaData = await usuarioEmpresaResponse.json();
                     setUsuarioEmpresaData(usuarioEmpresaData);

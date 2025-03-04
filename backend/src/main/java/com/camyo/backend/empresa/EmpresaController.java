@@ -16,6 +16,7 @@ import com.camyo.backend.usuario.UsuarioService;
 
 @RestController
 @RequestMapping("/empresas")
+@CrossOrigin(origins = "http://localhost:8081")
 public class EmpresaController {
     
     @Autowired
