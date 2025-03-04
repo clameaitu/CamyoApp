@@ -6,8 +6,9 @@ import { useRouter } from "expo-router";
 export default function CurrentCompanyOffers() {
   const router = useRouter();
   const [expandedIndex, setExpandedIndex] = useState(null);
-  const [selectedLocation, setSelectedLocation] = useState(null);
-  const [selectedService, setSelectedService] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+  const [selectedService, setSelectedService] = useState<string | null>(null);
+
 
   const allOffers = [
     { id: 1, titulo: "Oferta 1", direccion: "Calle Picaflor 5, Madrid, España.", servicio: "SEUR", fecha: "13/2/2025", puntuacion: "4.7/5 (150 comentarios)", ubicacion: "Madrid" },
@@ -53,16 +54,16 @@ export default function CurrentCompanyOffers() {
 
         {/* Filtro por ubicación */}
         <TouchableOpacity 
-          style={[styles.filterButton, selectedLocation && styles.filterButtonActive]} 
-          onPress={() => setSelectedLocation(selectedLocation === "Madrid" ? null : "Madrid")}
-        >
+            style={[styles.filterButton, selectedLocation === "Madrid" && styles.filterButtonActive]}          
+            onPress={() => setSelectedLocation("Madrid")}
+          >
           <FontAwesome name="map-marker" size={16} color="black" />
           <Text style={styles.filterText}> Madrid</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
-          style={[styles.filterButton, selectedLocation && styles.filterButtonActive]} 
-          onPress={() => setSelectedLocation(selectedLocation === "Sevilla" ? null : "Sevilla")}
+ style={[styles.filterButton, selectedLocation === "Sevilla" && styles.filterButtonActive]}          
+ onPress={() => setSelectedLocation("Sevilla")}
         >
           <FontAwesome name="map-marker" size={16} color="black" />
           <Text style={styles.filterText}> Sevilla</Text>
@@ -70,16 +71,16 @@ export default function CurrentCompanyOffers() {
 
         {/* Filtro por tipo de servicio */}
         <TouchableOpacity 
-          style={[styles.filterButton, selectedService && styles.filterButtonActive]} 
-          onPress={() => setSelectedService(selectedService === "SEUR" ? null : "SEUR")}
+            style={[styles.filterButton, selectedService === "SEUR" && styles.filterButtonActive]}          
+            onPress={() => setSelectedService("SEUR")}
         >
           <FontAwesome name="truck" size={16} color="black" />
           <Text style={styles.filterText}> SEUR</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
-          style={[styles.filterButton, selectedService && styles.filterButtonActive]} 
-          onPress={() => setSelectedService(selectedService === "US" ? null : "US")}
+            style={[styles.filterButton, selectedService === "US" && styles.filterButtonActive]}          
+            onPress={() => setSelectedService("US")}
         >
           <FontAwesome name="truck" size={16} color="black" />
           <Text style={styles.filterText}> US</Text>
