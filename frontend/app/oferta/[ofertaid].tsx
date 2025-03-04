@@ -4,6 +4,11 @@ import { useLocalSearchParams } from "expo-router";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import colors from "frontend/assets/styles/colors";
 
+const formatDate = (fecha: string) => {
+    const opciones = { day: "numeric", month: "long", year: "numeric" } as const;
+    return new Date(fecha).toLocaleDateString("es-ES", opciones);
+};
+
 export default function OfertaDetalleScreen() {
     const [offerData, setOfferData] = useState<any>(null);
     const [empresaData, setEmpresaData] = useState<any>(null);
@@ -154,7 +159,7 @@ export default function OfertaDetalleScreen() {
                         <View style={styles.detailRow}>
                             <MaterialIcons name="event" size={20} color="#0b4f6c" />
                             <Text style={styles.detalles}>
-                                <Text style={styles.detallesLabel}>Fecha Incorporación:</Text> {offerTrabajoData.fechaIncorporacion}
+                                <Text style={styles.detallesLabel}>Fecha Incorporación:</Text> {formatDate(offerTrabajoData.fechaIncorporacion)}
                             </Text>
                         </View>
                         <View style={styles.separator} />
