@@ -126,7 +126,7 @@ export default function PublishOfferScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f5f5f5" },
+  container: { flex: 1, backgroundColor: "#f5f5f5"},
   header: { flexDirection: "row", alignItems: "center", backgroundColor: "#0C4A6E", padding: 15 },
   headerText: { color: "white", fontSize: 20, fontWeight: "bold", marginLeft: 15 },
   scrollContent: { paddingBottom: 30 }, // Espacio extra para evitar que el teclado lo tape

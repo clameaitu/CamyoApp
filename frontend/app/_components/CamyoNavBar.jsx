@@ -5,6 +5,7 @@ import React, { useEffect, useState, useRef } from "react";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Ionicons from '@expo/vector-icons/Ionicons';
 const ProyectoLogo = require('frontend/assets/images/camyo.png');
+import routes from "./routes";
 
 export default function CamyoWebNavBar() {
 
@@ -67,14 +68,12 @@ export default function CamyoWebNavBar() {
                 />
                 <TouchableOpacity><FontAwesome name="search" size={12} color="black" style={styles.searchIconZoom} /></TouchableOpacity>
               </View>
-              <TouchableOpacity style={styles.shareButtonZoomed1}><Text style={styles.shareTextZoom1}>Iniciar Sesión</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.shareButtonZoomed2}><Text style={styles.shareTextZoom2}>Registrarse</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.shareButtonZoomed1} onPress={() => router.push(routes.login)}><Text style={styles.shareTextZoom1}>Iniciar Sesión</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.shareButtonZoomed2} onPress={() => router.push(routes.register)}><Text style={styles.shareTextZoom2}>Registrarse</Text></TouchableOpacity>
 
-              <TouchableOpacity style={styles.buttonTextZoomed} onPress={() => router.push('/miperfil')}><Text style={styles.linkTextZoom}>Perfil</Text></TouchableOpacity>
-
-              <TouchableOpacity style={styles.buttonTextZoomed}><Text style={styles.linkTextZoom}>Crear alerta</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.buttonTextZoomed}><Text style={styles.linkTextZoom}>Crear alerta</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.buttonTextZoomed}><Text style={styles.linkTextZoom}>Crear alerta</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.buttonText} onPress={() => router.replace(routes.createOffer)}><Text style={styles.linkText}>Crear Oferta</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.buttonTextZoomed} onPress={() => router.push(routes.profile)}><Text style={styles.linkTextZoom}>Perfil (Cam)</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.buttonTextZoomed} onPress={() => router.push(routes.profileEmpresa)}><Text style={styles.linkTextZoom}>Perfil (Emp)</Text></TouchableOpacity>
             </ScrollView>
           </Animated.View>
         </>
@@ -87,11 +86,10 @@ export default function CamyoWebNavBar() {
             </TouchableOpacity>
             </View>
             <View style={styles.rightSection}>
-              <TouchableOpacity style={styles.buttonText}><Text style={styles.linkText}>Crear alerta</Text></TouchableOpacity>
-
-              <TouchableOpacity style={styles.buttonText} onPress={() => router.push('/miperfil')}><Text style={styles.linkText}>Mi Perfil</Text></TouchableOpacity>
-
-              <TouchableOpacity style={styles.buttonText}><Text style={styles.linkText}>Empresas</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.buttonText} onPress={() => router.replace(routes.createOffer)}><Text style={styles.linkText}>Crear Oferta</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.buttonText} onPress={() => router.push(routes.profile)}><Text style={styles.linkText}>Mi Perfil (Cam)</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.buttonText} onPress={() => router.push(routes.profileEmpresa)}><Text style={styles.linkText}>Mi Perfil (Emp)</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.buttonText} onPress={() => router.push(routes.listcompanies)} ><Text style={styles.linkText}>Empresas</Text></TouchableOpacity>
               <View style={styles.searchWeb}>
                 <TextInput
                   style={styles.searchInputWeb}
@@ -100,8 +98,8 @@ export default function CamyoWebNavBar() {
                 />
                 <TouchableOpacity><FontAwesome name="search" size={24} color="black" style={styles.searchIcon} /></TouchableOpacity>
               </View>
-              <TouchableOpacity style={styles.shareButton1}><Text style={styles.shareText}>Iniciar Sesión</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.shareButton2}><Text style={styles.shareText}>Regístrarse</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.shareButton1} onPress={() => router.push(routes.login)}><Text style={styles.shareText}>Iniciar Sesión</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.shareButton2} onPress={() => router.push(routes.register)}><Text style={styles.shareText}>Registrarse</Text></TouchableOpacity>
             </View>
           </View>
         </>
