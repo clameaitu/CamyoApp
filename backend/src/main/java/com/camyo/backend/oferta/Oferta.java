@@ -62,7 +62,7 @@ public class Oferta {
 
     @ManyToOne(optional=true)
     @JoinColumn(name = "camionero_id")
-    private Camionero camioneroAsignado;
+    private Camionero camionero;
 
     @ManyToMany
     @JoinTable(name = "aplicados", joinColumns = @JoinColumn(name = "oferta_id"), inverseJoinColumns = @JoinColumn(name = "camionero_id"))

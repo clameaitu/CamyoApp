@@ -171,7 +171,7 @@ public class OfertaService {
         Camionero cam = camioneroRepository.findById(camioneroId)
                 .orElseThrow(() -> new ResourceNotFoundException("Camionero", "id", camioneroId));
 
-        oferta.setCamioneroAsignado(cam);
+        oferta.setCamionero(cam);
         ofertaRepository.save(oferta);
     }
 
