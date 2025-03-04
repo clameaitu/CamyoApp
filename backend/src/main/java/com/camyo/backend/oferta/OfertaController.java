@@ -118,16 +118,36 @@ public class OfertaController {
 
     /**
      * PUT: Actualizar una oferta existente
-     * 
-     * @param id            ID de la oferta a actualizar
-     * @param ofertaDetalles Nuevos datos de la oferta
-     * @return Oferta actualizada o error si no existe.
+     *
+     * Permite actualizar los detalles de una oferta y, si es necesario, actualizar su carga o trabajo asociado.
+     *
+     * @param id      ID de la oferta a actualizar.
+     * @param request Datos actualizados de la oferta, incluyendo tipo de oferta (CARGA o TRABAJO).
+     * @return Oferta actualizada correctamente o error si la oferta no existe.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Oferta> actualizarOferta(@PathVariable Integer id,
-                                                   @RequestBody Oferta ofertaDetalles) {
+    public ResponseEntity<?> actualizarOferta(@PathVariable Integer id, @RequestBody OfertaRequestDTO request) {
         try {
-            Oferta ofertaActualizada = ofertaService.modificarOferta(ofertaDetalles, id);
+            Oferta ofertaActualizada = ofertaService.modificarOferta(request.getOferta(), id);
+
+            if ("CARGA".equalsIgnoreCase(request.getTipoOferta()) && request.getCarga() != null) {
+                Carga carga = ofertaService.obtenerCarga(id);
+                if (carga != null) {
+                    request.getCarga().setId(carga.getId());
+                    request.getCarga().setOferta(ofertaActualizada);
+                    Carga cargaActualizada = cargaService.guardarCarga(request.getCarga());
+                    return ResponseEntity.ok(cargaActualizada);
+                }
+            } else if ("TRABAJO".equalsIgnoreCase(request.getTipoOferta()) && request.getTrabajo() != null) {
+                Trabajo trabajo = ofertaService.obtenerTrabajo(id);
+                if (trabajo != null) {
+                    request.getTrabajo().setId(trabajo.getId());
+                    request.getTrabajo().setOferta(ofertaActualizada);
+                    Trabajo trabajoActualizado = trabajoService.guardarTrabajo(request.getTrabajo());
+                    return ResponseEntity.ok(trabajoActualizado);
+                }
+            }
+
             return ResponseEntity.ok(ofertaActualizada);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();

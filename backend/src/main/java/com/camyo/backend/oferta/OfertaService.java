@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.camyo.backend.camionero.Camionero;
 import com.camyo.backend.camionero.CamioneroRepository;
+import com.camyo.backend.empresa.Empresa;
+import com.camyo.backend.empresa.EmpresaRepository;
 import com.camyo.backend.exceptions.ResourceNotFoundException;
 
 import jakarta.validation.Valid;
@@ -24,6 +26,8 @@ public class OfertaService {
     private TrabajoRepository trabajoRepository;
     @Autowired
     private CamioneroRepository camioneroRepository;
+    @Autowired
+    private EmpresaRepository empresaRepository;
 
     @Transactional(readOnly = true)
     public List<Oferta> obtenerOfertas() {
@@ -83,10 +87,19 @@ public class OfertaService {
     @Transactional
     public Oferta modificarOferta(@Valid Oferta oferta, Integer idToUpdate) {
         Oferta toUpdate = obtenerOfertaPorId(idToUpdate);
-        BeanUtils.copyProperties(oferta, toUpdate, "id");
+        if (oferta.getEmpresa() != null && oferta.getEmpresa().getId() != null) {
+            Empresa empresa = empresaRepository.findById(oferta.getEmpresa().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Empresa", "id", oferta.getEmpresa().getId()));
+            toUpdate.setEmpresa(empresa);
+        }
+    
+        BeanUtils.copyProperties(oferta, toUpdate, "id", "empresa");
+    
         ofertaRepository.save(toUpdate);
         return toUpdate;
     }
+    
+
 
     @Transactional
     public Oferta crearOfertaConCarga(OfertaConCargaDTO dto) {
