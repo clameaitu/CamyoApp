@@ -1,6 +1,8 @@
-import { Text, View, ActivityIndicator, StyleSheet, FlexAlignType, Image } from "react-native";
+import { Text, View, ActivityIndicator, StyleSheet, TouchableOpacity, Image } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useLocalSearchParams } from "expo-router";
+import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
+import colors from "frontend/assets/styles/colors";
 
 export default function OfertaDetalleScreen() {
     const [offerData, setOfferData] = useState<any>(null);
@@ -75,7 +77,7 @@ export default function OfertaDetalleScreen() {
     const renderOfferCard = () => {
         return (
             <View style={styles.card}>
-                {offerData.tipo === 'type1' ? (
+                {offerTrabajoData == null ? (
                     <>
                         <View style={styles.header}>
                             <Image
@@ -84,8 +86,8 @@ export default function OfertaDetalleScreen() {
                             />
                             <View style={styles.headerText}>
                                 <Text style={styles.title}>{offerData.titulo}</Text>
-                                {empresaData.web && (
-                                    <Text style={styles.empresa}>{empresaData.web.toUpperCase()}</Text>
+                                {usuarioEmpresaData.web && (
+                                    <Text style={styles.empresa}>{usuarioEmpresaData.nombre.toUpperCase()}</Text>
                                 )}
                             </View>
                         </View>
@@ -100,12 +102,67 @@ export default function OfertaDetalleScreen() {
                             />
                             <View style={styles.headerText}>
                                 <Text style={styles.title}>{offerData.titulo}</Text>
-                                {empresaData.web && (
-                                    <Text style={styles.empresa}>{empresaData.web.toUpperCase()}</Text>
+                                {usuarioEmpresaData.nombre && (
+                                    <Text style={styles.empresa}>
+                                    {usuarioEmpresaData.nombre.toUpperCase()} |
+                                    <MaterialIcons name="location-on" size={18} color="#0b4f6c" />
+                                    <Text style={styles.empresa}> {usuarioEmpresaData.localizacion}</Text>
+                                </Text>
                                 )}
                             </View>
                         </View>
+                        
+
+                        <TouchableOpacity style={styles.solicitarButton}>
+                            <Text style={styles.solicitarButtonText}>Solicita Oferta</Text>
+                        </TouchableOpacity>
+
+                        <View style={styles.separator} />
+
+                        <Text style={styles.subTitulo}>
+                            Detalles de la Oferta
+                        </Text>
+
+                        <View style={styles.detailRow}>
+                            <MaterialIcons name="attach-money" size={20} color="#0b4f6c" />
+                            <Text style={styles.detalles}>
+                                <Text style={styles.detallesLabel}>Salario:</Text> {offerData.sueldo}
+                            </Text>
+                        </View>
+
+                        <View style={styles.detailRow}>
+                            <FontAwesome5 name="briefcase" size={18} color="#0b4f6c" />
+                            <Text style={styles.detalles}>
+                                <Text style={styles.detallesLabel}>Experiencia Mínima:</Text> {offerData.experiencia}
+                            </Text>
+                        </View>
+
+                        <View style={styles.detailRow}>
+                            <Entypo name="clock" size={20} color="#0b4f6c" />
+                            <Text style={styles.detalles}>
+                                <Text style={styles.detallesLabel}>Jornada:</Text> Completa {/* {offerData.jornada} */}
+                            </Text>
+                        </View>
+
+                        <View style={styles.detailRow}>
+                            <FontAwesome5 name="id-card" size={18} color="#0b4f6c" />
+                            <Text style={styles.detalles}>
+                                <Text style={styles.detallesLabel}>Licencia Requerida:</Text> C+E {/* {offerData.licencia} */}
+                            </Text>
+                        </View>
+
+                        <View style={styles.detailRow}>
+                            <MaterialIcons name="event" size={20} color="#0b4f6c" />
+                            <Text style={styles.detalles}>
+                                <Text style={styles.detallesLabel}>Fecha Incorporación:</Text> {offerTrabajoData.fechaIncorporacion}
+                            </Text>
+                        </View>
+                        <View style={styles.separator} />
+
+                        <Text style={styles.subTitulo}>Descripción Completa</Text>
+
                         <Text style={styles.description}>{offerData.notas}</Text>
+
                     </>
                 )}
             </View>
@@ -123,17 +180,23 @@ export default function OfertaDetalleScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
+        //justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#e6e8e6',
-        paddingVertical: 20, // Space at the top and bottom
+        paddingVertical: 20,
+        paddingTop: 90,
     },
     card: {
-        width: '70%',
+        width: '60%',
         marginHorizontal: '15%',
         padding: 20,
         backgroundColor: 'white',
         borderRadius: 10,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 5,
     },
     header: {
         flexDirection: 'row',
@@ -149,18 +212,69 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     title: {
-        fontSize: 24,
+        fontSize: 34,
         fontWeight: 'bold',
     },
     empresa: {
-        fontSize: 16,
+        fontSize: 20,
         color: '#0b4f6c',
-        fontWeight: 'bold',
-        marginTop: 5,
+        marginTop: 0,
     },
+    solicitarButton: {
+        width: '40%', 
+        paddingVertical: 10, 
+        borderRadius: 20, 
+        alignSelf: 'center', 
+        backgroundColor: colors.primary, 
+        marginVertical: 15,
+    },
+    solicitarButtonText: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    separator: {
+        height: 1,
+        backgroundColor: '#ccc',
+        opacity: 0.6, 
+        marginVertical: 12,
+        width: '100%',  
+        alignSelf: 'center',
+    },
+    
+    subTitulo: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        color: '#0b4f6c',
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+        marginLeft: '0%', 
+    },
+    
+    detailRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 5,
+        marginLeft: '2%', 
+    },
+    
+    detalles: {
+        fontSize: 16,
+        marginLeft: 8, 
+        color: '#333',
+    },
+    
+    detallesLabel: {
+        fontWeight: 'bold',
+    },
+    
+    
     description: {
         fontSize: 16,
-        marginTop: 10,
+        marginTop: 5,
+        marginRight: 10,
     },
     errorText: {
         fontSize: 16,
