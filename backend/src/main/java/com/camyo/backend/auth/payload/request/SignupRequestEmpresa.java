@@ -1,7 +1,5 @@
 package com.camyo.backend.auth.payload.request;
 
-import org.hibernate.validator.constraints.URL;
-
 import jakarta.validation.constraints.NotBlank;
 
 
@@ -10,8 +8,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SignupRequest {
-	
+public class SignupRequestEmpresa {
+
 	@NotBlank
 	private String username;
 	
@@ -24,16 +22,23 @@ public class SignupRequest {
 	@NotBlank
 	private String email;
 	
+	@NotBlank
 	private String nombre;
 	
+	@NotBlank
 	private String telefono;
 	
+	@NotBlank
 	private String localizacion;
+
+	@NotBlank
+	private byte[] foto;
 
 	private String descripcion;
 
-	private String web;
+    private String web;
 
+    @NotBlank
 	private String nif;
-
+    
 }

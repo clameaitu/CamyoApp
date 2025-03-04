@@ -7,8 +7,12 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.camyo.backend.auth.payload.request.SignupRequest;
+import com.camyo.backend.auth.payload.request.SignupRequestCamionero;
+import com.camyo.backend.auth.payload.request.SignupRequestEmpresa;
+import com.camyo.backend.camionero.Camionero;
+import com.camyo.backend.camionero.CamioneroService;
 import com.camyo.backend.empresa.Empresa;
+import com.camyo.backend.empresa.EmpresaService;
 import com.camyo.backend.usuario.Authorities;
 import com.camyo.backend.usuario.AuthoritiesService;
 import com.camyo.backend.usuario.Usuario;
@@ -23,35 +27,70 @@ public class AuthService {
     private final PasswordEncoder encoder;
 	private final AuthoritiesService authoritiesService;
 	private final UsuarioService usuarioService;
+	private final CamioneroService camioneroService;
+	private final EmpresaService empresaService;
 
 	@Autowired
-	public AuthService(PasswordEncoder encoder, AuthoritiesService authoritiesService, UsuarioService usuarioService) {
+	public AuthService(PasswordEncoder encoder, AuthoritiesService authoritiesService, UsuarioService usuarioService, CamioneroService camioneroService, EmpresaService empresaService) {
 		this.encoder = encoder;
 		this.authoritiesService = authoritiesService;
 		this.usuarioService = usuarioService;
+		this.camioneroService = camioneroService;
+		this.empresaService = empresaService;
 	}
 
 	@Transactional
-	public void createUser(@Valid SignupRequest request) throws DataAccessException, IOException {
+	public void createCamionero(@Valid SignupRequestCamionero request) throws DataAccessException, IOException {
 		Usuario usuario = new Usuario();
 		usuario.setUsername(request.getUsername());
 		usuario.setPassword(request.getPassword());
 		usuario.setEmail(request.getEmail());
-		String strRoles = request.getAuthority();
-		Authorities role;
-
-		switch (strRoles.toLowerCase()) {
-		case "empresa":
-			role = authoritiesService.findByAuthority("EMPRESA");
-			usuario.setAuthority(role);
-			usuarioService.guardarUsuario(usuario);
-            Empresa empresa = new Empresa();
-			break;
-		default:
-			role = authoritiesService.findByAuthority("CAMIONERO");
-			usuario.setAuthority(role);
-			usuarioService.guardarUsuario(usuario);
+		usuario.setLocalizacion(request.getLocalizacion());
+		usuario.setTelefono(request.getTelefono());
+		usuario.setNombre(request.getNombre());
+		usuario.setFoto(request.getFoto());
+		if (request.getDescripcion() != null) {
+			usuario.setDescripcion(request.getDescripcion());
 		}
+		Authorities role = authoritiesService.findByAuthority("CAMIONERO");
+		usuario.setAuthority(role);
+		usuarioService.guardarUsuario(usuario);
+		Camionero camionero = new Camionero();
+		camionero.setUsuario(usuario);
+		camionero.setDni(request.getDni());
+		camionero.setLicencias(request.getLicencias());
+		camionero.setDisponibilidad(request.getDisponibilidad());
+		camionero.setTieneCAP(request.getTieneCAP());
+		if (request.getExpiracionCAP() != null) {
+			camionero.setTieneCAP(request.getTieneCAP());
+		}
+		camioneroService.guardarCamionero(camionero);
+
+	}
+
+	@Transactional
+	public void createEmpresa(@Valid SignupRequestEmpresa request) throws DataAccessException, IOException {
+		Usuario usuario = new Usuario();
+		usuario.setUsername(request.getUsername());
+		usuario.setPassword(request.getPassword());
+		usuario.setEmail(request.getEmail());
+		usuario.setLocalizacion(request.getLocalizacion());
+		usuario.setTelefono(request.getTelefono());
+		usuario.setNombre(request.getNombre());
+		usuario.setFoto(request.getFoto());
+		if (request.getDescripcion() != null) {
+			usuario.setDescripcion(request.getDescripcion());
+		}
+		Authorities role = authoritiesService.findByAuthority("EMPRESA");
+		usuario.setAuthority(role);
+		usuarioService.guardarUsuario(usuario);
+		Empresa empresa = new Empresa();
+		empresa.setUsuario(usuario);
+		empresa.setNif(request.getNif());
+		if (request.getWeb() != null) {
+			empresa.setWeb(request.getWeb());
+		}
+		empresaService.guardarEmpresa(empresa);
 	}
     
 }

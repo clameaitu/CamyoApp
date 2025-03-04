@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.camyo.backend.auth.payload.request.LoginRequest;
-import com.camyo.backend.auth.payload.request.SignupRequest;
+import com.camyo.backend.auth.payload.request.SignupRequestCamionero;
+import com.camyo.backend.auth.payload.request.SignupRequestEmpresa;
 import com.camyo.backend.auth.payload.response.JwtResponse;
 import com.camyo.backend.auth.payload.response.MessageResponse;
 import com.camyo.backend.configuration.jwt.JwtUtils;
@@ -73,15 +74,27 @@ public class AuthController {
 	}
 	
 	
-	@PostMapping("/signup")	
-	public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) throws DataAccessException, IOException {
+	@PostMapping("/signup/camionero")	
+	public ResponseEntity<MessageResponse> registerCamionero(@Valid @RequestBody SignupRequestCamionero signUpRequest) throws DataAccessException, IOException {
 		if (usuarioService.existeUsuarioPorUsername(signUpRequest.getUsername()).equals(true)) {
 			return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
 		}
         if (usuarioService.existeUsuarioPorEmail(signUpRequest.getEmail()).equals(true)) {
 			return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
 		}
-		authService.createUser(signUpRequest);
+		authService.createCamionero(signUpRequest);
+		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+	}
+
+	@PostMapping("/signup/empresa")	
+	public ResponseEntity<MessageResponse> registerEmpresa(@Valid @RequestBody SignupRequestEmpresa signUpRequest) throws DataAccessException, IOException {
+		if (usuarioService.existeUsuarioPorUsername(signUpRequest.getUsername()).equals(true)) {
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
+		}
+        if (usuarioService.existeUsuarioPorEmail(signUpRequest.getEmail()).equals(true)) {
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
+		}
+		authService.createEmpresa(signUpRequest);
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
     
