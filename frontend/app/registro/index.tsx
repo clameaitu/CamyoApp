@@ -1,12 +1,16 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Image  } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, useWindowDimensions } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import { FontAwesome5, MaterialIcons, Entypo, Feather } from "@expo/vector-icons";
 import globalStyles from "../../assets/styles/globalStyles";
 import colors from "../../assets/styles/colors";
 import BooleanSelector from "../_components/BooleanSelector";
 import Selector from "../_components/Selector";
+import defaultProfileImage from "../../assets/images/react-logo.png";
 
 const RegisterScreen = () => {
+  const { width } = useWindowDimensions();
+  const isWideScreen = width > 1074;  
   const [userType, setUserType] = useState("camionero");
   const [formData, setFormData] = useState({
     nombre: "",
@@ -32,6 +36,7 @@ const RegisterScreen = () => {
     web: "",
     tipoId: "",
     numId: "",
+ 
   });
 
   const handleInputChange = (field: string, value: string | boolean) => {
@@ -52,131 +57,97 @@ const RegisterScreen = () => {
     }
   };
 
+  // Función para renderizar cada input del formulario
+  const renderInput = (label, field, icon, keyboardType = "default", secureTextEntry = false, multiline = false) => (
+    <View style={{ width: '90%', marginBottom: 15 }}>
+      <Text style={{ fontSize: 12, color: colors.secondary, marginLeft: 8, marginBottom: -6, backgroundColor: colors.white, alignSelf: 'flex-start', paddingHorizontal: 5, zIndex: 1 }}>{label}</Text>
+      <View style={{ flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: colors.mediumGray, borderRadius: 8, paddingHorizontal: 10, backgroundColor: colors.white }}>      
+        {icon}
+        <TextInput
+          style={{ flex: 1, height: multiline ? 80 : 40, paddingLeft: 8, outline:"none", textAlignVertical: multiline ? 'top' : 'center' }}
+          keyboardType={keyboardType}
+          secureTextEntry={secureTextEntry}
+          multiline={multiline}
+          numberOfLines={multiline ? 3 : 1}
+          onChangeText={(value) => handleInputChange(field, value)}
+        />
+      </View>
+    </View>
+  );
+
   return (
     <ScrollView style={[globalStyles.container, { paddingTop: 100 }]}>
-      <View style={globalStyles.formContainer}>
-        <Text style={globalStyles.title}>Registro de Nuevo Usuario</Text>
+      <View style={{ flexDirection: isWideScreen ? "row" : "column", justifyContent: "center", alignItems: "center", width: "100%", marginTop: isWideScreen ? -25 : -100, marginBottom: isWideScreen ? -100 : 155 }}>
+      <View style={[globalStyles.formContainerHalf, { marginRight: isWideScreen ? 20 : 0 }]}>
 
-        <View style={{ borderBottomWidth: 1, borderBottomColor: colors.mediumGray, paddingBottom: 10, marginBottom: 20 }}>
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Nombre"
-            placeholderTextColor={colors.secondary}
-            onChangeText={(value) => handleInputChange("nombre", value)}
-          />
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Apellido"
-            placeholderTextColor={colors.secondary}
-            onChangeText={(value) => handleInputChange("apellido", value)}
-          />
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Email"
-            placeholderTextColor={colors.secondary}
-            keyboardType="email-address"
-            onChangeText={(value) => handleInputChange("email", value)}
-          />
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Contraseña"
-            placeholderTextColor={colors.secondary}
-            secureTextEntry
-            onChangeText={(value) => handleInputChange("password", value)}
-          />
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Número de teléfono"
-            placeholderTextColor={colors.secondary}
-            keyboardType="phone-pad"
-            onChangeText={(value) => handleInputChange("telefono", value)}
-          />
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Localización"
-            placeholderTextColor={colors.secondary}
-            onChangeText={(value) => handleInputChange("localizacion", value)}
-          />
-
-          <TextInput
-            style={[globalStyles.input, { height: 120 }]}
-            placeholder="Descripción (Opcional)"
-            placeholderTextColor={colors.secondary}
-            multiline
-            numberOfLines={3}
-            onChangeText={(value) => handleInputChange("descripcion", value)}
-          />
-
-          {/* Selector de Imagen */}
-          <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 20 }}>
-            <TouchableOpacity onPress={pickImage} style={[globalStyles.button, { backgroundColor: colors.lightBlue, flex: 1, marginRight: 5 }]}>
-              {formData.foto && <Text style={globalStyles.buttonText}>Cambiar Foto</Text>}
-              {!formData.foto && <Text style={globalStyles.buttonText}>Seleccionar Foto</Text>}
-              
+        <Text style={globalStyles.title}>Registro</Text>
+        
+        {/* Selector de Imagen */}
+        <View style={{ alignItems: "center", marginBottom: 20, marginTop: 10 }}>
+          <Image source={formData.foto ? { uri: formData.foto } : defaultProfileImage}  style={{ width: 100, height: 100, borderRadius: 50, marginBottom: 8,  borderWidth: 1, borderColor: colors.mediumGray, }} />
+          {!formData.foto ? (
+            <TouchableOpacity onPress={pickImage} style={[globalStyles.button, { backgroundColor: colors.secondary }]}>
+              <Text style={globalStyles.buttonText}>Añadir Foto</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setFormData({ ...formData, foto: null })} style={[globalStyles.button, { backgroundColor: colors.red, flex: 1, marginLeft: 5 }]}>
-              <Text style={globalStyles.buttonText}>Eliminar Foto</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Mostrar la imagen seleccionada */}
-          {formData.foto && (
-            <Image source={{ uri: formData.foto }} style={{ width: 100, height: 100, borderRadius: 50, marginBottom: 20 }} />
+          ) : (
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity onPress={pickImage} style={[globalStyles.button, { backgroundColor: colors.green, marginRight: 7 }]}>
+                <Text style={globalStyles.buttonText}>Cambiar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setFormData({ ...formData, foto: null })} style={[globalStyles.button, { backgroundColor: colors.red }]}>
+                <Text style={globalStyles.buttonText}>  Borrar  </Text>
+              </TouchableOpacity>
+            </View>
           )}
         </View>
 
-        {/* =================== CAMPOS ESPECÍFICOS SEGÚN TIPO DE USUARIO ================= */}
+        {renderInput("Nombre", "nombre", <FontAwesome5 name="user" size={20} color={colors.primary} />)}
+        {renderInput("Apellidos", "apellido", <FontAwesome5 name="user-alt" size={20} color={colors.primary} />)}
+        {renderInput("Email", "email", <MaterialIcons name="email" size={20} color={colors.primary} />, "email-address")}
+        {renderInput("Contraseña", "password", <Entypo name="lock" size={20} color={colors.primary} />, "default", true)}
+        {renderInput("Teléfono", "telefono", <MaterialIcons name="phone" size={20} color={colors.primary} />, "phone-pad")}
+        {renderInput("Localización", "localizacion", <MaterialIcons name="location-pin" size={20} color={colors.primary} />)}
+        {renderInput("Descripción (Opcional)", "descripcion", <FontAwesome5 name="align-left" size={20} color={colors.primary} />, "default", false, true)}
 
-        <Text style={{ fontSize: 20, fontWeight: "bold", color: colors.secondary, textAlign: "center", marginBottom: 12 }}>
-          Selecciona qué tipo de usuario eres:
-        </Text>
+        </View>
+
+      <View style={[globalStyles.formContainerHalf, { marginLeft: isWideScreen ? 20 : 0 }]}> 
+
+        <Text style={globalStyles.title}>¿Qué tipo de usuario eres?</Text>
 
         {/* Selector de Usuario */}
-        <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 12 }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", width: "100%", marginBottom: 20 }}>
           <TouchableOpacity
-            style={[
-              globalStyles.userTypeButton,
-              userType === "camionero" ? globalStyles.selectedUserType : { backgroundColor: colors.lightGray, borderWidth: 1, borderColor: colors.mediumGray },
-            ]}
+            style={[globalStyles.userTypeButton, userType === "camionero" ? globalStyles.selectedUserType : globalStyles.unselectedUserType]}
             onPress={() => setUserType("camionero")}
           >
-            <Text style={[globalStyles.userTypeText, { color: userType === "camionero" ? colors.white : colors.secondary, fontSize: 18 }]}>
-              Camionero</Text>
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+              <FontAwesome5 name="truck" size={24} color={userType === "camionero" ? colors.white : colors.secondary} style={{ marginRight: 10 }} />
+              <Text style={[globalStyles.userTypeText, { color: userType === "camionero" ? colors.white : colors.secondary }]}>
+                Camionero
+              </Text>
+            </View>
           </TouchableOpacity>
+
           <TouchableOpacity
-            style={[
-              globalStyles.userTypeButton,
-              userType === "empresa" ? globalStyles.selectedUserType : { backgroundColor: colors.lightGray, borderWidth: 1, borderColor: colors.mediumGray },
-            ]}
+            style={[globalStyles.userTypeButton, userType === "empresa" ? globalStyles.selectedUserType : globalStyles.unselectedUserType]}
             onPress={() => setUserType("empresa")}
           >
-            <Text style={[globalStyles.userTypeText, { color: userType === "empresa" ? colors.white : colors.secondary, fontSize: 18 }]}>
-              Empresa</Text>
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+              <MaterialIcons name="business" size={24} color={userType === "empresa" ? colors.white : colors.secondary} style={{ marginRight: 10 }} />
+              <Text style={[globalStyles.userTypeText, { color: userType === "empresa" ? colors.white : colors.secondary }]}>
+                Empresa
+              </Text>
+            </View>
           </TouchableOpacity>
         </View>
 
         {/* Campos dinámicos según usuario */}
         {userType === "camionero" ? (
           <>
-            <TextInput
-              style={globalStyles.input}
-              placeholder="DNI"
-              placeholderTextColor={colors.secondary}
-              onChangeText={(value) => handleInputChange("dni", value)}
-            />
-            <TextInput
-              style={globalStyles.input}
-              placeholder="Experiencia (años)"
-              placeholderTextColor={colors.secondary}
-              keyboardType="numeric"
-              onChangeText={(value) => handleInputChange("experiencia", value)}
-            />
-            <TextInput
-              style={globalStyles.input}
-              placeholder="Licencia(s) (AM, A1, A2, A, B, C1, C+E, D1+E...)"
-              placeholderTextColor={colors.secondary}
-              onChangeText={(value) => handleInputChange("licencias", value)}
-            />
+            {renderInput("DNI", "dni", <FontAwesome5 name="address-card" size={20} color={colors.primary} />)}
+            {renderInput("Años de experiencia", "experiencia", <FontAwesome5 name="briefcase" size={20} color={colors.primary} />, "phone-pad")}
+            {renderInput("Licencia(s)", "licencias", <FontAwesome5 name="id-badge" size={20} color={colors.primary} />)}
 
             <Text style={{ color: colors.secondary, fontSize: 16, marginRight: 10, flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
               Disponibilidad:</Text>
@@ -188,10 +159,6 @@ const RegisterScreen = () => {
               globalStyles={globalStyles} 
             />
 
-
-
-
-            {/* CAP */}
             <Text style={{ color: colors.secondary, fontSize: 16, marginRight: 10, flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
               ¿Tiene CAP (Certificado de Aptitud Profesional)?:</Text>
             <BooleanSelector 
@@ -201,12 +168,7 @@ const RegisterScreen = () => {
               globalStyles={globalStyles} 
             />
 
-            <TextInput
-              style={globalStyles.input}
-              placeholder="Fecha de expiración del CAP (DD-MM-YYYY)"
-              placeholderTextColor={colors.secondary}
-              onChangeText={(value) => handleInputChange("expiracionCAP", value)}
-            />
+            {renderInput("Fecha de expiración del CAP (DD-MM-AAAA)", "expiracionCAP", <FontAwesome5 name="calendar" size={20} color={colors.primary} />)}
 
             <Text style={{ color: colors.secondary, fontSize: 16, marginRight: 10, flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
               ¿Tiene camión propio?</Text>
@@ -218,24 +180,13 @@ const RegisterScreen = () => {
             />
           </>
 
-
         ) : (
 
-
           <>
-            <TextInput
-              style={globalStyles.input}
-              placeholder="Nombre de la empresa"
-              placeholderTextColor={colors.secondary}
-              onChangeText={(value) => handleInputChange("empresaNombre", value)}
-            />
-            <TextInput
-              style={globalStyles.input}
-              placeholder="Página web (Opcional)"
-              placeholderTextColor={colors.secondary}
-              onChangeText={(value) => handleInputChange("web", value)}
-            />
-            
+
+          {renderInput("Nombre de la empresa", "empresaNombre", <FontAwesome5 name="building" size={20} color={colors.primary} />)}
+          {renderInput("Página web (Opcional)", "web", <FontAwesome5 name="globe" size={20} color={colors.primary} />, "url")}
+
             <Text style={{ color: colors.secondary, fontSize: 16, marginRight: 10, flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
               Tipo de Identificación:</Text>
             <Selector 
@@ -246,13 +197,8 @@ const RegisterScreen = () => {
               globalStyles={globalStyles} 
             />
 
-            <TextInput
-              style={globalStyles.input}
-              placeholder="Número de Identificación"
-              placeholderTextColor={colors.secondary}
-              keyboardType="numeric"
-              onChangeText={(value) => handleInputChange("numId", value)}
-            />
+            {renderInput("Número de Identificación", "numId", <FontAwesome5 name="file-invoice" size={20} color={colors.primary} />, "phone-pad")}
+
           </>
         )}
 
@@ -260,11 +206,12 @@ const RegisterScreen = () => {
         <TouchableOpacity 
           style={[
             globalStyles.button, 
-            { borderRadius: 12, elevation: 5 }
+            { width: "100%", borderRadius: 12, elevation: 5 }
           ]}
         >
           <Text style={[globalStyles.buttonText, { fontSize: 30 }]}>Registrarse</Text>
         </TouchableOpacity>
+      </View>
       </View>
     </ScrollView>
   );
