@@ -2,8 +2,10 @@ import { Text, View, ActivityIndicator, StyleSheet, FlexAlignType, Image } from 
 import React, { useState, useEffect } from "react";
 import { useLocalSearchParams } from "expo-router";
 
-export default function ExampleScreen() {
+export default function OfertaDetalleScreen() {
     const [offerData, setOfferData] = useState<any>(null);
+    const [empresaData, setEmpresaData] = useState<any>(null);
+    const [usuarioEmpresaData, setUsuarioEmpresaData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const { ofertaid } = useLocalSearchParams();
 
@@ -14,6 +16,14 @@ export default function ExampleScreen() {
                     const response = await fetch(`http://localhost:8080/api/ofertas/${ofertaid}`);
                     const data = await response.json();
                     setOfferData(data);
+                    const empresaResponse = await fetch(`http://localhost:8080/empresas/1`); //http://localhost:8080/empresas/${data.empresaId}
+                    const empresaData = await empresaResponse.json();
+                    setEmpresaData(empresaData);
+                    console.log(empresaData);
+                    const usuarioEmpresaResponse = await fetch(`http://localhost:8080/usuarios/1`); //http://localhost:8080/usuarios/${empresaData.usuarioId}
+                    const usuarioEmpresaData = await usuarioEmpresaResponse.json();
+                    setUsuarioEmpresaData(usuarioEmpresaData);
+                    console.log(usuarioEmpresaData);
                 } catch (error) {
                     console.error("Error fetching data:", error);
                 } finally {
@@ -53,8 +63,8 @@ export default function ExampleScreen() {
                             />
                             <View style={styles.headerText}>
                                 <Text style={styles.title}>{offerData.titulo}</Text>
-                                {offerData.empresa && (
-                                    <Text style={styles.empresa}>{offerData.empresa.toUpperCase()}</Text>
+                                {empresaData.web && (
+                                    <Text style={styles.empresa}>{empresaData.web.toUpperCase()}</Text>
                                 )}
                             </View>
                         </View>
@@ -69,8 +79,8 @@ export default function ExampleScreen() {
                             />
                             <View style={styles.headerText}>
                                 <Text style={styles.title}>{offerData.titulo}</Text>
-                                {offerData.empresa && (
-                                    <Text style={styles.empresa}>{offerData.empresa.toUpperCase()}</Text>
+                                {empresaData.web && (
+                                    <Text style={styles.empresa}>{empresaData.web.toUpperCase()}</Text>
                                 )}
                             </View>
                         </View>
