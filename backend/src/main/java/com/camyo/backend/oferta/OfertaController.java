@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.camyo.backend.auth.payload.response.MessageResponse;
 import com.camyo.backend.camionero.Camionero;
+import com.camyo.backend.empresa.Empresa;
+import com.camyo.backend.empresa.EmpresaService;
 import com.camyo.backend.exceptions.ResourceNotFoundException;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,6 +29,8 @@ public class OfertaController {
 
     @Autowired
     private CargaService cargaService;
+    @Autowired
+    private EmpresaService empresaService;
 
    /**
      * GET: Listar todas las ofertas
@@ -78,13 +82,38 @@ public class OfertaController {
     /**
      * POST: Crear una nueva oferta
      * 
-     * @param oferta Datos de la oferta a crear
-     * @return Oferta creada correctamente.
+     * Permite crear una oferta y asignarle una empresa.
+     * Se debe especificar si es de tipo 'CARGA' o 'TRABAJO'.
+     * 
+     * @param request DTO con los datos de la oferta, tipo y detalles adicionales.
+     * @return Respuesta con la oferta creada o error en caso de fallo.
      */
     @PostMapping
-    public ResponseEntity<Oferta> crearOferta(@RequestBody Oferta oferta) {
-        Oferta nuevaOferta = ofertaService.guardarOferta(oferta);
-        return ResponseEntity.ok(nuevaOferta);
+    public ResponseEntity<?> crearOferta(@RequestBody OfertaRequestDTO request) {
+        try {
+            Empresa empresa = empresaService.obtenerEmpresaPorId(request.getOferta().getEmpresa().getId());
+            request.getOferta().setEmpresa(empresa);
+
+            Oferta nuevaOferta = ofertaService.guardarOferta(request.getOferta());
+
+            if ("CARGA".equalsIgnoreCase(request.getTipoOferta()) && request.getCarga() != null) {
+                request.getCarga().setOferta(nuevaOferta);
+                Carga cargaGuardada = cargaService.guardarCarga(request.getCarga());
+                return ResponseEntity.ok(cargaGuardada);
+            } 
+            else if ("TRABAJO".equalsIgnoreCase(request.getTipoOferta()) && request.getTrabajo() != null) {
+                request.getTrabajo().setOferta(nuevaOferta);
+                Trabajo trabajoGuardado = trabajoService.guardarTrabajo(request.getTrabajo());
+                return ResponseEntity.ok(trabajoGuardado);
+            } 
+            else {
+                return ResponseEntity.badRequest().body("Debe especificar un tipo de oferta válido: 'CARGA' o 'TRABAJO'");
+            }
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.badRequest().body("Empresa no encontrada.");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error al crear la oferta: " + e.getMessage());
+        }
     }
 
     /**
