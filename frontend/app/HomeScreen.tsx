@@ -5,8 +5,8 @@ import React, { useEffect, useState, useRef } from "react";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Ionicons from '@expo/vector-icons/Ionicons';
 const ProyectoLogo = require('frontend/assets/images/camyo.png');
-import BottomBar from 'frontend/app/components/BottomBar.jsx';
-import CamyoWebNavBar from "./components/CamyoNabBar";
+import BottomBar from './_components/BottomBar';
+import CamyoWebNavBar from "./_components/CamyoNavBar";
 
 export default function HomeScreen() {
   const router = useRouter();

@@ -5,12 +5,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.camyo.backend.auth.payload.response.MessageResponse;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/usuarios")
+@Tag(name = "Usuarios", description = "API para gestión de usuarios")
 public class UsuarioController {
 
     @Autowired

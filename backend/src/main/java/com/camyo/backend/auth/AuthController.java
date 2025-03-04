@@ -27,10 +27,12 @@ import com.camyo.backend.configuration.jwt.JwtUtils;
 import com.camyo.backend.configuration.services.UserDetailsImpl;
 import com.camyo.backend.usuario.UsuarioService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Autenticación", description = "API de autenticación")
 public class AuthController {
     private final AuthenticationManager authenticationManager;
 	private final UsuarioService usuarioService;

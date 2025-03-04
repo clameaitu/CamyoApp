@@ -11,6 +11,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.camyo.backend.camion.Camion;
 import com.camyo.backend.oferta.Oferta;
 import com.camyo.backend.usuario.Usuario;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -67,9 +69,11 @@ public class Camionero{
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Usuario usuario;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "camionero", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Camion> camiones;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "camionero", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Oferta> asignadas;
 
