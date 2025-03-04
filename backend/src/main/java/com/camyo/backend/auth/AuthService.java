@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.camyo.backend.auth.payload.request.SignupRequestCamionero;
 import com.camyo.backend.auth.payload.request.SignupRequestEmpresa;
+import com.camyo.backend.camionero.Autonomo;
+import com.camyo.backend.camionero.AutonomoService;
 import com.camyo.backend.camionero.Camionero;
 import com.camyo.backend.camionero.CamioneroService;
 import com.camyo.backend.empresa.Empresa;
@@ -29,14 +31,16 @@ public class AuthService {
 	private final UsuarioService usuarioService;
 	private final CamioneroService camioneroService;
 	private final EmpresaService empresaService;
+	private final AutonomoService autonomoService;
 
 	@Autowired
-	public AuthService(PasswordEncoder encoder, AuthoritiesService authoritiesService, UsuarioService usuarioService, CamioneroService camioneroService, EmpresaService empresaService) {
+	public AuthService(PasswordEncoder encoder, AuthoritiesService authoritiesService, UsuarioService usuarioService, CamioneroService camioneroService, EmpresaService empresaService, AutonomoService autonomoService) {
 		this.encoder = encoder;
 		this.authoritiesService = authoritiesService;
 		this.usuarioService = usuarioService;
 		this.camioneroService = camioneroService;
 		this.empresaService = empresaService;
+		this.autonomoService = autonomoService;
 	}
 
 	@Transactional
@@ -66,6 +70,14 @@ public class AuthService {
 			camionero.setTieneCAP(request.getTieneCAP());
 		}
 		camioneroService.guardarCamionero(camionero);
+		if (request.getIsAutonomo() == true) {
+			Autonomo autonomo = new Autonomo();
+			if (request.getTarjetas() != null) {
+				autonomo.setTarjetas(request.getTarjetas());
+			}
+			autonomo.setCamionero(camionero);
+			autonomoService.guardarAutonomo(autonomo);
+		}
 
 	}
 

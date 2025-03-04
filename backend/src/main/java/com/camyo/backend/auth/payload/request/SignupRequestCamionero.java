@@ -1,10 +1,12 @@
 package com.camyo.backend.auth.payload.request;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 import com.camyo.backend.camionero.Disponibilidad;
 import com.camyo.backend.camionero.Licencia;
+import com.camyo.backend.camionero.Tarjetas;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -54,5 +56,10 @@ public class SignupRequestCamionero {
 	private Integer experiencia;
 
 	private LocalDate expiracionCAP;
+
+	@NotNull
+	private Boolean isAutonomo;
+
+	private List<Tarjetas> tarjetas;
 
 }
