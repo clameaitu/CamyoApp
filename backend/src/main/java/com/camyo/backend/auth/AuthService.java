@@ -67,7 +67,7 @@ public class AuthService {
 		camionero.setTieneCAP(request.getTieneCAP());
 		camionero.setExperiencia(request.getExperiencia());
 		if (request.getExpiracionCAP() != null) {
-			camionero.setTieneCAP(request.getTieneCAP());
+			camionero.setExpiracionCAP(request.getExpiracionCAP());
 		}
 		camioneroService.guardarCamionero(camionero);
 		if (request.getIsAutonomo() == true) {
