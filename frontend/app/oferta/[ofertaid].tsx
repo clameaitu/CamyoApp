@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import colors from "frontend/assets/styles/colors";
-import globalStyles from "@/assets/styles/globalStyles";
 
 const formatDate = (fecha: string) => {
     const opciones = { day: "numeric", month: "long", year: "numeric" } as const;
@@ -89,23 +88,107 @@ export default function OfertaDetalleScreen() {
                     <>
                         <View style={styles.header}>
                             <Image
-                                source={require('frontend/assets/images/no-company-logo.png')} // Replace with your logo path
+                                source={require('frontend/assets/images/no-company-logo.png')} 
                                 style={styles.logo}
                             />
                             <View style={styles.headerText}>
                                 <Text style={styles.title}>{offerData.titulo}</Text>
-                                {usuarioEmpresaData.web && (
-                                    <Text style={styles.empresa}>{usuarioEmpresaData.nombre.toUpperCase()}</Text>
+                                {usuarioEmpresaData.nombre && (
+                                    <Text style={styles.empresa}>
+                                    {usuarioEmpresaData.nombre.toUpperCase()} |
+                                    <MaterialIcons name="location-on" size={18} color="#0b4f6c" />
+                                    <Text style={styles.empresa}> {offerCargaData.origen}</Text>
+                                </Text>
                                 )}
                             </View>
                         </View>
-                        <Text style={styles.description}>{offerData.notas}</Text>
+                        
+
+                        <TouchableOpacity style={styles.solicitarButton}>
+                            <Text style={styles.solicitarButtonText}>Solicita Carga</Text>
+                        </TouchableOpacity>
+
+                        <View style={styles.separator} />
+
+                        <Text style={styles.subTitulo}>
+                            Detalles de la Oferta
+                        </Text>
+
+                        <View style={styles.detailRow}>
+                            <MaterialIcons name="attach-money" size={20} color="#0b4f6c" />
+                            <Text style={styles.detalles}>
+                                <Text style={styles.detallesLabel}>Presupuesto:</Text> {offerData.sueldo}
+                            </Text>
+                        </View>
+
+                        <View style={styles.detailRow}>
+                            <FontAwesome5 name="briefcase" size={18} color="#0b4f6c" />
+                            <Text style={styles.detalles}>
+                                <Text style={styles.detallesLabel}>Experiencia Mínima:</Text> {offerData.experiencia}
+                            </Text>
+                        </View>
+
+                        <View style={styles.detailRow}>
+                            <FontAwesome5 name="truck" size={18} color="#0b4f6c" />
+                            <Text style={styles.detalles}>
+                                <Text style={styles.detallesLabel}>Camión Requerido:</Text> Furgoneta/Camión furgón Refrigerado {/*offerData.camionRequerido*/}
+                            </Text>
+                        </View>
+
+                        <View style={styles.detailRow}>
+                            <MaterialIcons name="location-on" size={20} color="#0b4f6c" />
+                            <Text style={styles.detalles}>
+                                <Text style={styles.detallesLabel}>Recogida (Localización):</Text> {offerCargaData.inicio}
+                            </Text>
+                        </View>
+
+                        <View style={styles.detailRow}>
+                            <MaterialIcons name="location-on" size={20} color="#0b4f6c" />
+                            <Text style={styles.detalles}>
+                                <Text style={styles.detallesLabel}>Entrega (Localización):</Text> {offerCargaData.destino}
+                            </Text>
+                        </View>
+
+                        <View style={styles.detailRow}>
+                            <FontAwesome5 name="road" size={18} color="#0b4f6c" />
+                            <Text style={styles.detalles}>
+                                <Text style={styles.detallesLabel}>Distancia:</Text> {offerCargaData.distancia} km
+                            </Text>
+                        </View>
+
+                        <View style={styles.detailRow}>
+                            <FontAwesome5 name="box" size={18} color="#0b4f6c" />
+                            <Text style={styles.detalles}>
+                                <Text style={styles.detallesLabel}>Tamaño de Paquete:</Text> Euro Palet 120cm x 80cm x 120cm {/* {offerCargaData.dim} */}
+                            </Text>
+                        </View>
+
+                        <View style={styles.detailRow}>
+                            <FontAwesome5 name="cogs" size={18} color="#0b4f6c" />
+                            <Text style={styles.detalles}>
+                                <Text style={styles.detallesLabel}>Número de Paquetes:</Text> 2{/*offerCargaData.numeroPaquetes*/}
+                            </Text>
+                        </View>
+
+                        <View style={styles.detailRow}>
+                            <FontAwesome5 name="weight" size={18} color="#0b4f6c" />
+                            <Text style={styles.detalles}>
+                                <Text style={styles.detallesLabel}>Peso (en kg):</Text> {offerCargaData.peso} kg
+                            </Text>
+                        </View>
+
+                        <View style={styles.separator} />
+
+                        <Text style={styles.subTitulo}>Descripción Completa</Text>
+
+                        <Text style={styles.description}>{offerData.notas} </Text>
+
                     </>
                 ) : (
                     <>
                         <View style={styles.header}>
                             <Image
-                                source={require('frontend/assets/images/no-company-logo.png')} // Replace with your logo path
+                                source={require('frontend/assets/images/no-company-logo.png')} 
                                 style={styles.logo}
                             />
                             <View style={styles.headerText}>
