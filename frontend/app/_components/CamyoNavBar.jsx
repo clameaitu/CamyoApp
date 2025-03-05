@@ -87,7 +87,6 @@ export default function CamyoWebNavBar() {
             <View style={styles.rightSection}>
               <TouchableOpacity style={styles.buttonText} onPress={() => router.push(routes.profile)}><Text style={styles.linkText}>Mi Perfil (Cam)</Text></TouchableOpacity>
               <TouchableOpacity style={styles.buttonText} onPress={() => router.push(routes.profileEmpresa)}><Text style={styles.linkText}>Mi Perfil (Emp)</Text></TouchableOpacity>
-
               <TouchableOpacity style={styles.buttonText} onPress={() => router.push(routes.listcompanies)} ><Text style={styles.linkText}>Empresas</Text></TouchableOpacity>
               <View style={styles.searchWeb}>
                 <TextInput
