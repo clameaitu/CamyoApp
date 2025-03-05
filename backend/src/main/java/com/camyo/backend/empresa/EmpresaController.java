@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/empresas")
+@CrossOrigin(origins = "http://localhost:8081")
 @Tag(name = "Empresas", description = "API para gestión de empresas")
 public class EmpresaController {
     
