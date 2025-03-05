@@ -75,7 +75,7 @@ public class Camionero{
 
     @JsonIgnore
     @OneToMany(mappedBy = "camionero", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Oferta> ofertas;
+    private List<Oferta> asignadas;
 
 
 }
