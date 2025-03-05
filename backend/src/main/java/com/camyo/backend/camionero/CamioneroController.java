@@ -157,12 +157,10 @@ public class CamioneroController {
             );
         }
 
-        // 4. Mantener la asociación con el usuario autenticado
-        camionero.setUsuario(usuario);
 
-        // 5. Actualizar el Camionero
+        // 4. Actualizar el Camionero
         try {
-            Camionero camioneroActualizado = camioneroService.actualizCamionero(id, camionero);
+            Camionero camioneroActualizado = camioneroService.actualizarCamionero(id, camionero);
             return new ResponseEntity<>(camioneroActualizado, HttpStatus.OK);
         } catch (DataAccessException ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -173,25 +171,44 @@ public class CamioneroController {
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Camionero eliminado con éxito"),
         @ApiResponse(responseCode = "403", description = "El usuario debe iniciar sesión o no puede eliminar un camionero que no es suyo"),
-        @ApiResponse(responseCode = "404", description = "No se encontró un camionero con ese ID")
+        @ApiResponse(responseCode = "404", description = "No se encontró un camionero con ese ID"),
+        @ApiResponse(responseCode = "405", description = "No puede eliminar un camionero que no es suyo"),
+        @ApiResponse(responseCode = "500", description = "Error interno al guardar el camionero")
+
     })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> eliminarCamionero(@PathVariable Integer id) {
+    public ResponseEntity<?> eliminarCamionero(@PathVariable("id") Integer id) {
+        // 1. Verificar que el usuario está autenticado
+        Usuario usuario;
         try {
-            Usuario usuario = usuarioService.obtenerUsuarioActual();
-            Camionero camioneroExistente = camioneroService.obtenerCamioneroPorId(id);
-            if (!camioneroExistente.getUsuario().equals(usuario)) {
-                return new ResponseEntity<>(new MessageResponse("No puede eliminar un camionero que no es suyo."), HttpStatus.FORBIDDEN);
-            }
+            usuario = usuarioService.obtenerUsuarioActual();
         } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>(new MessageResponse("Debe iniciar sesión para eliminar un camionero."), HttpStatus.FORBIDDEN);
+            // Si el usuario no está autenticado o no existe, retornamos 403
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        
+    
         try {
+            // 2. Obtener el Camionero existente
+            Camionero camioneroExistente = camioneroService.obtenerCamioneroPorId(id);
+    
+            // 3. Verificar que el Camionero pertenece al usuario autenticado
+            if (!camioneroExistente.getUsuario().equals(usuario)) {
+                // Si el Camionero no pertenece al usuario, retornamos 405 (Method Not Allowed)
+                return new ResponseEntity<>(
+                    new MessageResponse("No puede eliminar un camionero que no es suyo."),
+                    HttpStatus.METHOD_NOT_ALLOWED
+                );
+            }
+    
+            // 4. Eliminar el Camionero
             camioneroService.eliminarCamionero(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    
         } catch (ResourceNotFoundException e) {
+            // Si no se encontró el Camionero, retornamos 404 (Not Found)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            // Para cualquier otro error inesperado, retornamos 500 (Internal Server Error)
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

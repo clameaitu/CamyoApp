@@ -51,7 +51,7 @@ public class CamioneroService {
 
 
     @Transactional()
-    public Camionero actualizCamionero(Integer id, Camionero camioneroUpdated) {
+    public Camionero actualizarCamionero(Integer id, Camionero camioneroUpdated) {
         Camionero existingCamionero = obtenerCamioneroPorId(id);
         // Ignoramos "id", "usuario", y además "camiones" y "ofertas" si no queremos sobreescribirlas
         BeanUtils.copyProperties(camioneroUpdated, existingCamionero, "id", "usuario", "camiones", "ofertas");
