@@ -20,30 +20,39 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.camyo.backend.auth.payload.request.LoginRequest;
-import com.camyo.backend.auth.payload.request.SignupRequest;
+import com.camyo.backend.auth.payload.request.SignupRequestCamionero;
+import com.camyo.backend.auth.payload.request.SignupRequestEmpresa;
 import com.camyo.backend.auth.payload.response.JwtResponse;
 import com.camyo.backend.auth.payload.response.MessageResponse;
+import com.camyo.backend.camionero.CamioneroService;
 import com.camyo.backend.configuration.jwt.JwtUtils;
 import com.camyo.backend.configuration.services.UserDetailsImpl;
+import com.camyo.backend.empresa.EmpresaService;
 import com.camyo.backend.usuario.UsuarioService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Autenticación", description = "API de autenticación")
 public class AuthController {
     private final AuthenticationManager authenticationManager;
 	private final UsuarioService usuarioService;
 	private final JwtUtils jwtUtils;
 	private final AuthService authService;
+	private final CamioneroService camioneroService;
+	private final EmpresaService empresaService;
 
 	@Autowired
 	public AuthController(AuthenticationManager authenticationManager, UsuarioService usuarioService, JwtUtils jwtUtils,
-			AuthService authService) {
+			AuthService authService, EmpresaService empresaService, CamioneroService camioneroService) {
 		this.usuarioService = usuarioService;
 		this.jwtUtils = jwtUtils;
 		this.authenticationManager = authenticationManager;
 		this.authService = authService;
+		this.empresaService = empresaService;
+		this.camioneroService = camioneroService;
 	}
 
 	@PostMapping("/signin")
@@ -73,15 +82,33 @@ public class AuthController {
 	}
 	
 	
-	@PostMapping("/signup")	
-	public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) throws DataAccessException, IOException {
+	@PostMapping("/signup/camionero")	
+	public ResponseEntity<MessageResponse> registerCamionero(@Valid @RequestBody SignupRequestCamionero signUpRequest) throws DataAccessException, IOException {
 		if (usuarioService.existeUsuarioPorUsername(signUpRequest.getUsername()).equals(true)) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: El usuario ya existe!"));
 		}
         if (usuarioService.existeUsuarioPorEmail(signUpRequest.getEmail()).equals(true)) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: El email ya existe!"));
 		}
-		authService.createUser(signUpRequest);
+		if (camioneroService.obtenerCamioneroPorDNI(signUpRequest.getDni()).isPresent()) {
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: El DNI ya existe!"));
+		}
+		authService.createCamionero(signUpRequest);
+		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+	}
+
+	@PostMapping("/signup/empresa")	
+	public ResponseEntity<MessageResponse> registerEmpresa(@Valid @RequestBody SignupRequestEmpresa signUpRequest) throws DataAccessException, IOException {
+		if (usuarioService.existeUsuarioPorUsername(signUpRequest.getUsername()).equals(true)) {
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: El usuario ya existe!"));
+		}
+        if (usuarioService.existeUsuarioPorEmail(signUpRequest.getEmail()).equals(true)) {
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: El email ya existe!"));
+		}
+		if (empresaService.obtenerEmpresaPorNif(signUpRequest.getNif()).isPresent()) {
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: El NIF ya existe!"));
+		}
+		authService.createEmpresa(signUpRequest);
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
     

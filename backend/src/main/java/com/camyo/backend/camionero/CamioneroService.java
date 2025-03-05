@@ -43,6 +43,10 @@ public class CamioneroService {
                 () -> new ResourceNotFoundException("Camionero", "ID", id));
     }
 
+    @Transactional(readOnly = true)
+    public Optional<Camionero> obtenerCamioneroPorDNI(String dni) {
+        return camioneroRepository.obtenerPorDNI(dni);
+    }
 
     @Transactional()
     public Camionero guardarCamionero(Camionero camionero) {

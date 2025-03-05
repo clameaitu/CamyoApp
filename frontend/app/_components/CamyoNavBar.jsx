@@ -71,6 +71,7 @@ export default function CamyoWebNavBar() {
               <TouchableOpacity style={styles.shareButtonZoomed1} onPress={() => router.push(routes.login)}><Text style={styles.shareTextZoom1}>Iniciar Sesión</Text></TouchableOpacity>
               <TouchableOpacity style={styles.shareButtonZoomed2} onPress={() => router.push(routes.register)}><Text style={styles.shareTextZoom2}>Registrarse</Text></TouchableOpacity>
 
+              <TouchableOpacity style={styles.buttonText} onPress={() => router.replace(routes.createOffer)}><Text style={styles.linkText}>Crear Oferta</Text></TouchableOpacity>
               <TouchableOpacity style={styles.buttonTextZoomed} onPress={() => router.push(routes.profile)}><Text style={styles.linkTextZoom}>Perfil (Cam)</Text></TouchableOpacity>
               <TouchableOpacity style={styles.buttonTextZoomed} onPress={() => router.push(routes.profileEmpresa)}><Text style={styles.linkTextZoom}>Perfil (Emp)</Text></TouchableOpacity>
             </ScrollView>
@@ -85,9 +86,9 @@ export default function CamyoWebNavBar() {
             </TouchableOpacity>
             </View>
             <View style={styles.rightSection}>
+              <TouchableOpacity style={styles.buttonText} onPress={() => router.replace(routes.createOffer)}><Text style={styles.linkText}>Crear Oferta</Text></TouchableOpacity>
               <TouchableOpacity style={styles.buttonText} onPress={() => router.push(routes.profile)}><Text style={styles.linkText}>Mi Perfil (Cam)</Text></TouchableOpacity>
               <TouchableOpacity style={styles.buttonText} onPress={() => router.push(routes.profileEmpresa)}><Text style={styles.linkText}>Mi Perfil (Emp)</Text></TouchableOpacity>
-
               <TouchableOpacity style={styles.buttonText} onPress={() => router.push(routes.listcompanies)} ><Text style={styles.linkText}>Empresas</Text></TouchableOpacity>
               <View style={styles.searchWeb}>
                 <TextInput
