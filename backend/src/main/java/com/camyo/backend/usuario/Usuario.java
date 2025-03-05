@@ -2,7 +2,9 @@ package com.camyo.backend.usuario;
 
 
 import java.util.Set;
-import com.camyo.backend.empresa.Empresa;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.*;
 import jakarta.validation.constraints.Email;
@@ -33,6 +35,7 @@ public class Usuario {
     @Email
     private String email;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario", cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true)
     private Set<Reseña> reseñas;
     
