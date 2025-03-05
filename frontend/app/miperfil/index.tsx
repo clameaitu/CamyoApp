@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, Platform, ScrollView } from 'react-native';
+import { View, Text, Image, Platform, ScrollView, TouchableOpacity } from 'react-native';
 import frontendData from '../../assets/frontendData.json'; // Adjust the path if necessary
 import styles from './css/UserProfileScreen'; // Adjust the path if necessary
 import { FontAwesome } from '@expo/vector-icons';
 import BottomBar from '../_components/BottomBar';
 import CamyoWebNavBar from "../_components/CamyoNavBar";
 import { useNavigation } from '@react-navigation/native';
+import { useRouter } from "expo-router";
 
 interface UserProfile {
     id: number;
@@ -69,6 +70,49 @@ const UserProfileScreen: React.FC = () => {
 
     const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 
+    const router = useRouter();
+    const [expandedIndex, setExpandedIndex] = useState(null);
+    const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+    const [selectedService, setSelectedService] = useState<string | null>(null);
+
+
+    const allOffers = [
+        { id: 1, titulo: "Oferta 1", direccion: "Calle Picaflor 5, Madrid, España.", servicio: "SEUR", fecha: "13/2/2025", puntuacion: "4.7/5 (150 comentarios)", ubicacion: "Madrid" },
+        { id: 2, titulo: "Oferta 2", direccion: "Calle Picaflor 5, Madrid, España.", servicio: "US", fecha: "13/2/2025", puntuacion: "1/5 (150 comentarios)", ubicacion: "Madrid" },
+        { id: 3, titulo: "Oferta 3", direccion: "Calle Reina Mercedes,123, Sevilla", servicio: "SEUR", fecha: "13/2/2025", puntuacion: "4.7/5 (150 comentarios)", ubicacion: "Sevilla" },
+        { id: 4, titulo: "Oferta 4", direccion: "Calle Picaflor 5, Madrid, España.", servicio: "SEUR", fecha: "13/2/2025", puntuacion: "4.7/5 (150 comentarios)", ubicacion: "Madrid" },
+        { id: 5, titulo: "Oferta 5", direccion: "Calle Reina Mercedes,123, Sevilla", servicio: "US", fecha: "13/2/2025", puntuacion: "1/5 (150 comentarios)", ubicacion: "Sevilla" },
+    ];
+
+    const oldOffers = [
+        { id: 6, titulo: "Oferta 6", direccion: "Calle Mayor 10, Barcelona, España.", servicio: "SEUR", fecha: "10/1/2024", puntuacion: "4.5/5 (100 comentarios)", ubicacion: "Barcelona" },
+        { id: 7, titulo: "Oferta 7", direccion: "Calle Gran Vía 20, Madrid, España.", servicio: "US", fecha: "5/12/2023", puntuacion: "3.8/5 (80 comentarios)", ubicacion: "Madrid" },
+    ];
+
+    // Filtrar las ofertas basándonos en la ubicación y el servicio seleccionados
+    const filteredOffers = allOffers.filter((oferta) => {
+        return (
+        (!selectedLocation || oferta.ubicacion === selectedLocation) &&
+        (!selectedService || oferta.servicio === selectedService)
+        );
+    });
+
+    const filteredOldOffers = oldOffers.filter((oferta) => {
+        return (
+        (!selectedLocation || oferta.ubicacion === selectedLocation) &&
+        (!selectedService || oferta.servicio === selectedService)
+        );
+    });
+
+    const toggleExpand = (index) => {
+        setExpandedIndex(expandedIndex === index ? null : index);
+    };
+
+    const clearFilters = () => {
+        setSelectedLocation(null);
+        setSelectedService(null);
+    };
+
     return (
         <>
             {isMobile ? <BottomBar /> : <CamyoWebNavBar />}
@@ -106,6 +150,21 @@ const UserProfileScreen: React.FC = () => {
                     )}
                     <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>Ubicación: {user?.ubicacion}</Text>
                 </View>
+                <Text style={isMobile ? styles.phoneText : styles.desktopPhoneText}>Ofertas aplicadas</Text>
+
+                {filteredOffers.map((oferta, index) => (
+
+                <View key={oferta.id} style={styles.offerCard}>
+
+                    <View style={styles.offerDetails}>
+                    <Text style={styles.offerTitle}>{oferta.titulo}</Text>
+                    <Text style={styles.offerText}><Text style={styles.bold}>Dirección:</Text> {oferta.direccion}</Text>
+                    <Text style={styles.offerText}><Text style={styles.bold}>Servicios:</Text> {oferta.servicio}</Text>
+                    <Text style={styles.offerText}><Text style={styles.bold}>Fecha:</Text> {oferta.fecha}</Text>
+                    <Text style={styles.offerText}><Text style={styles.bold}>Puntuación:</Text> {oferta.puntuacion}</Text>
+                    </View>
+                </View>
+                ))}
             </ScrollView>
         </>
     );

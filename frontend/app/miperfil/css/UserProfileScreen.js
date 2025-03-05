@@ -147,6 +147,22 @@ const styles = StyleSheet.create({
         color: 'gray',
         marginBottom: 15,
     },
+
+    offerHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+    offerTitle: { fontSize: 16, fontWeight: "bold" },
+    offerText: { fontSize: 14, color: "black" },
+    bold: { fontWeight: "bold" },
+    offerDetails: { marginTop: 5 },
+    offerCard: { 
+        width: '80%',
+        backgroundColor: "white", 
+        borderRadius: 10, 
+        borderWidth: 2, 
+        borderColor: "red", 
+        padding: 10, 
+        marginBottom: 10
+    },
+
 });
 
 export default styles;
