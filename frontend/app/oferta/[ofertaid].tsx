@@ -1,8 +1,9 @@
-import { Text, View, ActivityIndicator, StyleSheet, TouchableOpacity, Image, Platform } from "react-native";
+import { Text, View, ActivityIndicator, StyleSheet, TouchableOpacity, Image, Platform, ScrollView } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import colors from "frontend/assets/styles/colors";
+import globalStyles from "@/assets/styles/globalStyles";
 
 const formatDate = (fecha: string) => {
     const opciones = { day: "numeric", month: "long", year: "numeric" } as const;
@@ -168,7 +169,7 @@ export default function OfertaDetalleScreen() {
 
                         <Text style={styles.subTitulo}>Descripción Completa</Text>
 
-                        <Text style={styles.description}>{offerData.notas}</Text>
+                        <Text style={styles.description}>{offerData.notas} </Text>
 
                     </>
                 )}
@@ -177,9 +178,12 @@ export default function OfertaDetalleScreen() {
     };
 
     return (
-        <View style={styles.container}>
-            {renderOfferCard()}
-        </View>
+        <ScrollView style={[styles.scrollContainer, { paddingTop: 0 }]}>
+            <View style={styles.container}>
+                    {renderOfferCard()}
+            </View>
+        </ScrollView>
+
     );
 }
 
@@ -193,6 +197,12 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
         paddingTop: Platform.OS === "web" ? 90 : 0,
         
+    },
+    scrollContainer: {
+        flex: 1,
+        backgroundColor: colors.lightGray,
+        paddingHorizontal: 0,
+        paddingVertical: 0,
     },
     card: {
         width: Platform.OS === "web" ? '60%' : '100%',
