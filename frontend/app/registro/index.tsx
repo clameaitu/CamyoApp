@@ -85,10 +85,11 @@ const RegisterScreen = () => {
         <TextInput
           style={{ flex: 1, height: 40, paddingLeft: 8, outline: "none", textAlignVertical: "center" }}
           secureTextEntry={!passwordVisible}
+          value={formData.password || ''}
           onChangeText={(value) => handleInputChange("password", value)}
         />
         <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
-          <Entypo name={passwordVisible ? "eye" : "eye-with-line"} size={18} color={colors.mediumGray} />
+          <Entypo name={passwordVisible ? "eye-with-line" : "eye"} size={18} color={colors.mediumGray} />
         </TouchableOpacity>
       </View>
     </View>

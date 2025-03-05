@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.camyo.backend.camionero.Camionero;
+
 @Repository
 public interface OfertaRepository extends JpaRepository<Oferta,Integer>{
 
@@ -25,4 +27,11 @@ public interface OfertaRepository extends JpaRepository<Oferta,Integer>{
 
     @Query("Select o FROM Oferta o INNER JOIN Carga c ON c.oferta.id= o.id")
     List<Oferta> encontrarCargas();
+
+    @Query("Select o FROM Oferta o JOIN o.aplicados c WHERE c.id= :camId")
+    List<Oferta> encontrarAplicadas(Integer camId);
+
+    @Query("Select c.asignadas FROM Camionero c WHERE c.id= :camId")
+    List<Oferta> encontrarAsignadas(Integer camId);
+
 }

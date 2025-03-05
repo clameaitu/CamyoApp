@@ -14,8 +14,17 @@ import com.camyo.backend.exceptions.ResourceNotFoundException;
 import com.camyo.backend.usuario.Usuario;
 import com.camyo.backend.usuario.UsuarioService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/empresas")
+@CrossOrigin(origins = "http://localhost:8081")
+@Tag(name = "Empresas", description = "API para gestión de empresas")
 public class EmpresaController {
     
     @Autowired
@@ -24,11 +33,20 @@ public class EmpresaController {
     @Autowired
     private UsuarioService usuarioService;
 
+    @Operation(summary = "Obtener todas las empresas", description = "Obtiene los detalles de todas las empresas que se encuentran en la BD.")
+    @ApiResponses({
+       @ApiResponse(responseCode = "200", description = "Empresas encontradas y devueltas")
+    })
     @GetMapping
     public List<Empresa> obtenerTodasEmpresas() {
         return empresaService.obtenerTodasEmpresas();
     }
     
+    @Operation(summary = "Obtener empresa por ID", description = "Obtiene los detalles de una empresa por su ID.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Empresa encontrada y devuelta"),
+        @ApiResponse(responseCode = "404", description = "No se encontró una empresa con ese ID")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<Empresa> obtenerEmpresaPorId(@PathVariable Integer id) {
         try {
@@ -39,12 +57,24 @@ public class EmpresaController {
         }
     }
 
+    @Operation(summary = "Obtener empresa por usuario", description = "Obtiene los detalles de una empresa por el usuario que la posee.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Empresas encontrada y devuelta"),
+        @ApiResponse(responseCode = "404", description = "No se encontró una empresa con ese usuario")
+    })
     @GetMapping("/por_usuario/{id}")
     public ResponseEntity<Empresa> obtenerEmpresaPorUsuario(@PathVariable Integer id) {
         Optional<Empresa> empresa = empresaService.obtenerEmpresaPorUsuario(id);
         return empresa.isPresent() ? new ResponseEntity<>(empresa.get(), HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @Operation(summary = "Guardar empresa", description = "Almacena una empresa en la BD.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Empresa creada con éxito"),
+        @ApiResponse(responseCode = "403", description = "El usuario debe iniciar sesión"),
+        @ApiResponse(responseCode = "400", description = "El usuario ya tiene una empresa"),
+        @ApiResponse(responseCode = "500", description = "Error en la validación")
+    })
     @PostMapping
     public ResponseEntity<Object> guardarEmpresa(@RequestBody Empresa empresa) {
         // La empresa se creará con el usuario que ha iniciado sesión.
@@ -70,6 +100,12 @@ public class EmpresaController {
         }
     }
 
+    @Operation(summary = "Actualizar empresa", description = "Actualiza la información de una empresa ya existente y que pertenece al usuario autenticado.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Empresa actualizada con éxito"),
+        @ApiResponse(responseCode = "403", description = "El usuario debe iniciar sesión"),
+        @ApiResponse(responseCode = "404", description = "No se encontró una empresa con ese ID")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<Object> actualizarEmpresa(@RequestBody Empresa empresa, @PathVariable Integer id) {
         try {
@@ -91,6 +127,12 @@ public class EmpresaController {
         }
     }
 
+    @Operation(summary = "Eliminar empresa", description = "Elimina una empresa ya existente y que pertenece al usuario autenticado.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "Empresa eliminada con éxito"),
+        @ApiResponse(responseCode = "403", description = "El usuario debe iniciar sesión"),
+        @ApiResponse(responseCode = "404", description = "No se encontró una empresa con ese ID")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> eliminarEmpresa(@PathVariable Integer id) {
         try {
