@@ -70,68 +70,38 @@ public class CamioneroController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
-    @Operation(summary = "Guardar camionero", description = "Almacena un camionero en la BD. Se crea con el usuario que ha iniciado sesión.")
+    @Operation(summary = "Crear Camionero", description = "Crear una descripcion al camionero.")
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Camionero creado con éxito"),
-        @ApiResponse(responseCode = "403", description = "El usuario debe iniciar sesión"),
-        @ApiResponse(responseCode = "400", description = "El usuario ya tiene un camionero registrado"),
-        @ApiResponse(responseCode = "500", description = "Error interno al guardar el camionero")
+        @ApiResponse(responseCode = "200", description = "Camionero creado con éxito"),
+        @ApiResponse(responseCode = "404", description = "No se puede crear el camionero")
     })
     @PostMapping
-    public ResponseEntity<Object> guardarCamionero(@RequestBody @Valid Camionero camionero) {
-        // Asignar el usuario autenticado al camionero.
-        try {
-            Usuario usuario = usuarioService.obtenerUsuarioActual();
-            camionero.setUsuario(usuario);
-        } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>(new MessageResponse("Debe iniciar sesión para crear un camionero."), HttpStatus.FORBIDDEN);
-        }
-        
-        // Verificar que el usuario no tenga ya un camionero registrado.
-        try {
-            Camionero camioneroExistente = camioneroService.obtenerCamioneroPorUsuario(camionero.getUsuario().getId());
-            return new ResponseEntity<>(new MessageResponse("El usuario ya tiene un camionero registrado."), HttpStatus.BAD_REQUEST);
-        } catch (ResourceNotFoundException ex) {
-            // No se encontró un camionero para este usuario, se puede continuar.
-        }
-        
-        // Guardar el nuevo camionero.
-        try {
-            Camionero camioneroGuardado = camioneroService.guardarCamionero(camionero);
-            return new ResponseEntity<>(camioneroGuardado, HttpStatus.CREATED);
-        } catch (DataAccessException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Camionero> create(@RequestBody @Valid Camionero camionero) {
+        Camionero camioneroGuardado = camioneroService.guardarCamionero(camionero);
+        return new ResponseEntity<>(camioneroGuardado, HttpStatus.CREATED);
     }
-
-    @Operation(summary = "Actualizar camionero", description = "Actualiza la información de un camionero existente, siempre que pertenezca al usuario autenticado.")
+    @Operation(summary = "Actuzalizar Camionero", description = "Actualizar una descripcion al camionero.")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Camionero actualizado con éxito"),
-        @ApiResponse(responseCode = "403", description = "El usuario debe iniciar sesión o no puede actualizar un camionero que no es suyo"),
-        @ApiResponse(responseCode = "404", description = "No se encontró un camionero con ese ID")
+        @ApiResponse(responseCode = "200", description = "Actuzalizar camionero con éxito"),
+        @ApiResponse(responseCode = "404", description = "No se puede actualizar el camionero")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Object> actualizarCamionero(@RequestBody @Valid Camionero camionero, @PathVariable Integer id) {
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Camionero> update(@PathVariable("id") Integer id, @RequestBody @Valid Camionero camionero) {
         try {
-            Usuario usuario = usuarioService.obtenerUsuarioActual();
-            Camionero camioneroExistente = camioneroService.obtenerCamioneroPorId(id);
-            if (!camioneroExistente.getUsuario().equals(usuario)) {
-                return new ResponseEntity<>(new MessageResponse("No puede actualizar un camionero que no es suyo."), HttpStatus.FORBIDDEN);
-            }
-            // Mantener la asociación con el usuario autenticado.
-            camionero.setUsuario(usuario);
-        } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>(new MessageResponse("Debe iniciar sesión para actualizar un camionero."), HttpStatus.FORBIDDEN);
-        }
-        
-        try {
+            // Se intenta actualizar el Camionero con el ID indicado utilizando el servicio.
             Camionero camioneroActualizado = camioneroService.actualizCamionero(id, camionero);
             return new ResponseEntity<>(camioneroActualizado, HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
+            // Si no se encuentra el Camionero, se retorna un 404 (Not Found).
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            // Para cualquier otro error, se retorna un 500 (Internal Server Error).
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
 
     @Operation(summary = "Eliminar camionero", description = "Elimina un camionero existente, siempre que pertenezca al usuario autenticado.")
     @ApiResponses({

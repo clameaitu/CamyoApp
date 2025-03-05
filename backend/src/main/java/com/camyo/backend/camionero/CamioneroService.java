@@ -53,12 +53,11 @@ public class CamioneroService {
     @Transactional()
     public Camionero actualizCamionero(Integer id, Camionero camioneroUpdated) {
         Camionero existingCamionero = obtenerCamioneroPorId(id);
-        BeanUtils.copyProperties(camioneroUpdated, existingCamionero, "id", "usuario");
-
-    return guardarCamionero(existingCamionero);
-
+        // Ignoramos "id", "usuario", y además "camiones" y "ofertas" si no queremos sobreescribirlas
+        BeanUtils.copyProperties(camioneroUpdated, existingCamionero, "id", "usuario", "camiones", "ofertas");
+        return guardarCamionero(existingCamionero);
     }
-
+    
     @Transactional()
     public void eliminarCamionero(Integer id) {
         Camionero camionero = obtenerCamioneroPorId(id);
@@ -66,8 +65,9 @@ public class CamioneroService {
     }
 
     @Transactional(readOnly = true)
-    public Float obtenerValoracionMedia(Integer id){
+    public double obtenerValoracionMedia(Integer id) {
         Usuario user = obtenerCamioneroPorId(id).getUsuario();        
-        return usuarioService.obtenerValoracionMedia(user.getId());
+        return usuarioService.obtenerValoracionMedia(user.getId()).doubleValue();
     }
+    
 }
