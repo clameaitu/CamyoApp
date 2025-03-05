@@ -147,6 +147,28 @@ const styles = StyleSheet.create({
         color: 'gray',
         marginBottom: 15,
     },
+    input: {
+        height: 45,
+        width: '90%',
+        borderColor: colors.primary,
+        borderWidth: 1.5,
+        borderRadius: 10,
+        paddingHorizontal: 15,
+        backgroundColor: 'white',
+        fontSize: 16,
+        marginBottom: 10,
+    },
+    desktopInput: {
+        height: 50,
+        width: '50%',
+        borderColor: colors.primary,
+        borderWidth: 2,
+        borderRadius: 10,
+        paddingHorizontal: 15,
+        backgroundColor: 'white',
+        fontSize: 18,
+        marginBottom: 15,
+    },
 });
 
 export default styles;
