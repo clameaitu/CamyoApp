@@ -18,7 +18,7 @@ export default function OfertaDetalleScreen() {
     const [loading, setLoading] = useState(true);
     const { ofertaid } = useLocalSearchParams();
 
-    const BACKEND_URL = "http://192.168.1.101:8080"; //http://localhost:8080
+    const BACKEND_URL = "http://localhost:8080"; //http://ip:8080 para conectar al móvil
 
     useEffect(() => {
         if (ofertaid) {
