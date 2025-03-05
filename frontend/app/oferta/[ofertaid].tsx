@@ -1,4 +1,4 @@
-import { Text, View, ActivityIndicator, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { Text, View, ActivityIndicator, StyleSheet, TouchableOpacity, Image, Platform } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
@@ -18,37 +18,39 @@ export default function OfertaDetalleScreen() {
     const [loading, setLoading] = useState(true);
     const { ofertaid } = useLocalSearchParams();
 
+    const BACKEND_URL = "http://192.168.1.101:8080"; //http://localhost:8080
+
     useEffect(() => {
         if (ofertaid) {
             const fetchData = async () => {
                 try {
-                    const response = await fetch(`http://localhost:8080/api/ofertas/${ofertaid}`);
+                    const response = await fetch(`${BACKEND_URL}/api/ofertas/${ofertaid}`);
                     const data = await response.json();
                     setOfferData(data);
 
                     console.log(data);
                     
                     
-                    const trabajoResponse = await fetch(`http://localhost:8080/api/ofertas/${ofertaid}/trabajo`);
+                    const trabajoResponse = await fetch(`${BACKEND_URL}/api/ofertas/${ofertaid}/trabajo`);
                     const trabajoText = await trabajoResponse.text();
                     const trabajoData = trabajoText ? JSON.parse(trabajoText) : null;
                     setOfferTrabajoData(trabajoData);
 
                     console.log(trabajoData);
 
-                    const cargaResponse = await fetch(`http://localhost:8080/api/ofertas/${ofertaid}/carga`);
+                    const cargaResponse = await fetch(`${BACKEND_URL}/api/ofertas/${ofertaid}/carga`);
                     const cargaText = await cargaResponse.text();
                     const cargaData = cargaText ? JSON.parse(cargaText) : null;
                     setOfferCargaData(cargaData);
 
                     console.log(cargaData);
                     
-                    const empresaResponse = await fetch(`http://localhost:8080/empresas/1`); //http://localhost:8080/empresas/${data.empresaId}
+                    const empresaResponse = await fetch(`${BACKEND_URL}/empresas/1`); //http://localhost:8080/empresas/${data.empresaId}
                     const empresaData = await empresaResponse.json();
                     setEmpresaData(empresaData);
                     console.log(empresaData);
 
-                    const usuarioEmpresaResponse = await fetch(`http://localhost:8080/usuarios/1`); //http://localhost:8080/usuarios/${empresaData.usuarioId}
+                    const usuarioEmpresaResponse = await fetch(`${BACKEND_URL}/usuarios/1`); //http://localhost:8080/usuarios/${empresaData.usuarioId}
                     const usuarioEmpresaData = await usuarioEmpresaResponse.json();
                     setUsuarioEmpresaData(usuarioEmpresaData);
                     console.log(usuarioEmpresaData);
@@ -189,12 +191,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#e6e8e6',
         paddingVertical: 20,
-        paddingTop: 90,
+        paddingTop: Platform.OS === "web" ? 90 : 0,
+        
     },
     card: {
-        width: '60%',
+        width: Platform.OS === "web" ? '60%' : '100%',
         marginHorizontal: '15%',
-        padding: 20,
+        padding: Platform.OS === "web" ? 20 : 10,
         backgroundColor: 'white',
         borderRadius: 10,
         shadowColor: "#000",
@@ -217,6 +220,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     title: {
+        paddingTop: Platform.OS === "web" ? 0 : 10,
         fontSize: 34,
         fontWeight: 'bold',
     },
