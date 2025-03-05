@@ -24,21 +24,21 @@ export default function OfertaDetalleScreen() {
         if (ofertaid) {
             const fetchData = async () => {
                 try {
-                    const response = await fetch(`${BACKEND_URL}/api/ofertas/${ofertaid}`);
+                    const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`);
                     const data = await response.json();
                     setOfferData(data);
 
                     console.log(data);
                     
                     
-                    const trabajoResponse = await fetch(`${BACKEND_URL}/api/ofertas/${ofertaid}/trabajo`);
+                    const trabajoResponse = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`);
                     const trabajoText = await trabajoResponse.text();
                     const trabajoData = trabajoText ? JSON.parse(trabajoText) : null;
                     setOfferTrabajoData(trabajoData);
 
                     console.log(trabajoData);
 
-                    const cargaResponse = await fetch(`${BACKEND_URL}/api/ofertas/${ofertaid}/carga`);
+                    const cargaResponse = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`);
                     const cargaText = await cargaResponse.text();
                     const cargaData = cargaText ? JSON.parse(cargaText) : null;
                     setOfferCargaData(cargaData);
