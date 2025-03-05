@@ -18,8 +18,20 @@ export default function CurrentCompanyOffers() {
     { id: 5, titulo: "Oferta 5", direccion: "Calle Reina Mercedes,123, Sevilla", servicio: "US", fecha: "13/2/2025", puntuacion: "1/5 (150 comentarios)", ubicacion: "Sevilla" },
   ];
 
+  const oldOffers = [
+    { id: 6, titulo: "Oferta 6", direccion: "Calle Mayor 10, Barcelona, España.", servicio: "SEUR", fecha: "10/1/2024", puntuacion: "4.5/5 (100 comentarios)", ubicacion: "Barcelona" },
+    { id: 7, titulo: "Oferta 7", direccion: "Calle Gran Vía 20, Madrid, España.", servicio: "US", fecha: "5/12/2023", puntuacion: "3.8/5 (80 comentarios)", ubicacion: "Madrid" },
+  ];
+
   // Filtrar las ofertas basándonos en la ubicación y el servicio seleccionados
   const filteredOffers = allOffers.filter((oferta) => {
+    return (
+      (!selectedLocation || oferta.ubicacion === selectedLocation) &&
+      (!selectedService || oferta.servicio === selectedService)
+    );
+  });
+
+  const filteredOldOffers = oldOffers.filter((oferta) => {
     return (
       (!selectedLocation || oferta.ubicacion === selectedLocation) &&
       (!selectedService || oferta.servicio === selectedService)
@@ -79,7 +91,7 @@ export default function CurrentCompanyOffers() {
         </TouchableOpacity>
 
         <TouchableOpacity 
-            style={[styles.filterButton, selectedService === "US" && styles.filterButtonActive]}          
+            style={[styles.filterButton, selectedService === "" && styles.filterButtonActive]}          
             onPress={() => setSelectedService("US")}
         >
           <FontAwesome name="truck" size={16} color="black" />
@@ -98,20 +110,32 @@ export default function CurrentCompanyOffers() {
       <ScrollView style={styles.scrollContainer}>
         {filteredOffers.map((oferta, index) => (
           <View key={oferta.id} style={styles.offerCard}>
-            <TouchableOpacity onPress={() => toggleExpand(index)} style={styles.offerHeader}>
-              <Text style={styles.offerTitle}>{oferta.titulo}</Text>
-              <FontAwesome name={expandedIndex === index ? "chevron-up" : "chevron-down"} size={16} color="black" />
-            </TouchableOpacity>
-            {expandedIndex === index && (
+
               <View style={styles.offerDetails}>
+                <Text style={styles.offerTitle}>{oferta.titulo}</Text>
+
                 <Text style={styles.offerText}><Text style={styles.bold}>Dirección:</Text> {oferta.direccion}</Text>
                 <Text style={styles.offerText}><Text style={styles.bold}>Servicios:</Text> {oferta.servicio}</Text>
                 <Text style={styles.offerText}><Text style={styles.bold}>Fecha:</Text> {oferta.fecha}</Text>
                 <Text style={styles.offerText}><Text style={styles.bold}>Puntuación:</Text> {oferta.puntuacion}</Text>
               </View>
-            )}
           </View>
         ))}
+
+<Text style={styles.resultsText}>Mostrando {filteredOldOffers.length} ofertas antiguas</Text>
+
+{filteredOldOffers.map((oferta, index) => (
+  <View key={oferta.id} style={styles.offerCard}>
+      <View style={styles.offerDetails}>
+        <Text style={styles.offerTitle}>{oferta.titulo}</Text>
+
+        <Text style={styles.offerText}><Text style={styles.bold}>Dirección:</Text> {oferta.direccion}</Text>
+        <Text style={styles.offerText}><Text style={styles.bold}>Servicios:</Text> {oferta.servicio}</Text>
+        <Text style={styles.offerText}><Text style={styles.bold}>Fecha:</Text> {oferta.fecha}</Text>
+        <Text style={styles.offerText}><Text style={styles.bold}>Puntuación:</Text> {oferta.puntuacion}</Text>
+      </View>
+  </View>
+))}
       </ScrollView>
     </View>
   );
