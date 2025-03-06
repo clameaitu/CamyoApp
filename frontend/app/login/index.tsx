@@ -1,18 +1,36 @@
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from "react-native";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import globalStyles from "../../assets/styles/globalStyles";
 import colors from "../../assets/styles/colors";
+import axios from "axios";
+import { useAuth } from "../../contexts/AuthContext";
 
 const LoginScreen = () => {
   const router = useRouter();
+  const { login } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
 
-  const handleLogin = () => {
-    console.log("Iniciar sesión con:", { username, password });
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post("http://localhost:8080/auth/signin", {
+        username,
+        password,
+      });
+
+      const { token } = response.data;
+      login(token); // Guarda el token en el contexto
+
+      // Redirigir al usuario a la pantalla principal de ofertas
+      router.replace("/");
+
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error);
+      Alert.alert("Error", "No se pudo iniciar sesión. Verifica tus datos e intenta nuevamente.");
+    }
   };
 
   return (
