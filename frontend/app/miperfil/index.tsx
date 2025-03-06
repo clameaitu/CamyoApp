@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, Platform, ScrollView } from 'react-native';
+import { View, Text, Image, Platform, ScrollView, FlatList, TouchableOpacity } from 'react-native';
 import frontendData from '../../assets/frontendData.json'; // Adjust the path if necessary
 import styles from './css/UserProfileScreen'; // Adjust the path if necessary
 import { FontAwesome } from '@expo/vector-icons';
-import BottomBar from '../_components/BottomBar';
-import CamyoWebNavBar from "../_components/CamyoNavBar";
+import BottomBar from '../_components/BottomBar.jsx';
+import CamyoWebNavBar from "../_components/CamyoNavBar.jsx";
 import { useNavigation } from '@react-navigation/native';
+import colors from '@/assets/styles/colors';
 
 interface UserProfile {
     id: number;
@@ -16,6 +17,14 @@ interface UserProfile {
     licencias?: string[];
     vehiculo_propio?: boolean;
     ubicacion: string;
+    avatar: string;
+}
+
+interface Review {
+    id: number;
+    reviewer: string;
+    rating: number;
+    text: string;
     avatar: string;
 }
 
@@ -31,6 +40,15 @@ const placeholderUser: UserProfile = {
     ubicacion: frontendData.usuarios[0].ubicacion,
     avatar: 'https://randomuser.me/api/portraits/men/1.jpg', // Placeholder image URL of a person
 };
+
+// Fake reviews data
+const reviews: Review[] = [
+    { id: 1, reviewer: 'John Doe', rating: 4, text: 'Great service!', avatar: 'https://randomuser.me/api/portraits/men/3.jpg' },
+    { id: 2, reviewer: 'Jane Smith', rating: 5, text: 'Highly recommended!', avatar: 'https://randomuser.me/api/portraits/women/2.jpg' },
+    { id: 3, reviewer: 'Alice Johnson', rating: 3, text: 'Good, but could be better.', avatar: 'https://randomuser.me/api/portraits/women/3.jpg' },
+    { id: 4, reviewer: 'Bob Brown', rating: 4, text: 'Very satisfied!', avatar: 'https://randomuser.me/api/portraits/men/4.jpg' },
+    { id: 5, reviewer: 'Charlie Davis', rating: 5, text: 'Excellent experience!', avatar: 'https://randomuser.me/api/portraits/men/5.jpg' },
+];
 
 const UserProfileScreen: React.FC = () => {
     const [user, setUser] = useState<UserProfile | null>(placeholderUser);
@@ -72,7 +90,7 @@ const UserProfileScreen: React.FC = () => {
     return (
         <>
             {isMobile ? <BottomBar /> : <CamyoWebNavBar />}
-            <ScrollView contentContainerStyle={[isMobile ? styles.container : styles.desktopContainer, { paddingTop: isMobile ? 0 : 60 }]}>
+            <ScrollView contentContainerStyle={[isMobile ? styles.container : styles.desktopContainer, { paddingTop: isMobile ? 0 : 100, paddingLeft: 10 }]}>
                 <View style={isMobile ? styles.profileContainer : styles.desktopProfileContainer}>
                     <Image 
                         source={{ uri: user?.avatar }} 
@@ -80,32 +98,82 @@ const UserProfileScreen: React.FC = () => {
                     />
                     <View>
                         <Text style={isMobile ? styles.name : styles.desktopName}>{user?.nombre}</Text>
-                        <View style={isMobile ? styles.infoContainer : styles.desktopInfoContainer}>
-                            <View style={isMobile ? styles.infoButton : styles.desktopInfoButton}>
-                                <Text style={isMobile ? styles.infoText : styles.desktopInfoText}>Tipo: {user?.tipo}</Text>
-                            </View>
-                            {user?.experiencia !== undefined && (
-                                <View style={isMobile ? styles.infoButton2 : styles.desktopInfoButton2}>
-                                    <Text style={isMobile ? styles.infoText : styles.desktopInfoText}>{user.experiencia} años de experiencia</Text>
+                        
+                        {!isMobile && (
+                            <View style={styles.desktopInfoContainer}>
+                                <View style={styles.desktopInfoButton}>
+                                    <Text style={styles.desktopInfoText}>Tipo: {user?.tipo}</Text>
                                 </View>
-                            )}
+                                {user?.experiencia !== undefined && (
+                                    <View style={styles.desktopInfoButton2}>
+                                        <Text style={styles.desktopInfoText}>{user.experiencia} años de experiencia</Text>
+                                    </View>
+                                )}
+                            </View>
+                            
+                        )}
+                        <TouchableOpacity style={isMobile? styles.editProfileButton: styles.desktopEditProfileButton}>
+                        <Text style={styles.editProfileButtonText}>Editar perfil</Text>
+                    </TouchableOpacity>
+                    </View>
+                </View>
+                {isMobile && (
+                    <View style={styles.infoContainer}>
+                        <View style={styles.infoButton}>
+                            <Text style={styles.infoText}>Tipo: {user?.tipo}</Text>
+                        </View>
+                        {user?.experiencia !== undefined && (
+                            <View style={styles.infoButton2}>
+                                <Text style={styles.infoText}>{user.experiencia} años de experiencia</Text>
+                            </View>
+                        )}
+                    </View>
+                    
+                )}
+                <View style={styles.detailsOuterContainer}>
+                    <View style={isMobile ? styles.detailsContainer : styles.desktopDetailsContainer}>
+                        <View style={styles.detailItem}>
+                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}> <FontAwesome style={styles.envelopeIcon} name="envelope" size={20}/>  <Text style={styles.boldText}>Contacta con {user?.nombre} en</Text> {user?.email}</Text>
+                        </View>
+                        {user?.licencias && (
+                            <View style={styles.detailItem}>
+                                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="id-card" size={20}/>  <Text style={styles.boldText}>{user?.nombre} tiene las licencias</Text> {user.licencias.join(', ')}</Text>
+                            </View>
+                        )}
+                        {user?.vehiculo_propio !== undefined && (
+                            <View style={styles.detailItem}>
+                                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.truckIcon} name="truck" size={23}/>  <Text style={styles.boldText}>¿Tiene vehículo propio?</Text> {user.vehiculo_propio ? 'Sí' : 'No'}</Text>
+                            </View>
+                        )}
+                        <View style={styles.detailItem}>
+                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="map" size={20}/>  <Text style={styles.boldText}>{user?.nombre} está ubicado en</Text> {user?.ubicacion}</Text>
                         </View>
                     </View>
                 </View>
-                <View style={isMobile ? styles.phoneContainer : styles.desktopPhoneContainer}>
-                    <FontAwesome name="phone" style={isMobile ? styles.phoneIcon : styles.desktopPhoneIcon} />
-                    <Text style={isMobile ? styles.phoneText : styles.desktopPhoneText}>+1 (234) 567-890</Text>
-                </View>
-                <View style={isMobile ? styles.detailsContainer : styles.desktopDetailsContainer}>
-                    <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>Email: {user?.email}</Text>
-                    {user?.licencias && (
-                        <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>Licencias: {user.licencias.join(', ')}</Text>
+                {/* <FlatList
+                    data={reviews}
+                    horizontal
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={({ item }) => (
+                        <View style={[styles.reviewCard, !isMobile && styles.desktopReviewCard]}>
+                            <Image source={{ uri: item.avatar }} style={styles.reviewerAvatar} />
+                            <Text style={styles.reviewerName}>{item.reviewer}</Text>
+                            <View style={styles.ratingContainer}>
+                                {[...Array(5)].map((_, index) => (
+                                    <FontAwesome
+                                        key={index}
+                                        name="star"
+                                        size={20}
+                                        color={index < item.rating ? colors.primary : colors.lightGray}
+                                    />
+                                ))}
+                            </View>
+                            <Text style={styles.reviewText}>{item.text}</Text>
+                        </View>
                     )}
-                    {user?.vehiculo_propio !== undefined && (
-                        <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>Vehículo propio: {user.vehiculo_propio ? 'Sí' : 'No'}</Text>
-                    )}
-                    <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>Ubicación: {user?.ubicacion}</Text>
-                </View>
+                
+                    contentContainerStyle={isMobile ? styles.reviewsContainer : styles.desktopReviewsContainer}
+                /> */}
             </ScrollView>
         </>
     );
