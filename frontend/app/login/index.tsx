@@ -4,7 +4,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from "reac
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import globalStyles from "../../assets/styles/globalStyles";
 import colors from "../../assets/styles/colors";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 
 const LoginScreen = () => {
@@ -13,10 +13,21 @@ const LoginScreen = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const API_URL = process.env.API_URL || "http://localhost:8080";
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("http://localhost:8080/auth/signin", {
+      if (!username.trim()) {
+        setErrorMessage("Por favor ingresa tu nombre de usuario.");
+        return;
+      } else if (!password.trim()) {
+        setErrorMessage("Por favor ingresa tu contraseña.");
+        return;
+      }
+
+      const response = await axios.post(`${API_URL}/auth/signin`, {
         username,
         password,
       });
@@ -28,8 +39,11 @@ const LoginScreen = () => {
       router.replace("/");
 
     } catch (error) {
-      console.error("Error al iniciar sesión:", error);
-      Alert.alert("Error", "No se pudo iniciar sesión. Verifica tus datos e intenta nuevamente.");
+      if (axios.isAxiosError(error)) {
+        setErrorMessage(error.response?.data || 'Error desconocido');
+      } else {
+        setErrorMessage('Error desconocido');
+      }
     }
   };
 
@@ -66,14 +80,22 @@ const LoginScreen = () => {
           </View>
         </View>
 
+        {errorMessage ? (
+          <Text style={{ color: "red", fontSize: 18, marginBottom: 10 }}>
+            {errorMessage}
+          </Text>
+        ) : null}
+
         <TouchableOpacity style={[globalStyles.button, { marginBottom: 10, borderRadius: 12, elevation: 5 }]} onPress={handleLogin}>
           <Text style={[globalStyles.buttonText, { fontSize: 25 }]}>Ingresar</Text>
         </TouchableOpacity>
         
+        {/* 
         <TouchableOpacity onPress={() => router.push("/")}> 
           <Text style={{ color: colors.secondary, textAlign: "center", marginTop: 16, marginBottom: 9 }}>He olvidado mi contraseña</Text>
         </TouchableOpacity>
-        
+        */}
+
         <View style={globalStyles.separatorContainer}>
           <View style={globalStyles.separator} />
           <Text style={globalStyles.separatorText}>¿Eres nuevo?</Text>
