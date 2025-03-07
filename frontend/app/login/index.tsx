@@ -7,12 +7,12 @@ import colors from "../../assets/styles/colors";
 
 const LoginScreen = () => {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleLogin = () => {
-    console.log("Iniciar sesión con:", { email, password });
+    console.log("Iniciar sesión con:", { username, password });
   };
 
   return (
@@ -21,14 +21,13 @@ const LoginScreen = () => {
         <Text style={globalStyles.title}>Iniciar Sesión</Text>
         
         <View style={{ width: "90%", marginBottom: 15 }}>
-          <Text style={{ fontSize: 12, color: colors.secondary, marginLeft: 8, marginBottom: -6, backgroundColor: colors.white, alignSelf: "flex-start", paddingHorizontal: 5, zIndex: 1 }}>Correo Electrónico</Text>
+          <Text style={{ fontSize: 12, color: colors.secondary, marginLeft: 8, marginBottom: -6, backgroundColor: colors.white, alignSelf: "flex-start", paddingHorizontal: 5, zIndex: 1 }}>Nombre de Usuario</Text>
           <View style={{ flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: colors.mediumGray, borderRadius: 8, paddingHorizontal: 10, backgroundColor: colors.white }}>
-            <MaterialIcons name="email" size={20} color={colors.primary} />
+            <MaterialIcons name="person" size={20} color={colors.primary} />
             <TextInput
               style={{ flex: 1, height: 40, paddingLeft: 8 }}
-              keyboardType="email-address"
-              value={email}
-              onChangeText={setEmail}
+              value={username}
+              onChangeText={setUsername}
             />
           </View>
         </View>
@@ -50,7 +49,7 @@ const LoginScreen = () => {
         </View>
 
         <TouchableOpacity style={[globalStyles.button, { marginBottom: 10, borderRadius: 12, elevation: 5 }]} onPress={handleLogin}>
-          <Text style={[globalStyles.buttonText, { fontSize: 30 }]}>Ingresar</Text>
+          <Text style={[globalStyles.buttonText, { fontSize: 25 }]}>Ingresar</Text>
         </TouchableOpacity>
         
         <TouchableOpacity onPress={() => router.push("/")}> 
