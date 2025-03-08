@@ -34,7 +34,9 @@ public class DataInitializer {
                                 + "(205, 'cam_piloto5', '555666777', 'user5', 'user5@example.com', 'Valencia, España', 'EMPRESAPILOTO1', NULL, '$2a$10$UuMGQU9YECEKvuUMjiFXGuDHC.zzMfOhcAbcQj6Ql9ieOKUczQE9y',202),"
                                 + "(206, 'cam_piloto6', '111222333', 'user6', 'user6@example.com', 'Sevilla, España', 'EMPRESAPILOTO2', NULL, '$2a$10$UuMGQU9YECEKvuUMjiFXGuDHC.zzMfOhcAbcQj6Ql9ieOKUczQE9y9',202),"
                                 + "(207, 'cam_piloto7', '777666555', 'user7', 'user7@example.com', 'Alicante, España', 'EMPRESAPILOTO3', NULL, '$2a$10$UuMGQU9YECEKvuUMjiFXGuDHC.zzMfOhcAbcQj6Ql9ieOKUczQE9y',202),"
-                                + "(208, 'cam_piloto8', '333222111', 'user8', 'user8@example.com', 'Almería, España', 'EMPRESAPILOTO4', NULL, '$2a$10$UuMGQU9YECEKvuUMjiFXGuDHC.zzMfOhcAbcQj6Ql9ieOKUczQE9y9',202)");
+                                + "(208, 'cam_piloto8', '333222111', 'user8', 'user8@example.com', 'Almería, España', 'EMPRESAPILOTO4', NULL, '$2a$10$UuMGQU9YECEKvuUMjiFXGuDHC.zzMfOhcAbcQj6Ql9ieOKUczQE9y9',202),"
+                                + "(209, 'Isabel', '777666555', 'isabel', 'isabel@example.com', 'Badajoz, España', 'camionera autonoma', NULL, '$2a$10$Kgkh3hHPPmPeu4TxhzC1DeYbZq.spo9FqHNDcPHiKxXgprBSZznF2',201),"
+                                + "(210, 'mopa', '777666555', 'mopa', 'mopa@example.com', 'Badajoz, España', 'Empresa extremeña', NULL, '$2a$10$Kgkh3hHPPmPeu4TxhzC1DeYbZq.spo9FqHNDcPHiKxXgprBSZznF2',202)");
 
                         // Insert Empresas
                         statement.addBatch("INSERT IGNORE INTO empresas (id, web, nif, usuario_id) VALUES "
