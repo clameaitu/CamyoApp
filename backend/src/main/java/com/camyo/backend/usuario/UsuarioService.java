@@ -87,12 +87,12 @@ public class UsuarioService {
 
     @Transactional
     public Float obtenerValoracionMedia(Integer id){
-        List<Reseña> list = usuarioRepository.obtenerReseñas(id);
+        List<Resena> list = usuarioRepository.obtenerReseñas(id);
         if (list.isEmpty()) {
             return 0.0f;
         }
         Integer media = 0;
-        for (Reseña reseña : list) {
+        for (Resena reseña : list) {
             media += reseña.getValoracion();
         }
         return (float) media / list.size();     
