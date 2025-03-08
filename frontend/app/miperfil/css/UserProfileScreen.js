@@ -29,17 +29,23 @@ const styles = StyleSheet.create({
         padding: 15,
     },
     profileContainer: {
-        flexDirection: 'row', // Changed to row to place name next to avatar
-        alignItems: 'flex-start', // Align items to the start
-        justifyContent: 'center', // Center elements horizontally
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start', // Align items to the start
         marginBottom: 20,
+        marginLeft: '12.5%', // Adjusted to start at about 75% width of the screen
+        position: 'relative', // Changed to relative
+        top: 100, // Adjusted to place the profile picture above the banner
     },
     desktopProfileContainer: {
-        flexDirection: 'row', // Changed to row to place name next to avatar
-        alignItems: 'center', // Center items horizontally
-        width: '45%', // Adjust width as needed
-        alignSelf: 'center', // Center the container horizontally
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '45%',
+        alignSelf: 'flex-start', // Align the container to the start
         marginBottom: 20,
+        marginLeft: '12.5%', // Adjusted to start at about 75% width of the screen
+        position: 'relative', // Changed to relative
+        top: 100, // Adjusted to place the profile picture above the banner
     },
     avatar: {
         width: 120,
@@ -47,109 +53,33 @@ const styles = StyleSheet.create({
         borderRadius: 60,
         marginBottom: 10,
         position: 'relative',
-        left: -35,
-        bottom: -20
+        left: 20, // Position the avatar to the left side
+        top: -60, // Adjusted to place half of the avatar above the banner
     },
     desktopAvatar: {
-        width: 180,
-        height: 180,
-        borderRadius: 90,
+        width: 200,
+        height: 200,
+        borderRadius: 100,
         marginBottom: 10,
-        // Removed left positioning
+        position: 'fixed',
+        left: 420, // Position the avatar to the left side
+        top: 100, // Adjusted to place half of the avatar above the banner
+    },
+    profileDetailsContainer: {
+        marginLeft: 20, // Added margin to separate details from avatar
+        marginTop: 60, // Adjusted margin to align with the bottom half of the avatar
+        
     },
     name: {
         fontSize: 26,
         fontWeight: 'bold',
-        marginLeft: -20, // Added margin to separate name from avatar
-        marginTop: 60,
     },
     desktopName: {
         fontSize: 32,
         fontWeight: 'bold',
-        marginLeft: 20, // Added margin to separate name from avatar
-        marginTop: 60, // Adjusted margin to place name a little below the avatar
-        marginBottom: 10, // Added margin to separate name from info
-    },
-    infoContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: '100%',
-        marginBottom: 20,
-    },
-    desktopInfoContainer: {
-        flexDirection: 'row',
-        justifyContent: 'flex-start', // Align items to the start
-        marginTop: 10,
-    },
-    infoButton: {
-        backgroundColor: colors.primary,
-        borderRadius: 50,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        marginHorizontal: 10,
-    },
-    desktopInfoButton: {
-        backgroundColor: colors.primary,
-        borderRadius: 50,
-        paddingVertical: 15,
-        paddingHorizontal: 10,
-        marginHorizontal: 15,
-    },
-    infoButton2: {
-        backgroundColor: colors.secondary,
-        borderRadius: 50,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        marginHorizontal: 10,
-    },
-    desktopInfoButton2: {
-        backgroundColor: colors.secondary,
-        borderRadius: 50,
-        paddingVertical: 15,
-        paddingHorizontal: 30,
-        marginHorizontal: 15,
-    },
-    infoText: {
-        fontSize: 15,
-        color: 'white',
-    },
-    desktopInfoText: {
-        fontSize: 15,
-        color: 'white',
-    },
-    phoneContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    desktopPhoneContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 30,
-    },
-    phoneIcon: {
-        fontSize: 35,
-        color: colors.primary,
-        marginRight: 10,
-    },
-    desktopPhoneIcon: {
-        fontSize: 35,
-        color: colors.primary,
-        marginRight: 15,
-    },
-    phoneText: {
-        fontSize: 25,
-        color: colors.secondary,
-        fontWeight: 'bold',
-    },
-    desktopPhoneText: {
-        fontSize: 25,
-        color: colors.secondary,
-        fontWeight: 'bold',
-    },
-    detailsOuterContainer: {
-        alignItems: 'center',
-        marginBottom: 20,
+        position: 'fixed',
+        left: 700, // Position the avatar to the left side
+        top: 210, // Adjusted to place half of the avatar above the banner
     },
     detailsContainer: {
         backgroundColor: 'white',
@@ -162,6 +92,7 @@ const styles = StyleSheet.create({
         elevation: 2,
         alignItems: 'center', // Center items horizontally
         width: '90%', // Adjust width as needed
+        marginTop: 10, // Added margin to separate details from name
     },
     desktopDetailsContainer: {
         backgroundColor: 'white',
@@ -191,7 +122,7 @@ const styles = StyleSheet.create({
         width: '100%', // Ensure text takes full width
     },
     desktopDetailsText: {
-        fontSize: 20,
+        fontSize: 15,
         color: 'black',
         marginBottom: 15,
         marginLeft: '5%',
@@ -257,7 +188,7 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         position: 'relative',
         top: -2,
-        left: -4,
+        right: 0,
         width: 30,
         textAlign: 'center',
         verticalAlign: 'bottom',
@@ -269,7 +200,7 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         position: 'relative',
         top: -2,
-        left: -9.5,
+        left: 0,
         width: 30,
         textAlign: 'center',
         verticalAlign: 'bottom',
@@ -281,7 +212,7 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         position: 'relative',
         top: -2,
-        left: -5,
+        left: 0,
         width: 30,
         textAlign: 'center',
         verticalAlign: 'bottom',
@@ -305,7 +236,7 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         paddingVertical: 10,
         paddingHorizontal: 20,
-        left:'125%',
+        left:'200%',
         top:'-10%',
         width: '40%',
     },
@@ -313,6 +244,100 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    bannerContainer: {
+        position: 'relative',
+        width: '100%',
+        height: 200,
+    },
+    bannerImage: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
+        position: 'absolute',
+    },
+    infoContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+        marginBottom: 20,
+    },
+    desktopInfoContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start', // Align items to the start
+        marginTop: 10,
+    },
+    infoText: {
+        fontSize: 15,
+        color: 'gray',
+    },
+    desktopInfoText: {
+        fontSize: 15,
+        color: 'gray',
+    },
+    phoneContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    desktopPhoneContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 30,
+    },
+    phoneIcon: {
+        fontSize: 35,
+        color: colors.primary,
+        marginRight: 10,
+    },
+    desktopPhoneIcon: {
+        fontSize: 35,
+        color: colors.primary,
+        marginRight: 15,
+    },
+    phoneText: {
+        fontSize: 25,
+        color: colors.secondary,
+        fontWeight: 'bold',
+    },
+    desktopPhoneText: {
+        fontSize: 25,
+        color: colors.secondary,
+        fontWeight: 'bold',
+    },
+    detailsOuterContainer: {
+        alignItems: 'left',
+        position: 'fixed',
+        top: 150,
+        left: 330,
+        width: '100%',
+    },
+    detailsRow: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start', // Align items to the start
+        position: 'fixed',
+        left: 700, // Position the avatar to the left side
+        top: 260, // Adjusted to place half of the avatar above the banner
+    },
+    detailsColumn: {
+        flexDirection: 'column', // Stack items vertically
+        justifyContent: 'left', // Align items to the start
+        alignItems: 'left', // Align items to the start
+
+    },
+    infoText: {
+        fontSize: 15,
+        color: 'gray',
+        marginRight: 30, // Added margin to separate the detail lines
+    },
+    linkText: {
+        fontSize: 15,
+        color: colors.primary,
+        textDecorationLine: 'underline',
+        marginBottom: 15,
+  
+        textAlign: 'left', // Align text to the left
+        width: '100%', // Ensure text takes full width
     },
 });
 

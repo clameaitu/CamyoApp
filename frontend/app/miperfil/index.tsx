@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, Platform, ScrollView, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, Image, Platform, ScrollView, FlatList, TouchableOpacity, Linking } from 'react-native';
 import frontendData from '../../assets/frontendData.json'; // Adjust the path if necessary
 import styles from './css/UserProfileScreen'; // Adjust the path if necessary
 import { FontAwesome } from '@expo/vector-icons';
@@ -7,6 +7,8 @@ import BottomBar from '../_components/BottomBar.jsx';
 import CamyoWebNavBar from "../_components/CamyoNavBar.jsx";
 import { useNavigation } from '@react-navigation/native';
 import colors from '@/assets/styles/colors';
+import defaultBanner from '../../assets/images/banner_default.jpg'; // Ensure this path is correct or update it accordingly
+
 
 interface UserProfile {
     id: number;
@@ -90,33 +92,25 @@ const UserProfileScreen: React.FC = () => {
     return (
         <>
             {isMobile ? <BottomBar /> : <CamyoWebNavBar />}
-            <ScrollView contentContainerStyle={[isMobile ? styles.container : styles.desktopContainer, { paddingTop: isMobile ? 0 : 100, paddingLeft: 10 }]}>
+            <View style={styles.bannerContainer}>
+                <Image source={defaultBanner} style={styles.bannerImage} />
                 <View style={isMobile ? styles.profileContainer : styles.desktopProfileContainer}>
                     <Image 
                         source={{ uri: user?.avatar }} 
                         style={isMobile ? styles.avatar : styles.desktopAvatar} 
                     />
-                    <View>
+                    <View style={styles.profileDetailsContainer}>
                         <Text style={isMobile ? styles.name : styles.desktopName}>{user?.nombre}</Text>
-                        
-                        {!isMobile && (
-                            <View style={styles.desktopInfoContainer}>
-                                <View style={styles.desktopInfoButton}>
-                                    <Text style={styles.desktopInfoText}>Tipo: {user?.tipo}</Text>
-                                </View>
-                                {user?.experiencia !== undefined && (
-                                    <View style={styles.desktopInfoButton2}>
-                                        <Text style={styles.desktopInfoText}>{user.experiencia} años de experiencia</Text>
-                                    </View>
-                                )}
-                            </View>
-                            
-                        )}
-                        <TouchableOpacity style={isMobile? styles.editProfileButton: styles.desktopEditProfileButton}>
-                        <Text style={styles.editProfileButtonText}>Editar perfil</Text>
-                    </TouchableOpacity>
+                        <View style={styles.detailsRow}>
+                            <Text style={styles.infoText}>Tipo: {user?.tipo}</Text>
+                            {user?.experiencia !== undefined && (
+                                <Text style={styles.infoText}>{user.experiencia} años de experiencia</Text>
+                            )}
+                        </View>
                     </View>
                 </View>
+            </View>
+            <ScrollView contentContainerStyle={[isMobile ? styles.container : styles.desktopContainer, { paddingTop: isMobile ? 0 : 100, paddingLeft: 10 }]}>
                 {isMobile && (
                     <View style={styles.infoContainer}>
                         <View style={styles.infoButton}>
@@ -128,25 +122,32 @@ const UserProfileScreen: React.FC = () => {
                             </View>
                         )}
                     </View>
-                    
-                )}
+                                    )}
                 <View style={styles.detailsOuterContainer}>
-                    <View style={isMobile ? styles.detailsContainer : styles.desktopDetailsContainer}>
+                    <View style={styles.detailsColumn}>
                         <View style={styles.detailItem}>
-                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}> <FontAwesome style={styles.envelopeIcon} name="envelope" size={20}/>  <Text style={styles.boldText}>Contacta con {user?.nombre} en</Text> {user?.email}</Text>
+                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>
+                                <FontAwesome style={styles.envelopeIcon} name="envelope" size={20}/>
+                                 <Text style={styles.linkText}>
+                                    <Text onPress={() => Linking.openURL(`mailto:${user?.email}`)}>{user?.email}</Text>
+                                    </Text>  
+                            </Text>
                         </View>
                         {user?.licencias && (
                             <View style={styles.detailItem}>
-                                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="id-card" size={20}/>  <Text style={styles.boldText}>{user?.nombre} tiene las licencias</Text> {user.licencias.join(', ')}</Text>
+                                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="id-card" size={20}/>{user.licencias.join(', ')}</Text>
                             </View>
                         )}
                         {user?.vehiculo_propio !== undefined && (
                             <View style={styles.detailItem}>
-                                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.truckIcon} name="truck" size={23}/>  <Text style={styles.boldText}>¿Tiene vehículo propio?</Text> {user.vehiculo_propio ? 'Sí' : 'No'}</Text>
+                                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.truckIcon} name="truck" size={23}/>{user.vehiculo_propio ? 'Vehículo propio' : 'Sin vehículo propio'}</Text>
                             </View>
                         )}
                         <View style={styles.detailItem}>
-                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="map" size={20}/>  <Text style={styles.boldText}>{user?.nombre} está ubicado en</Text> {user?.ubicacion}</Text>
+                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="map" size={20}/>{user?.ubicacion}</Text>
+                        </View>
+                        <View style={styles.detailItem}>
+                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="phone" size={20}/>123 456 789</Text>
                         </View>
                     </View>
                 </View>
