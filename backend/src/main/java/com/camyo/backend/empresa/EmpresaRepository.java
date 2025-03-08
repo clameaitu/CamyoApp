@@ -12,4 +12,7 @@ public interface EmpresaRepository extends JpaRepository<Empresa, Integer> {
     @Query("SELECT DISTINCT empresa FROM Empresa empresa WHERE empresa.usuario.id = :usuarioId")
 	public Optional<Empresa> obtenerPorUsuario(int usuarioId);
 
+    @Query("SELECT DISTINCT empresa FROM Empresa empresa WHERE empresa.nif = :nif")
+	public Optional<Empresa> obtenerPorNif(String nif);
+
 }

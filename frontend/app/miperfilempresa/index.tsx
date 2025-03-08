@@ -2,6 +2,7 @@ import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet, Modal } fr
 import { useRouter } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { useState } from "react";
+import routes from "../_components/routes";
 
 export default function CompanyDetailScreen() {
   const router = useRouter();
@@ -48,7 +49,8 @@ export default function CompanyDetailScreen() {
           <Text style={styles.companyName}>SEUR</Text>
           <Text style={styles.companyDescription}>SEUR es la compañía referente en transporte urgente y logística integral en España</Text>
           <Text style={styles.companyDetails}>Transporte terrestre en camión · Sevilla · Empleados +10 mil</Text>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} 
+            onPress={() => router.replace(routes.createOffer)}>
             <Text style={styles.buttonText}>Publicar Nueva Oferta</Text>
           </TouchableOpacity>
         </View>

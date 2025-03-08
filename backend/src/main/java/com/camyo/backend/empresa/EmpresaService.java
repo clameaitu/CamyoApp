@@ -37,6 +37,11 @@ public class EmpresaService {
 		return empresaRepository.obtenerPorUsuario(usuarioId);
 	}
 
+	@Transactional(readOnly = true)
+	public Optional<Empresa> obtenerEmpresaPorNif(String nif) throws DataAccessException {
+		return empresaRepository.obtenerPorNif(nif);
+	}
+
     @Transactional
     public Empresa guardarEmpresa(Empresa empresa) throws DataAccessException {
         empresaRepository.save(empresa);

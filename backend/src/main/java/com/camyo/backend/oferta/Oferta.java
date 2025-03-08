@@ -1,6 +1,7 @@
 package com.camyo.backend.oferta;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -13,6 +14,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.DecimalMin;
@@ -49,7 +52,7 @@ public class Oferta {
     @Column(name="estado")
     OfertaEstado estado;
 
-    @Column(name="fecha_publicación")
+    @Column(name="fecha_publicacion")
     @DateTimeFormat(pattern = "yyyy/MM/dd HH/mm")
     LocalDateTime fechaPublicacion;
     
@@ -57,9 +60,13 @@ public class Oferta {
     @DecimalMin(value = "0.0", inclusive = false, message = "El sueldo debe ser mayor a 0")
     Double sueldo;
 
-    @ManyToOne
+    @ManyToOne(optional=true)
     @JoinColumn(name = "camionero_id")
     private Camionero camionero;
+
+    @ManyToMany
+    @JoinTable(name = "aplicados", joinColumns = @JoinColumn(name = "oferta_id"), inverseJoinColumns = @JoinColumn(name = "camionero_id"))
+    private List<Camionero> aplicados;
 
     @ManyToOne
     @JoinColumn(name = "empresa_id")

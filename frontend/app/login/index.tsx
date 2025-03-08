@@ -1,49 +1,70 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import { useRouter } from "expo-router";
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import globalStyles from "../../assets/styles/globalStyles";
 import colors from "../../assets/styles/colors";
 
 const LoginScreen = () => {
-  const [email, setEmail] = useState("");
+  const router = useRouter();
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
   const handleLogin = () => {
-    console.log("Iniciar sesión con:", { email, password });
-    // Aquí iría la lógica para autenticación
+    console.log("Iniciar sesión con:", { username, password });
   };
 
   return (
-    <ScrollView contentContainerStyle={[globalStyles.container, { justifyContent: "center", flexGrow: 1, alignItems: "center" }]}>
-      
-      <View style={globalStyles.formContainer}>
-      <Text style={globalStyles.title}>Iniciar Sesión</Text>
-        <TextInput
-          style={globalStyles.input}
-          placeholder="Correo Electrónico"
-          placeholderTextColor={colors.secondary}
-          keyboardType="email-address"
-          onChangeText={setEmail}
-          value={email}
-        />
+    <ScrollView contentContainerStyle={[globalStyles.container, { justifyContent: "center", flexGrow: 1, alignItems: "center" }]}>  
+      <View style={globalStyles.formContainerHalf}>
+        <Text style={globalStyles.title}>Iniciar Sesión</Text>
         
-        <TextInput
-          style={globalStyles.input}
-          placeholder="Contraseña"
-          placeholderTextColor={colors.secondary}
-          secureTextEntry
-          onChangeText={setPassword}
-          value={password}
-        />
+        <View style={{ width: "90%", marginBottom: 15 }}>
+          <Text style={{ fontSize: 12, color: colors.secondary, marginLeft: 8, marginBottom: -6, backgroundColor: colors.white, alignSelf: "flex-start", paddingHorizontal: 5, zIndex: 1 }}>Nombre de Usuario</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: colors.mediumGray, borderRadius: 8, paddingHorizontal: 10, backgroundColor: colors.white }}>
+            <MaterialIcons name="person" size={20} color={colors.primary} />
+            <TextInput
+              style={{ flex: 1, height: 40, paddingLeft: 8 }}
+              value={username}
+              onChangeText={setUsername}
+            />
+          </View>
+        </View>
         
-        <TouchableOpacity style={[globalStyles.button, { marginBottom: 10, borderRadius: 12, elevation: 5 }]}
-           onPress={handleLogin}>
-          <Text style={[globalStyles.buttonText, { fontSize: 30 }]}>Ingresar</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity>
-          <Text style={{ color: colors.primary, textAlign: "center", marginTop: 16 }}>¿Olvidaste tu contraseña?</Text>
-        </TouchableOpacity>
+        <View style={{ width: "90%", marginBottom: 15 }}>
+          <Text style={{ fontSize: 12, color: colors.secondary, marginLeft: 8, marginBottom: -6, backgroundColor: colors.white, alignSelf: "flex-start", paddingHorizontal: 5, zIndex: 1 }}>Contraseña</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: colors.mediumGray, borderRadius: 8, paddingHorizontal: 10, backgroundColor: colors.white }}>
+            <Entypo name="lock" size={20} color={colors.primary} />
+            <TextInput
+              style={{ flex: 1, height: 40, paddingLeft: 8, outline:"none" }}
+              secureTextEntry={!passwordVisible}
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
+              <Entypo name={passwordVisible ? "eye-with-line" : "eye"} size={18} color={colors.mediumGray} />
+            </TouchableOpacity>
+          </View>
+        </View>
 
+        <TouchableOpacity style={[globalStyles.button, { marginBottom: 10, borderRadius: 12, elevation: 5 }]} onPress={handleLogin}>
+          <Text style={[globalStyles.buttonText, { fontSize: 25 }]}>Ingresar</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity onPress={() => router.push("/")}> 
+          <Text style={{ color: colors.secondary, textAlign: "center", marginTop: 16, marginBottom: 9 }}>He olvidado mi contraseña</Text>
+        </TouchableOpacity>
+        
+        <View style={globalStyles.separatorContainer}>
+          <View style={globalStyles.separator} />
+          <Text style={globalStyles.separatorText}>¿Eres nuevo?</Text>
+          <View style={globalStyles.separator} />
+        </View>
+        
+        <TouchableOpacity style={globalStyles.buttonOrange} onPress={() => router.push("/registro")}>
+          <Text style={globalStyles.buttonText}>Regístrate</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );

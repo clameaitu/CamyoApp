@@ -6,6 +6,7 @@ const routes = {
     profile: "/miperfil",
     profileEmpresa: "/miperfilempresa",
     listcompanies: "/empresas",
+    createOffer: "/oferta/crear",
   };
   
   export default routes;
