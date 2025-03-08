@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -64,7 +65,7 @@ public class AuthController {
     @Operation(summary = "Iniciar sesión", description = "Autentica a un usuario y devuelve un token JWT.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Autenticación exitosa"),
-        @ApiResponse(responseCode = "400", description = "Credenciales incorrectas")
+        @ApiResponse(responseCode = "401", description = "Credenciales incorrectas")
     })
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -82,7 +83,7 @@ public class AuthController {
 	
 			return ResponseEntity.ok().body(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), roles));
 		} catch (BadCredentialsException exception) {
-			return ResponseEntity.badRequest().body("Credenciales incorrectas!");
+			return new ResponseEntity<String>("Credenciales incorrectas!", HttpStatus.UNAUTHORIZED);
 		}
 	}
 
