@@ -1,65 +1,64 @@
 import React, { useState } from "react";
 import { 
-  View, Text, TextInput, TouchableOpacity, ScrollView, 
-  KeyboardAvoidingView, Platform, StyleSheet, useWindowDimensions
+  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet 
 } from "react-native";
-import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import colors from "../../assets/styles/colors"; 
-import { FontAwesome5 } from "@expo/vector-icons";
+import globalStyles from "../../assets/styles/globalStyles";
 import Selector from "../_components/Selector";
-import globalStyles from "@/assets/styles/globalStyles";
+import MultiSelector from "../_components/MultiSelector";
 
 
-const licencias = ["AM", "A1", "A2", "A", "B", "C1", "C", "C1E", "CE", "D1", "DE", "D1E", "D"];
-
-export default function PublishOfferScreen() {
-  const router = useRouter();
-  const { width } = useWindowDimensions();
-  
-  const isWideScreen = width > 1074;  
-
+const CrearOfertaScreen = () => {
   const [tipoOferta, setTipoOferta] = useState("TRABAJO");
-  const [titulo, setTitulo] = useState("");
-  const [experiencia, setExperiencia] = useState("");
-  const [licencia, setLicencia] = useState("");
-  const [notas, setNotas] = useState("");
-  const [sueldo, setSueldo] = useState("");
+
   const [formData, setFormData] = useState({
-      //Oferta
-      titulo: "",
-      experiencia: "",
-      licencia: "",
-      notas: "",
-      estado: "",
-      sueldo: "",
-      fechaPublicación: "",
-      empresa: "",
+    titulo: "",
+    experiencia: "",
+    licencia: "",
+    notas: "",
+    estado: "",
+    sueldo: "",
+    fechaPublicacion: "",
+    empresa: "",
 
-      // Trabajo
-      fechaIncorporación: "",
-      jornada: "",
+    // Trabajo
+    fechaIncorporacion: "",
+    jornada: "",
 
-      // Carga
-      mercancia: "",
-      peso: "",
-      origen: "",
-      destino: "",
-      distancia: "",
-      inicio: "",
-      finMinimo: "",
-      finMaximo: "",
-  
-    });
-  
+    // Carga
+    mercancia: "",
+    peso: "",
+    origen: "",
+    destino: "",
+    distancia: "",
+    inicio: "",
+    finMinimo: "",
+    finMaximo: "",
+  });
+
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prevState) => ({ ...prevState, [field]: value }));
-  };  
-  
+  };
+
+  const validateForm = () => {
+    if (!formData.titulo || !formData.empresa) {
+      alert("Los campos obligatorios deben completarse.");
+      return false;
+    }
+    return true;
+  };
+
+  const handlePublish = () => {
+    if (validateForm()) {
+      console.log("Publicando oferta:", formData);
+    }
+  };
+
   // Función para renderizar cada input del formulario
   const renderInput = (label, field, icon, keyboardType = "default", secureTextEntry = false, multiline = false) => (
     <View style={{ width: '90%', marginBottom: 15 }}>
-      <Text style={{ fontSize: 12, color: colors.secondary, marginLeft: 8, marginBottom: -6, backgroundColor: colors.white, alignSelf: 'flex-start', paddingHorizontal: 5, zIndex: 1 }}>{label}</Text>
+      <Text style={{ fontSize: 16, color: colors.secondary, marginLeft: 8, marginBottom: -6, backgroundColor: colors.white, alignSelf: 'flex-start', paddingHorizontal: 5, zIndex: 1 }}>{label}</Text>
       <View style={{ flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: colors.mediumGray, borderRadius: 8, paddingHorizontal: 10, backgroundColor: colors.white }}>      
         {icon}
         <TextInput
@@ -74,100 +73,177 @@ export default function PublishOfferScreen() {
     </View>
   );
 
-
   return (
-    <ScrollView style={[globalStyles.container, { paddingTop: 100 }]}>
-      <View style={{ flexDirection: isWideScreen ? "row" : "column", justifyContent: "center", alignItems: "center", width: "100%", marginTop: isWideScreen ? -25 : -100, marginBottom: isWideScreen ? -100 : 155 }}>
-        <View style={[globalStyles.formContainerHalf, { marginRight: isWideScreen ? 20 : 0 }]}>
-          <Text style={globalStyles.title}>Nueva oferta</Text>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.container}>
+        <View style={styles.cardContainer}>
+          <Text style={styles.title}>Crear nueva oferta</Text>
 
-            {renderInput("Titulo", "titulo", <FontAwesome5 size={20} color={colors.primary} />)}
-            {renderInput("Experiencia", "experiencia", <FontAwesome5 size={20} color={colors.primary} />)}
-            {renderInput("Licencia", "licencia", <FontAwesome5  size={20} color={colors.primary} />)}
-            {renderInput("Descripcion", "notas", <FontAwesome5  size={20} color={colors.primary} />)}
-            {renderInput("Estado ", "estado", <FontAwesome5  size={20} color={colors.primary} />)}
-            {renderInput("Sueldo", "sueldo", <FontAwesome5  size={20} color={colors.primary} />)}
-            {renderInput("Fecha Publicacion", "fechaPublicación", <FontAwesome5  size={20} color={colors.primary} />)}
-            {renderInput("Empresa", "empresa", <FontAwesome5 size={20} color={colors.primary} />)}
-
-        </View>
-
-      <View style={[globalStyles.formContainerHalf, { marginLeft: isWideScreen ? 20 : 0 }]}> 
-
-        <Text style={globalStyles.title}>¿Qué tipo de oferta quieres?</Text>
-
-        {/* Selector de Usuario */}
-        <View style={{ flexDirection: "row", justifyContent: "space-between", width: "100%", marginBottom: 20 }}>
-          <TouchableOpacity
-            style={[globalStyles.userTypeButton, tipoOferta === "TRABAJO" ? globalStyles.selectedUserType : globalStyles.unselectedUserType]}
-            onPress={() => setTipoOferta("TRABAJO")}
-          >
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-              <FontAwesome5 name="truck" size={24} color={tipoOferta === "TRABAJO" ? colors.white : colors.secondary} style={{ marginRight: 10 }} />
-              <Text style={[globalStyles.userTypeText, { color: tipoOferta === "TRABAJO" ? colors.white : colors.secondary }]}>
-                Trabajo
+          {/* Campos generales */}
+          {renderInput("Título", "titulo", <FontAwesome5 name="tag" size={20} color={colors.primary} />)}
+          {renderInput("Experiencia", "experiencia", <FontAwesome5 name="briefcase" size={20} color={colors.primary} />)}
+          <View style={styles.inputContainer}>
+              <Text style={{ color: colors.secondary, fontSize: 16, marginRight: 10, flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
+                Licencia:
               </Text>
+              <MultiSelector 
+                value={formData.licencia}
+                onChange={(value) => handleInputChange("licencia", value)}
+                options={["C1","C","C1+E","C+E","D1","D+E","E","D"]}
+                colors={colors} 
+              />
             </View>
-          </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[globalStyles.userTypeButton, tipoOferta === "CARGA" ? globalStyles.selectedUserType : globalStyles.unselectedUserType]}
-            onPress={() => setTipoOferta("CARGA")}
-          >
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-              <MaterialIcons name="business" size={24} color={tipoOferta === "CARGA" ? colors.white : colors.secondary} style={{ marginRight: 10 }} />
-              <Text style={[globalStyles.userTypeText, { color: tipoOferta === "CARGA" ? colors.white : colors.secondary }]}>
-                De carga
+          {renderInput("Descripción", "notas", <FontAwesome5 name="align-left" size={20} color={colors.primary} />, "default", true)}
+          {renderInput("Estado", "estado", <FontAwesome5 name="flag" size={20} color={colors.primary} />)}
+          {renderInput("Sueldo", "sueldo", <FontAwesome5 name="money-bill-wave" size={20} color={colors.primary} />)}
+          {renderInput("Fecha de publicación", "fechaPublicacion", <FontAwesome5 name="calendar" size={20} color={colors.primary} />)}
+          {renderInput("Empresa", "empresa", <FontAwesome5 name="building" size={20} color={colors.primary} />)}
+
+          {/* Selector de tipo de oferta */}
+          <Text style={styles.title}>¿Qué tipo de oferta quieres publicar?</Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.userTypeButton, tipoOferta === "TRABAJO" ? styles.selectedButton : styles.unselectedButton]}
+              onPress={() => setTipoOferta("TRABAJO")}
+            >
+              <FontAwesome5 size={24} color={tipoOferta === "TRABAJO" ? colors.white : colors.secondary} />
+              <Text style={[styles.userTypeText, tipoOferta === "TRABAJO" ? styles.selectedText : styles.unselectedText]}>
+                TRABAJO
               </Text>
-            </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.userTypeButton, tipoOferta === "CARGA" ? styles.selectedButton : styles.unselectedButton]}
+              onPress={() => setTipoOferta("CARGA")}
+            >
+              <FontAwesome5 size={24} color={tipoOferta === "CARGA" ? colors.white : colors.secondary} />
+              <Text style={[styles.userTypeText, tipoOferta === "CARGA" ? styles.selectedText : styles.unselectedText]}>
+                CARGA
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Campos dinámicos según el tipo de oferta */}
+          {tipoOferta === "TRABAJO" ? (
+            <>
+              {renderInput("Fecha de incorporación", "fechaIncorporacion", <FontAwesome5 name="calendar-check" size={20} color={colors.primary} />)}
+
+              <View style={styles.inputContainer}>
+                <Text style={{ color: colors.secondary, fontSize: 16, marginRight: 10, flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
+                  Jornada:
+                </Text>              
+                <Selector 
+                  value={formData.jornada} 
+                  onChange={(value) => handleInputChange("jornada", value)} 
+                  options={["Regular", "Flexible", "Completa", "Nocturna", "Relevos", "Mixta"]} 
+                  colors={colors} 
+                  globalStyles={globalStyles} 
+                  />
+              </View>
+            </>
+          ) : (
+            <>
+              {renderInput("Mercancía", "mercancia", <FontAwesome5 name="box" size={20} color={colors.primary} />)}
+              {renderInput("Peso", "peso", <FontAwesome5 name="weight" size={20} color={colors.primary} />)}
+              {renderInput("Origen", "origen", <FontAwesome5 name="map-marker-alt" size={20} color={colors.primary} />)}
+              {renderInput("Destino", "destino", <FontAwesome5 name="map-marker" size={20} color={colors.primary} />)}
+              {renderInput("Distancia", "distancia", <FontAwesome5 name="road" size={20} color={colors.primary} />)}
+              {renderInput("Inicio", "inicio", <FontAwesome5 name="clock" size={20} color={colors.primary} />)}
+              {renderInput("Fin mínimo", "finMinimo", <FontAwesome5 name="calendar-minus" size={20} color={colors.primary} />)}
+              {renderInput("Fin máximo", "finMaximo", <FontAwesome5 name="calendar-plus" size={20} color={colors.primary} />)}
+            </>
+          )}
+
+          {/* Botón de publicación */}
+          <TouchableOpacity style={styles.publishButton} onPress={handlePublish}>
+            <Text style={styles.publishButtonText}>Publicar oferta</Text>
           </TouchableOpacity>
         </View>
-
-        {/* Campos dinámicos según usuario */}
-        {tipoOferta === "TRABAJO" ? (
-          <>
-            {renderInput("Fecha Incorporacion", "fechaIncorporación", <FontAwesome5 size={20} color={colors.primary} />)}
-
-            <Text style={{ color: colors.secondary, fontSize: 16, marginRight: 10, flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
-              Jornada:</Text>
-            <Selector 
-              value={formData.jornada} 
-              onChange={(value) => handleInputChange("jornada", value)} 
-              options={["REGULAR","FLEXIBLE","COMPLETA","NOCTURNA","RELEVOS","MIXTA"]} 
-              colors={colors} 
-              globalStyles={globalStyles} 
-            />
-          </>
-
-        ) : (
-
-          <>
-
-          {renderInput("Mercancia", "mercancia", <FontAwesome5 size={20} color={colors.primary} />)}
-          {renderInput("Peso", "peso", <FontAwesome5  size={20} color={colors.primary} />)}
-          {renderInput("Origen", "origen", <FontAwesome5 size={20} color={colors.primary} />)}
-          {renderInput("Destino", "destino", <FontAwesome5 size={20} color={colors.primary} />)}
-          {renderInput("Distancia", "distancia", <FontAwesome5  size={20} color={colors.primary} />)}
-          {renderInput("Inicio", "inicio", <FontAwesome5  size={20} color={colors.primary} />)}
-          {renderInput("Fin Minimo", "finMinimo", <FontAwesome5  size={20} color={colors.primary} />)}
-          {renderInput("Fin Maximo", "finMaximo", <FontAwesome5  size={20} color={colors.primary} />)}
-
-
-          </>
-        )}
-
-        {/* Botón de registro */}
-        <TouchableOpacity 
-          style={[
-            globalStyles.button, 
-            { width: "100%", borderRadius: 12, elevation: 5 }
-          ]}
-        >
-          <Text style={[globalStyles.buttonText, { fontSize: 30 }]}>Publicar oferta</Text>
-        </TouchableOpacity>
       </View>
-    </View>
-  </ScrollView>
-
+    </ScrollView>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.lightGray,
+    paddingVertical: 20,
+    paddingTop: 80,
+  },
+  container: {
+    width: "100%",
+    maxWidth: 600,
+    paddingHorizontal: 20,
+  },
+  cardContainer: {
+    backgroundColor: colors.white,
+    paddingVertical: 40,
+    paddingHorizontal: 30,
+    borderRadius: 12,
+    elevation: 5,
+    alignItems: "center",
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: colors.secondary,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  publishButton: {
+    backgroundColor: colors.primary,
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    width: "100%",
+    alignItems: "center",
+  },
+  publishButtonText: {
+    color: colors.white,
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  inputContainer: {
+    width: "90%",
+    marginBottom: 15,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    maxWidth: 600,
+  },
+  userTypeButton: {
+    flex: 1,
+    marginHorizontal: 10,
+    paddingVertical: 15,
+    borderRadius: 8,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  userTypeText: {
+    fontSize: 16,
+    color: colors.white,
+  },
+  selectedButton: {
+    backgroundColor: colors.primary,
+  },
+  unselectedButton: {
+    backgroundColor: colors.lightGray,
+    borderWidth: 1,
+    borderColor: colors.mediumGray,
+  },
+  selectedText: {
+    color: colors.white,
+  },
+  unselectedText: {
+    color: colors.secondary,
+  },
+});
+
+export default CrearOfertaScreen;
