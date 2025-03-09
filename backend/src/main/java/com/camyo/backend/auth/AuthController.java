@@ -6,12 +6,14 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,11 +32,15 @@ import com.camyo.backend.configuration.services.UserDetailsImpl;
 import com.camyo.backend.empresa.EmpresaService;
 import com.camyo.backend.usuario.UsuarioService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = "http://localhost:8081")
 @Tag(name = "Autenticación", description = "API de autenticación")
 public class AuthController {
     private final AuthenticationManager authenticationManager;
@@ -55,6 +61,12 @@ public class AuthController {
 		this.camioneroService = camioneroService;
 	}
 
+
+    @Operation(summary = "Iniciar sesión", description = "Autentica a un usuario y devuelve un token JWT.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Autenticación exitosa"),
+        @ApiResponse(responseCode = "401", description = "Credenciales incorrectas")
+    })
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 		try {
@@ -71,45 +83,58 @@ public class AuthController {
 	
 			return ResponseEntity.ok().body(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), roles));
 		} catch (BadCredentialsException exception) {
-			return ResponseEntity.badRequest().body("Bad Credentials!");
+			return new ResponseEntity<String>("Credenciales incorrectas!", HttpStatus.UNAUTHORIZED);
 		}
 	}
 
+	@Operation(summary = "Validar token JWT", description = "Verifica si un token JWT es válido.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Token válido o inválido")
+    })
 	@GetMapping("/validate")
 	public ResponseEntity<Boolean> validateToken(@RequestParam String token) {
 		Boolean isValid = jwtUtils.validateJwtToken(token);
 		return ResponseEntity.ok(isValid);
 	}
 	
-	
+	@Operation(summary = "Registrar camionero", description = "Registra un nuevo camionero en el sistema.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Registro existoso"),
+        @ApiResponse(responseCode = "400", description = "Error en el registro")
+    })
 	@PostMapping("/signup/camionero")	
 	public ResponseEntity<MessageResponse> registerCamionero(@Valid @RequestBody SignupRequestCamionero signUpRequest) throws DataAccessException, IOException {
 		if (usuarioService.existeUsuarioPorUsername(signUpRequest.getUsername()).equals(true)) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: El usuario ya existe!"));
+			return ResponseEntity.badRequest().body(new MessageResponse("El nombre de usuario '" + signUpRequest.getUsername() + "' ya está en uso. Por favor, elige otro."));
 		}
-        if (usuarioService.existeUsuarioPorEmail(signUpRequest.getEmail()).equals(true)) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: El email ya existe!"));
+		if (usuarioService.existeUsuarioPorEmail(signUpRequest.getEmail()).equals(true)) {
+			return ResponseEntity.badRequest().body(new MessageResponse("El correo electrónico '" + signUpRequest.getEmail() + "' ya está registrado."));
 		}
 		if (camioneroService.obtenerCamioneroPorDNI(signUpRequest.getDni()).isPresent()) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: El DNI ya existe!"));
+			return ResponseEntity.badRequest().body(new MessageResponse("El DNI '" + signUpRequest.getDni() + "' ya está asociado a otra cuenta. Verifica tus datos."));
 		}
 		authService.createCamionero(signUpRequest);
-		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+		return ResponseEntity.ok(new MessageResponse("Registro existoso!"));
 	}
 
+	@Operation(summary = "Registrar empresa", description = "Registra una nueva empresa en el sistema.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Registro exitoso"),
+        @ApiResponse(responseCode = "400", description = "Error en el registro")
+    })
 	@PostMapping("/signup/empresa")	
 	public ResponseEntity<MessageResponse> registerEmpresa(@Valid @RequestBody SignupRequestEmpresa signUpRequest) throws DataAccessException, IOException {
 		if (usuarioService.existeUsuarioPorUsername(signUpRequest.getUsername()).equals(true)) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: El usuario ya existe!"));
+			return ResponseEntity.badRequest().body(new MessageResponse("El nombre de usuario '" + signUpRequest.getUsername() + "' ya está en uso. Por favor, elige otro."));
 		}
         if (usuarioService.existeUsuarioPorEmail(signUpRequest.getEmail()).equals(true)) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: El email ya existe!"));
+			return ResponseEntity.badRequest().body(new MessageResponse("El correo electrónico '" + signUpRequest.getEmail() + "' ya está registrado."));
 		}
 		if (empresaService.obtenerEmpresaPorNif(signUpRequest.getNif()).isPresent()) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: El NIF ya existe!"));
+			return ResponseEntity.badRequest().body(new MessageResponse("El NIF '" + signUpRequest.getNif() + "' ya está registrado. Verifica tus datos."));
 		}
 		authService.createEmpresa(signUpRequest);
-		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+		return ResponseEntity.ok(new MessageResponse("Registro exitoso!"));
 	}
     
 }
