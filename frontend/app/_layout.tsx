@@ -27,11 +27,12 @@ export default function RootLayout() {
   return (
     <>
       {!isMobile && <CamyoWebNavBar />}
-      {/*name es el nombre que se usa para navegar y hacer router.push(name)*/}
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index"/>
         <Stack.Screen name="login"/>
         <Stack.Screen name="registro"/>
+        <Stack.Screen name="registro/camionero"/>
+        <Stack.Screen name="registro/empresa"/>
         <Stack.Screen name="miperfil"/>
         <Stack.Screen name="miperfilempresa"/>
         <Stack.Screen name="oferta/crear"/>
