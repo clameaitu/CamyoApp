@@ -32,6 +32,13 @@ const globalStyles = StyleSheet.create({
     alignItems: "center",
     marginTop: 16,
   },
+    buttonOrange: {
+    backgroundColor: colors.primary,
+    padding: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    width: "90%",
+  },
   buttonText: {
     color: colors.white,
     fontWeight: "bold",
@@ -85,6 +92,22 @@ const globalStyles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
     marginVertical: 20,
+  },
+  separatorContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "90%",
+    marginVertical: 20,
+  },
+  separator: {
+    flex: 1,
+    height: 1,
+    backgroundColor: colors.mediumGray,
+  },
+  separatorText: {
+    marginHorizontal: 10,
+    color: colors.secondary,
+    fontWeight: "bold",
   },
   
 });

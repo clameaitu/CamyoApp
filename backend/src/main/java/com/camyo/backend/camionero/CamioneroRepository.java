@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CamioneroRepository extends JpaRepository<Camionero, Integer>{
     @Query("SELECT DISTINCT c FROM Camionero c WHERE c.usuario.id = :usuarioId")
-	public Optional<Camionero> obtenerCamioneroPorUsuario(int userId);
+	public Optional<Camionero> obtenerCamioneroPorUsuario(int usuarioId);
 
     @Query("SELECT DISTINCT camionero FROM Camionero camionero WHERE camionero.dni = :dni")
 	public Optional<Camionero> obtenerPorDNI(String dni);
