@@ -94,8 +94,7 @@ export default function CamyoWebNavBar() {
                 />
                 <TouchableOpacity><FontAwesome name="search" size={24} color="black" style={styles.searchIcon} /></TouchableOpacity>
               </View>
-              <TouchableOpacity style={styles.shareButton1} onPress={() => router.push(routes.login)}><Text style={styles.shareText}>Iniciar Sesión</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.shareButton2} onPress={() => router.push(routes.register)}><Text style={styles.shareText}>Registrarse</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.shareButton} onPress={() => router.push(routes.login)}><Text style={styles.shareText}>Iniciar Sesión</Text></TouchableOpacity>
             </View>
           </View>
         </>
@@ -272,17 +271,7 @@ const styles = StyleSheet.create({
     color: colors.primary,
     marginRight: 10,
   },
-  shareButton1: {
-    backgroundColor: 'transparent', 
-    borderColor: colors.white,
-    borderWidth: 2, 
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginVertical: 5,
-    margin: 2,
-  },
-  shareButton2: {
+  shareButton: {
     backgroundColor: colors.primary, 
     borderColor: colors.primary, 
     borderWidth: 2, 
