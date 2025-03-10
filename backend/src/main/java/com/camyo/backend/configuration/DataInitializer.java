@@ -92,18 +92,19 @@ public class DataInitializer {
 
                         // Insert Ofertas
                         statement.addBatch("INSERT IGNORE INTO ofertas (id, titulo, experiencia, licencia, notas, estado, fecha_publicacion, sueldo, camionero_id, empresa_id) VALUES "
-                                + "(201, 'Conductor de Carga Pesada', 5, 'D1_E', 'Se requiere experiencia en cargas pesadas', 'PENDIENTE', '2025-03-05 08:00', 2500.00, NULL, 201),"
-                                + "(202, 'Transportista Nacional', 8, 'D1_E', 'Viajes a nivel nacional', 'PENDIENTE', '2025-03-03 10:45', 3200.00, NULL, 202),"
-                                + "(203, 'Carga de Sevilla a Madrid', 2, 'B', 'Transportar 1200 kg de electrodomesticos de Sevilla a Madrid', 'ACEPTADA', '2025-03-02 20:30', 2500.00, 202, 201),"
-                                + "(204, 'Carga de Sevilla a Murcia', 0, 'A1', 'Transportar 500 kg de ropa de Sevilla a Murcia', 'PENDIENTE', '2025-03-02 09:30', 2500.00, NULL, 202),"
-                                + "(205, 'Conductor Nocturna', 10, 'D1_E', 'Buscamos trabajador para mover cargas en horario nocturno', 'PENDIENTE', '2025-01-05 08:00', 2500.00, NULL, 201),"
-                                + "(206, 'Transportista en Valencia', 8, 'D1_E', 'Viajes limitados a la comunidad valenciana', 'PENDIENTE', '2025-03-03 10:45', 3200.00, NULL, 202),"
-                                + "(207, 'Carga de Barcelona a Sevilla', 20, 'B', 'Transportar 10 t de alimentos de Barcelona a Sevilla', 'ACEPTADA', '2025-07-02 09:30', 5000.00, 201, 201),"
-                                + "(208, 'Carga de Barcelona a Madrid', 2, 'A1', 'Transportar 500 kg de ropa de Sevilla a Murcia', 'RECHAZADA', '2025-01-02 09:30', 2500.00, NULL, 202),"
-                                + "(209, 'Conductor de Multiples cargas', 5, 'D1_E', 'Se requiere experiencia, tanto para cargas pesadas como frágiles', 'ACEPTADA', '2025-02-10 08:00', 2500.00, 202, 201),"
-                                + "(210, 'Transportista en Andalucía', 8, 'D1_E', 'Viajes limitados a la comunidad andaluza', 'PENDIENTE', '2025-03-03 10:45', 3200.00, NULL, 202),"
-                                + "(211, 'Carga de Valencia a Vigo', 2, 'B', 'Transportar 3.5 t de pescado de Valencia a Vigo', 'ACEPTADA', '2025-03-02 09:30', 2500.00, 203, 201),"
-                                + "(212, 'Carga de Sevilla a Alicante', 2, 'C', 'Transportar 300 kg de paquetes de Sevilla a Murcia', 'PENDIENTE', '2025-03-02 18:00', 2500.00, NULL, 202)");
+                                + "(201, 'Conductor de Carga Pesada', 5, 'D1_E', 'Se requiere experiencia en cargas pesadas', 'PENDIENTE', '2025-03-05 08:00:00.000000', 2500.00, NULL, 201),"
+                                + "(202, 'Transportista Nacional', 8, 'D1_E', 'Viajes a nivel nacional', 'PENDIENTE', '2025-03-03 10:45:00.000000', 3200.00, NULL, 202),"
+                                + "(203, 'Carga de Sevilla a Madrid', 2, 'B', 'Transportar 1200 kg de electrodomésticos de Sevilla a Madrid', 'ACEPTADA', '2025-03-02 20:30:00.000000', 2500.00, 202, 201),"
+                                + "(204, 'Carga de Sevilla a Murcia', 0, 'A1', 'Transportar 500 kg de ropa de Sevilla a Murcia', 'PENDIENTE', '2025-03-02 09:30:00.000000', 2500.00, NULL, 202),"
+                                + "(205, 'Conductor Nocturno', 10, 'D1_E', 'Buscamos trabajador para mover cargas en horario nocturno', 'PENDIENTE', '2025-01-05 08:00:00.000000', 2500.00, NULL, 201),"
+                                + "(206, 'Transportista en Valencia', 8, 'D1_E', 'Viajes limitados a la comunidad valenciana', 'PENDIENTE', '2025-03-03 10:45:00.000000', 3200.00, NULL, 202),"
+                                + "(207, 'Carga de Barcelona a Sevilla', 20, 'B', 'Transportar 10 t de alimentos de Barcelona a Sevilla', 'ACEPTADA', '2025-07-02 09:30:00.000000', 5000.00, 201, 201),"
+                                + "(208, 'Carga de Barcelona a Madrid', 2, 'A1', 'Transportar 500 kg de ropa de Sevilla a Murcia', 'RECHAZADA', '2025-01-02 09:30:00.000000', 2500.00, NULL, 202),"
+                                + "(209, 'Conductor de Múltiples Cargas', 5, 'D1_E', 'Se requiere experiencia, tanto para cargas pesadas como frágiles', 'ACEPTADA', '2025-02-10 08:00:00.000000', 2500.00, 202, 201),"
+                                + "(210, 'Transportista en Andalucía', 8, 'D1_E', 'Viajes limitados a la comunidad andaluza', 'PENDIENTE', '2025-03-03 10:45:00.000000', 3200.00, NULL, 202),"
+                                + "(211, 'Carga de Valencia a Vigo', 2, 'B', 'Transportar 3.5 t de pescado de Valencia a Vigo', 'ACEPTADA', '2025-03-02 09:30:00.000000', 2500.00, 203, 201),"
+                                + "(212, 'Carga de Sevilla a Alicante', 2, 'C', 'Transportar 300 kg de paquetes de Sevilla a Murcia', 'PENDIENTE', '2025-03-02 18:00:00.000000', 2500.00, NULL, 202)");
+
 
                         // Insert Trabajos
                         statement.addBatch("INSERT IGNORE INTO trabajos (id, fecha_incorporacion, jornada, oferta_id) VALUES "
@@ -116,13 +117,13 @@ public class DataInitializer {
 
                         // Insert Cargas
                         statement.addBatch("INSERT IGNORE INTO cargas (id, mercancia, peso, origen, destino, distancia, inicio, fin_minimo, fin_maximo, oferta_id) VALUES "
-                                + "(201, 'Electrodomésticos', 1200.50, 'Sevilla', 'Madrid', 530, '2025-03-10 09:30', '2025-03-11 08:00', '2025-03-12 09:30', 203),"
-                                + "(202, 'Ropa', 500.00, 'Sevilla', 'Murcia', 520, '2025-03-10 09:30', '2025-03-11 09:30', '2025-03-12 09:30', 204),"
-                                + "(203, 'Alimentos', 10000.00 , 'Barcelona', 'Sevilla', 830, '2025-07-10 09:30', '2025-07-13 08:00', '2025-07-17 09:30', 207),"
-                                + "(204, 'Muebles', 2000.00, 'Barcelona', 'Madrid', 620, '2025-03-10 09:30', '2025-03-11 09:30', '2025-03-12 09:30', 208),"
-                                + "(205, 'Pescado', 3500.50, 'Valencia', 'Vigo', 955, '2025-03-10 09:30', '2025-03-13 08:00', '2025-05-17 09:30', 211),"
-                                + "(206, 'Conjunto de paquete pequeños', 300.00, 'Sevilla', 'Alicante', 595, '2025-03-10 09:30', '2025-03-11 09:30', '2025-03-12 09:30', 212)");
-
+                                + "(201, 'Electrodomésticos', 1200.50, 'Sevilla', 'Madrid', 530, '2025-03-10 09:30:00.000000', '2025-03-11 08:00:00.000000', '2025-03-12 09:30:00.000000', 203),"
+                                + "(202, 'Ropa', 500.00, 'Sevilla', 'Murcia', 520, '2025-03-10 09:30:00.000000', '2025-03-11 09:30:00.000000', '2025-03-12 09:30:00.000000', 204),"
+                                + "(203, 'Alimentos', 10000.00 , 'Barcelona', 'Sevilla', 830, '2025-07-10 09:30:00.000000', '2025-07-13 08:00:00.000000', '2025-07-17 09:30:00.000000', 207),"
+                                + "(204, 'Muebles', 2000.00, 'Barcelona', 'Madrid', 620, '2025-03-10 09:30:00.000000', '2025-03-11 09:30:00.000000', '2025-03-12 09:30:00.000000', 208),"
+                                + "(205, 'Pescado', 3500.50, 'Valencia', 'Vigo', 955, '2025-03-10 09:30:00.000000', '2025-03-13 08:00:00.000000', '2025-05-17 09:30:00.000000', 211),"
+                                + "(206, 'Conjunto de paquete pequeños', 300.00, 'Sevilla', 'Alicante', 595, '2025-03-10 09:30:00.000000', '2025-03-11 09:30:00.000000', '2025-03-12 09:30:00.000000', 212)");
+                        
                         statement.addBatch("INSERT IGNORE INTO aplicados (oferta_id, camionero_id) VALUES "
                                 + "(201, 201),"
                                 + "(201, 202),"

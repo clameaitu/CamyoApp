@@ -52,7 +52,7 @@ public class Oferta {
     @Column(name="estado")
     OfertaEstado estado;
 
-    @Column(name="fecha_publicacion")
+    @Column(name="fecha_publicacion", columnDefinition = "DATETIME")
     @DateTimeFormat(pattern = "yyyy/MM/dd HH/mm")
     LocalDateTime fechaPublicacion;
     
