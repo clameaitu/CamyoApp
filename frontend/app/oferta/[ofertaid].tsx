@@ -88,7 +88,7 @@ export default function OfertaDetalleScreen() {
                     <>
                         <View style={styles.header}>
                             <Image
-                                source={require('../../assets/images/no-company-logo.png')} 
+                                source={require('frontend/assets/images/no-company-logo.png')} 
                                 style={styles.logo}
                             />
                             <View style={styles.headerText}>
@@ -188,7 +188,7 @@ export default function OfertaDetalleScreen() {
                     <>
                         <View style={styles.header}>
                             <Image
-                                source={require('../../assets/images/no-company-logo.png')} 
+                                source={require('frontend/assets/images/no-company-logo.png')} 
                                 style={styles.logo}
                             />
                             <View style={styles.headerText}>
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#e6e8e6',
         paddingVertical: 20,
-        paddingTop: Platform.OS === "web" ? 90 : 0,
+        paddingTop: Platform.OS === "web" ? '5.8%' : '0%',
         
     },
     scrollContainer: {
