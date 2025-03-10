@@ -43,14 +43,16 @@ public class DataInitializer {
                                 + "(201, 'https://www.example1.com', 'A12345678', 205),"
                                 + "(202, 'https://www.example2.com', 'B87654321', 206),"
                                 + "(203, 'https://www.example3.com', 'A87654321', 207),"
-                                + "(204, 'https://www.example4.com', 'B12345678', 208)");
+                                + "(204, 'https://www.example4.com', 'B12345678', 208),"
+                                + "(205, 'https://www.example5.com', 'C12345678', 210)");
 
                         // Insert Camioneros
                         statement.addBatch("INSERT IGNORE INTO camioneros (id, experiencia, dni, disponibilidad, tieneCAP, expiracionCAP, usuario_id) VALUES "
                                 + "(201, 5, '12345678Z', 'NACIONAL', true, '2025-12-31', 201),"
                                 + "(202, 10, '23456789A', 'NACIONAL', false, '2025-12-31', 202),"
                                 + "(203, 5, '87654321Z', 'NACIONAL', true, '2026-12-31', 203),"
-                                + "(204, 22, '98765432A', 'NACIONAL', false, '2025-05-31', 204)");
+                                + "(204, 22, '98765432A', 'NACIONAL', false, '2025-05-31', 204),"
+                                + "(205, 7, '77777777A', 'NACIONAL', false, '2025-05-31', 209)");
 
                         // Insert Camiones
                         statement.addBatch("INSERT IGNORE INTO camion (id, matricula, modelo, foto, notas, camionero_id) VALUES "
