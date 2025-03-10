@@ -11,7 +11,7 @@ import { useAuth } from "../contexts/AuthContext";
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { user, userToken, logout } = useAuth();
+  const { user, userToken } = useAuth();
 
   return (
     <>
@@ -40,10 +40,6 @@ export default function HomeScreen() {
       {/* Mostrar el perfil solo si estamos en la plataforma web y el usuario está logueado */}
       {Platform.OS === 'web' && user ? (
         <View style={styles.profileContainer}>
-
-          <TouchableOpacity onPress={() => logout()}>
-            <Text style={styles.profileLink}>Logout</Text>
-          </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push("/ejemplo")}>
             <Text style={styles.profileLink}>Ejemplo de uso</Text>
           </TouchableOpacity>
