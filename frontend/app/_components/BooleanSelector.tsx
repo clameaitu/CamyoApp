@@ -16,7 +16,9 @@ const BooleanSelector = ({ value, onChange, colors, globalStyles }) => {
           ]}
           onPress={() => onChange(opcion)}
         >
-          <Text style={{ color: value === opcion ? colors.white : colors.secondary }}>{opcion ? "Sí" : "No"}</Text>
+          <Text style={{ fontSize: 16, color: value === opcion ? colors.white : colors.secondary }}>
+            {opcion ? "Sí" : "No"}
+          </Text>
         </TouchableOpacity>
       ))}
     </View>
