@@ -1,6 +1,6 @@
-import { Text, View, ActivityIndicator, StyleSheet, TouchableOpacity, Image, Platform, ScrollView } from "react-native";
+import { Text, View, ActivityIndicator, StyleSheet, TouchableOpacity, Image, Platform, ScrollView, Alert } from "react-native";
 import React, { useState, useEffect } from "react";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import colors from "frontend/assets/styles/colors";
 
@@ -17,6 +17,7 @@ export default function OfertaDetalleScreen() {
     const [offerCargaData, setOfferCargaData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const { ofertaid } = useLocalSearchParams();
+    const router = useRouter();
 
     const BACKEND_URL = "http://localhost:8080"; //http://ip:8080 para conectar al móvil
 
@@ -64,6 +65,23 @@ export default function OfertaDetalleScreen() {
             fetchData();
         }
     }, [ofertaid]);
+
+    const handleDeleteOffer = async () => {
+        try {
+            const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`, {
+                method: "DELETE",
+            });
+            if (response.ok) {
+                console.log("Oferta eliminada correctamente");
+                router.push("/miperfil"); // Redirige a /miperfil sin mostrar una alerta
+
+            } else {
+                Alert.alert("Error", "No se pudo eliminar la oferta.");
+            }
+        } catch (error) {
+            console.error("Error al eliminar la oferta:", error);
+        }
+    };
 
     if (loading) {
         return (
@@ -256,6 +274,10 @@ export default function OfertaDetalleScreen() {
 
                     </>
                 )}
+
+                <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteOffer}>
+                    <Text style={styles.deleteButtonText}>Eliminar Oferta</Text>
+                </TouchableOpacity>
             </View>
         );
     };
@@ -265,6 +287,7 @@ export default function OfertaDetalleScreen() {
             <View style={styles.container}>
                     {renderOfferCard()}
             </View>
+
         </ScrollView>
 
     );
@@ -381,6 +404,20 @@ const styles = StyleSheet.create({
     errorText: {
         fontSize: 16,
         color: 'red',
+        textAlign: 'center',
+    },
+    deleteButton: {
+        marginTop: 20,
+        paddingVertical: 8,
+        paddingHorizontal: 15,
+        borderRadius: 20,
+        alignSelf: 'flex-end',
+        backgroundColor: 'red',
+    },
+    deleteButtonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
         textAlign: 'center',
     },
 });
