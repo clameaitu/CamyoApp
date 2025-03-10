@@ -62,11 +62,11 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         marginBottom: 10,
         position: 'fixed',
-        left: 420, // Position the avatar to the left side
+        left: 350, // Position the avatar to the left side
         top: 100, // Adjusted to place half of the avatar above the banner
     },
     profileDetailsContainer: {
-        marginLeft: 20, // Added margin to separate details from avatar
+        marginLeft: 50, // Added margin to separate details from avatar
         marginTop: 60, // Adjusted margin to align with the bottom half of the avatar
         
     },
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
         fontSize: 32,
         fontWeight: 'bold',
         position: 'fixed',
-        left: 700, // Position the avatar to the left side
+        left: 600, // Position the avatar to the left side
         top: 210, // Adjusted to place half of the avatar above the banner
     },
     detailsContainer: {
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: 'black',
         marginBottom: 15,
-        marginLeft: '5%',
+        marginLeft: '1%',
         textAlign: 'left', // Align text to the left
         width: '100%', // Ensure text takes full width
     },
@@ -316,13 +316,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-start', // Align items to the start
         position: 'fixed',
-        left: 700, // Position the avatar to the left side
+        left: 600, // Position the avatar to the left side
         top: 260, // Adjusted to place half of the avatar above the banner
     },
     detailsColumn: {
         flexDirection: 'column', // Stack items vertically
         justifyContent: 'left', // Align items to the start
         alignItems: 'left', // Align items to the start
+        position: 'fixed',
 
     },
     infoText: {
@@ -339,6 +340,219 @@ const styles = StyleSheet.create({
         textAlign: 'left', // Align text to the left
         width: '100%', // Ensure text takes full width
     },
+    phone: {
+        flex: 1,
+        flexDirection: "column",
+        justifyContent: "space-between",
+        alignContent: "center",
+        alignItems: "center",
+        backgroundColor: colors.mediumGray,
+      },
+      searchIcon: {
+        color: colors.primary,
+        marginRight: 10,
+      },
+      searchView: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        width: "100%",
+        marginTop: "5%",
+        paddingRight: 15,
+        paddingLeft: 15,
+        marginBottom: 20,
+      },
+      menuIcon: {
+        marginRight: 10,
+      },
+      barraSuperior: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        backgroundColor: colors.lightGray,
+        flex: 1,
+        borderRadius: 25,
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+      },
+      searchInput: {
+        backgroundColor: "transparent",
+        padding: 10,
+        borderRadius: 50,
+        borderColor: "transparent",
+        marginRight: 3,
+        outlineStyle: "none",
+      },
+      webContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: "center",
+        alignContent: "center",
+        flex: 1,
+        backgroundColor: colors.lightGray,
+      },
+      card: {
+        backgroundColor: colors.white,
+        padding: 20,
+        marginVertical: 10,
+        width: "70%",
+        borderRadius: 10,
+        display: "flex",
+        flexWrap:"wrap",
+        flexDirection: "row",
+        alignContent: "center",
+        alignItems:"center",
+        borderLeftWidth: 4,
+        borderColor: "red", // Cambia a "green" si quieres un borde verde
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+      },
+      scrollview: {
+        flex: 1,
+        padding: 10,
+        marginVertical: 40,
+        position: 'absolute',
+        top: 20, // Adjust this value based on the height of CamyoWebNavBar
+        left: 0,
+        right: 0,
+        bottom: -40,
+      },
+    
+      scrollviewIndicator: {
+        backgroundColor: colors.primary,
+        width: 3,
+        borderRadius: 1.5,
+      },
+      companyLogo: {
+        height: 90,
+        width: 90,
+        marginRight:10,
+      },
+      offerTitle: {
+        fontSize: 16,
+        fontWeight: "bold",
+        flexWrap: "wrap",
+        marginBottom: 2,
+        color: colors.secondary
+      },
+      offerDate: {
+        fontSize: 12,
+        color: "gray", flexWrap: "wrap",
+      },
+      offerDetails: {
+        fontSize: 12,
+        fontWeight: "bold",
+        flexWrap: "wrap",
+      },
+      offerDetailsTagExperience: {
+        fontSize: 9,
+        backgroundColor: colors.secondary,
+        borderRadius: 10,
+        color: colors.white,
+        paddingTop: 2,
+        textAlign: "center",
+        textAlignVertical: "center",
+        paddingBottom: 3,
+        paddingLeft: 5,
+        paddingRight: 6,
+        marginRight: 3,
+        fontWeight: "bold",
+        flexWrap: "wrap",
+      },
+      offerDetailsTagLicense: {
+        fontSize: 9,
+        backgroundColor: colors.primary,
+        color: colors.white,
+        borderRadius: 10,
+        paddingTop: 2,
+        textAlign: "center",
+        textAlignVertical: "center",
+        paddingBottom: 3,
+        paddingLeft: 5,
+        paddingRight: 6,
+        marginRight: 3,
+        fontWeight: "700",
+        flexWrap: "wrap",
+      },
+      offerInfo: {
+        fontSize: 12,
+        color: "gray",
+        marginTop: 5,
+        flexWrap: "wrap",
+      },
+      offerSueldo:{
+        fontSize:25,
+        fontWeight:"bold",
+        textAlign:"right",
+        paddingLeft:3,
+        color: colors.secondary,
+        textAlignVertical:"center",
+        width:"35%",
+        alignSelf:"center"
+      
+    
+      },
+      empresa: {
+        fontSize: 20,
+        color: '#0b4f6c',
+        marginTop: 0,
+    },
+      button:{
+        backgroundColor:colors.primary,
+        color:colors.white,
+        paddingLeft:5,
+        paddingRight:5,
+        marginLeft: "2%",
+        marginTop:4,
+        flexDirection:"row",
+        flexWrap:"nowrap",
+        height:40,
+        width: 150,
+        borderRadius:10,
+        alignItems:"center",
+        justifyContent:"center"
+    
+    
+    
+      },
+      buttonText:{
+        color:colors.white,
+        fontWeight:"bold"
+      },
+      detailsIcon:{
+        color:colors.white,
+        alignSelf:"center",
+        marginLeft:3,
+        marginTop:3,
+        marginRight:5,
+    
+      },
+
+        offersContainer: {
+            flex: 1,
+            width: '65%',
+            position: 'absolute',
+            top: 50, // Adjusted to place the offers below the header
+            left: 400,
+            height  : 1000,
+            padding: 10,
+            marginLeft: 20, // Adjust as needed to position next to the details column
+            marginTop: 1, // Adjust to start at the height of the email
+},
 });
 
 export default styles;

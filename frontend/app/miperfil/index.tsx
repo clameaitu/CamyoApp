@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, Platform, ScrollView, FlatList, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, Image, Platform, ScrollView, FlatList, TouchableOpacity, Linking, ActivityIndicator } from 'react-native';
 import frontendData from '../../assets/frontendData.json'; // Adjust the path if necessary
 import styles from './css/UserProfileScreen'; // Adjust the path if necessary
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import BottomBar from '../_components/BottomBar.jsx';
 import CamyoWebNavBar from "../_components/CamyoNavBar.jsx";
 import { useNavigation } from '@react-navigation/native';
 import colors from '@/assets/styles/colors';
 import defaultBanner from '../../assets/images/banner_default.jpg'; // Ensure this path is correct or update it accordingly
-
+import defaultCompanyLogo from '../../assets/images/defaultCompImg.png'; // Ensure this path is correct or update it accordingly
+import { useAuth } from '../../contexts/AuthContext';
+import axios from 'axios';
 
 interface UserProfile {
     id: number;
@@ -57,36 +59,44 @@ const UserProfileScreen: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const navigation = useNavigation();
+    const { userToken, userId } = useAuth();
+    const [offers, setOffers] = useState<any[]>([]);
 
     useEffect(() => {
+
+        fetchOffers();
         // Hide the default header
         navigation.setOptions({ headerShown: false });
 
-        // Simulate fetching user profile
-        const fetchUserProfile = async () => {
-            try {
-                // Simulate a delay
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                // Set the placeholder user data
-                setUser(placeholderUser);
-            } catch (err) {
-                setError('Failed to fetch user profile');
-            } finally {
-                setLoading(false);
-            }
-        };
+        // Fetch user profile based on session ID
+        
+        
 
-        fetchUserProfile();
-    }, []);
+        
+    }, [userToken,userId]);
 
-    if (loading) {
-        return <Text>Loading...</Text>;
-    }
+    const fetchOffers = async () => {
+        try {
+          const response = await axios.get('http://localhost:8080/ofertas');
+          console.log(response.data);
+          setOffers(response.data);
+        } catch (error) {
+          console.error('Error al cargar los datos:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+    
+      if (loading) {
+        return (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        );
+      }
 
-    if (error) {
-        return <Text>{error}</Text>;
-    }
-
+    console.log(userToken)
+    console.log("id" + userId)
     const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 
     return (
@@ -151,6 +161,7 @@ const UserProfileScreen: React.FC = () => {
                         </View>
                     </View>
                 </View>
+                
                 {/* <FlatList
                     data={reviews}
                     horizontal
@@ -175,8 +186,34 @@ const UserProfileScreen: React.FC = () => {
                 
                     contentContainerStyle={isMobile ? styles.reviewsContainer : styles.desktopReviewsContainer}
                 /> */}
+
+                <View style={styles.offersContainer}>
+                    <ScrollView style={styles.scrollview} showsVerticalScrollIndicator={false}>
+                        <View style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                            {offers && offers.map((item) => (
+                                <View key={item.id} style={styles.card}>
+                                    <Image source={defaultCompanyLogo} style={styles.companyLogo} />
+                                    <View style={{ width: "30%" }}>
+                                        <Text style={styles.offerTitle}>{item.titulo}</Text>
+                                        <View style={{ display: "flex", flexDirection: "row" }}>
+                                            <Text style={styles.offerDetailsTagExperience}>{">"}{item.experiencia} años</Text>
+                                            <Text style={styles.offerDetailsTagLicense}>{item.licencia}</Text>
+                                        </View>
+                                        <Text style={styles.offerInfo}>{item.notas}</Text>
+                                    </View>
+                                    <Text style={styles.offerSueldo}>{item.sueldo}€</Text>
+                                    <TouchableOpacity style={styles.button} onPress={() => router.push(`/oferta/${item.id}`)}>
+                                        <MaterialCommunityIcons name="details" size={15} color="white" style={styles.detailsIcon} />
+                                        <Text style={styles.buttonText}>Ver Detalles</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            ))}
+                        </View>
+                    </ScrollView>
+                </View>
             </ScrollView>
         </>
+        
     );
 };
 
