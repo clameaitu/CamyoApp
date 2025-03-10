@@ -112,6 +112,7 @@ const UserProfileScreen: React.FC = () => {
     return (
         <>
             {isMobile ? <BottomBar /> : <CamyoWebNavBar />}
+            <ScrollView contentContainerStyle={[isMobile ? styles.container : styles.desktopContainer, { paddingTop: isMobile ? 0 : 100, paddingLeft: 10 }]}>
             <View style={styles.bannerContainer}>
                 <Image source={defaultBanner} style={styles.bannerImage} />
                 <View style={isMobile ? styles.profileContainer : styles.desktopProfileContainer}>
@@ -130,7 +131,7 @@ const UserProfileScreen: React.FC = () => {
                     </View>
                 </View>
             </View>
-            <ScrollView contentContainerStyle={[isMobile ? styles.container : styles.desktopContainer, { paddingTop: isMobile ? 0 : 100, paddingLeft: 10 }]}>
+            
                 {isMobile && (
                     <View style={styles.infoContainer}>
                         <View style={styles.infoButton}>

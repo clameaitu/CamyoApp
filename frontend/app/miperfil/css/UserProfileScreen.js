@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         position: 'relative',
         left: 20, // Position the avatar to the left side
-        top: -60, // Adjusted to place half of the avatar above the banner
+        top: -40, // Adjusted to place half of the avatar above the banner
     },
     desktopAvatar: {
         width: 200,
@@ -63,11 +63,14 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         position: 'fixed',
         left: 350, // Position the avatar to the left side
-        top: 100, // Adjusted to place half of the avatar above the banner
+        top: 150, // Adjusted to place half of the avatar above the banner
     },
     profileDetailsContainer: {
         marginLeft: 50, // Added margin to separate details from avatar
-        marginTop: 60, // Adjusted margin to align with the bottom half of the avatar
+        marginTop: 40, // Adjusted margin to align with the bottom half of the avatar
+        position: 'fixed', // Changed to relative    
+        top: 100, // Adjusted to place the details below the avatar
+
         
     },
     name: {
@@ -79,7 +82,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         position: 'fixed',
         left: 600, // Position the avatar to the left side
-        top: 210, // Adjusted to place half of the avatar above the banner
+        top: 260, // Adjusted to place half of the avatar above the banner
     },
     detailsContainer: {
         backgroundColor: 'white',
@@ -91,7 +94,7 @@ const styles = StyleSheet.create({
         shadowRadius: 2,
         elevation: 2,
         alignItems: 'center', // Center items horizontally
-        width: '90%', // Adjust width as needed
+        width: '100%', // Adjust width as needed
         marginTop: 10, // Added margin to separate details from name
     },
     desktopDetailsContainer: {
@@ -113,6 +116,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         textAlign: 'left', // Align text to the left
         width: '100%', // Ensure text takes full width
+  
     },
     mobileDetailsText: {
         fontSize: 20,
@@ -246,8 +250,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     bannerContainer: {
-        position: 'relative',
+        position: 'fixed',
+        top: 50, // Adjusted to place the banner below the profile
         width: '100%',
+        left: 0,
         height: 200,
     },
     bannerImage: {
@@ -265,7 +271,7 @@ const styles = StyleSheet.create({
     desktopInfoContainer: {
         flexDirection: 'row',
         justifyContent: 'flex-start', // Align items to the start
-        marginTop: 10,
+        marginTop: 20,
     },
     infoText: {
         fontSize: 15,
@@ -308,8 +314,9 @@ const styles = StyleSheet.create({
     detailsOuterContainer: {
         alignItems: 'left',
         position: 'fixed',
-        top: 150,
-        left: 330,
+        top: 370,
+        bottom: 50,
+        left: 350,
         width: '100%',
     },
     detailsRow: {
@@ -317,13 +324,14 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start', // Align items to the start
         position: 'fixed',
         left: 600, // Position the avatar to the left side
-        top: 260, // Adjusted to place half of the avatar above the banner
+        top: 310, // Adjusted to place half of the avatar above the banner
     },
     detailsColumn: {
         flexDirection: 'column', // Stack items vertically
         justifyContent: 'left', // Align items to the start
         alignItems: 'left', // Align items to the start
         position: 'fixed',
+        
 
     },
     infoText: {
@@ -545,8 +553,8 @@ const styles = StyleSheet.create({
         offersContainer: {
             flex: 1,
             width: '65%',
-            position: 'absolute',
-            top: 90, // Adjusted to place the offers below the header
+            position: 'fixed',
+            top: 350, // Adjusted to place the offers below the header
             left: 400,
             height  : 1000,
             padding: 10,
@@ -588,6 +596,8 @@ descriptionBox: {
     minHeight: 500, // Set a minimum height
     maxHeight: 500, // Set a maximum height
     overflow: 'hidden', // Hide overflow text
+    position: 'fixed',
+    top:540, // Adjusted to place the description below the details
 },
 
 descriptionText: {
