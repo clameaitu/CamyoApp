@@ -2,6 +2,7 @@ package com.camyo.backend.oferta;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import com.camyo.backend.camionero.Camionero;
 import lombok.Getter;
@@ -22,7 +23,7 @@ public class OfertaCompletaDTO {
     private String localizacion;
     private OfertaPrioridad prioridad;
     private Camionero camionero;
-    private List<Camionero> aplicados;
+    private Set<Camionero> aplicados;
     private String nombreEmpresa;
     private String tipoOferta;
 }

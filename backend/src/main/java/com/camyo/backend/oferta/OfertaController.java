@@ -1,6 +1,7 @@
 package com.camyo.backend.oferta;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -174,25 +175,26 @@ public class OfertaController {
         try {
             Oferta ofertaExistente = ofertaService.obtenerOfertaPorId(id);
             if (request.getOferta() != null && request.getOferta().getEmpresa() != null) {
-                Empresa nuevaEmpresa = empresaService.obtenerEmpresaPorId(
-                    request.getOferta().getEmpresa().getId()
-                );
+                Empresa nuevaEmpresa = empresaService.obtenerEmpresaPorId(request.getOferta().getEmpresa().getId());
                 ofertaExistente.setEmpresa(nuevaEmpresa);
             }
-
             if (request.getPrioridad() != null) {
                 ofertaExistente.setPrioridad(request.getPrioridad());
             }
             if (request.getOferta() != null) {
-                BeanUtils.copyProperties(request.getOferta(), ofertaExistente, "id", "empresa");
+                Oferta nuevaData = request.getOferta();
+                if (nuevaData.getTitulo() != null) ofertaExistente.setTitulo(nuevaData.getTitulo());
+                if (nuevaData.getLicencia() != null) ofertaExistente.setLicencia(nuevaData.getLicencia());
+                if (nuevaData.getSueldo() != null) ofertaExistente.setSueldo(nuevaData.getSueldo());
+                if (nuevaData.getNotas() != null) ofertaExistente.setNotas(nuevaData.getNotas());
             }
-
+    
             Oferta ofertaActualizada = ofertaService.guardarOferta(ofertaExistente);
             if ("CARGA".equalsIgnoreCase(request.getTipoOferta()) && request.getCarga() != null) {
                 Carga cargaExistente = ofertaService.obtenerCarga(id);
                 if (cargaExistente != null) {
-                    BeanUtils.copyProperties(request.getCarga(), cargaExistente, "id", "oferta");
                     cargaExistente.setOferta(ofertaActualizada);
+                    cargaExistente.setPeso(request.getCarga().getPeso());
                     cargaService.guardarCarga(cargaExistente);
                 } else {
                     request.getCarga().setOferta(ofertaActualizada);
@@ -201,8 +203,8 @@ public class OfertaController {
             } else if ("TRABAJO".equalsIgnoreCase(request.getTipoOferta()) && request.getTrabajo() != null) {
                 Trabajo trabajoExistente = ofertaService.obtenerTrabajo(id);
                 if (trabajoExistente != null) {
-                    BeanUtils.copyProperties(request.getTrabajo(), trabajoExistente, "id", "oferta");
                     trabajoExistente.setOferta(ofertaActualizada);
+                    trabajoExistente.setJornada(request.getTrabajo().getJornada());
                     trabajoService.guardarTrabajo(trabajoExistente);
                 } else {
                     request.getTrabajo().setOferta(ofertaActualizada);
@@ -219,6 +221,7 @@ public class OfertaController {
                 .body("Error al actualizar la oferta: " + e.getMessage());
         }
     }
+    
     
     /**
      * GET: Obtener el tipo de una oferta concreta
@@ -475,7 +478,7 @@ public class OfertaController {
      * @return Lista de camioneros que han aplicado a la oferta.
      */
     @GetMapping("/{ofertaId}/camioneros")
-    public ResponseEntity<List<Camionero>> obtenerCamionerosAplicados(@PathVariable Integer ofertaId) {
+    public ResponseEntity<Set<Camionero>> obtenerCamionerosAplicados(@PathVariable Integer ofertaId) {
         try {
             Oferta oferta = ofertaService.obtenerOfertaPorId(ofertaId);
             return ResponseEntity.ok(oferta.getAplicados()); 

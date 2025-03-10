@@ -2,6 +2,7 @@ package com.camyo.backend.oferta;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -44,6 +45,7 @@ public class Oferta {
     @Min(value = 0, message="Los años de experiencia no pueden ser negativos")
     Integer experiencia;
 
+    @Enumerated(EnumType.STRING)
     @Column(name="licencia")
     Licencia licencia;
 
@@ -72,13 +74,14 @@ public class Oferta {
 
     @ManyToMany
     @JoinTable(name = "aplicados", joinColumns = @JoinColumn(name = "oferta_id"), inverseJoinColumns = @JoinColumn(name = "camionero_id"))
-    private List<Camionero> aplicados;
+    private Set<Camionero> aplicados;
 
     @ManyToOne
     @JoinColumn(name = "empresa_id")
     private Empresa empresa;
 
     @Enumerated(EnumType.STRING)
+    @Column(name="prioridad")
     private OfertaPrioridad prioridad;
 
     
