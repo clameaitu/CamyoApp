@@ -11,7 +11,7 @@ import { useAuth } from "../../contexts/AuthContext";
 
 export default function Ejemplo() {
   const router = useRouter();
-  const { user, userToken, logout } = useAuth();
+  const { user, userToken, login, logout } = useAuth();
 
   return (
     <>
