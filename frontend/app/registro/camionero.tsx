@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Image } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Image, Platform } from "react-native";
 import globalStyles from "../../assets/styles/globalStyles";
 import colors from "../../assets/styles/colors";
 import BooleanSelector from "../_components/BooleanSelector";
@@ -8,10 +8,12 @@ import MultiSelector from "../_components/MultiSelector";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import defaultProfileImage from "../../assets/images/react-logo.png";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const CamioneroScreen = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
-
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [date, setDate] = useState(new Date());
   const [formData, setFormData] = useState({
     nombre: "",
     username: "",
@@ -33,7 +35,11 @@ const CamioneroScreen = () => {
     tarjetas: []
   });
 
-  const handleInputChange = (field: string, value: string | boolean | any[]) => {
+//  const handleInputChange = (field: string, value: string | boolean | any[]) => {
+//    setFormData((prevState) => ({ ...prevState, [field]: value }));
+//  };
+  
+  const handleInputChange = (field, value) => {
     setFormData((prevState) => ({ ...prevState, [field]: value }));
   };
 
@@ -47,6 +53,17 @@ const CamioneroScreen = () => {
 
     if (!result.canceled) {
       setFormData({ ...formData, foto: result.assets[0].uri });
+    }
+  };
+
+  const handleDateChange = (event, selectedDate) => {
+    if (selectedDate) {
+      setShowDatePicker(Platform.OS === "ios");
+      const formattedDate = selectedDate.toISOString().split("T")[0]; // Formato YYYY-MM-DD
+      setDate(selectedDate);
+      handleInputChange("expiracionCAP", formattedDate);
+    } else {
+      setShowDatePicker(false);
     }
   };
 
@@ -173,7 +190,36 @@ const CamioneroScreen = () => {
           </View>
 
           {/* Expiración del CAP */}
-          {renderInput("Fecha de expiración del CAP", "expiracionCAP", <FontAwesome5 name="calendar" size={20} color={colors.primary} />, "default")}
+          {formData.tieneCAP && (
+            <View style={{ width: "90%", marginBottom: 15 }}>
+              <Text style={{ fontSize: 16, color: colors.secondary, marginLeft: 8, marginBottom: -6, backgroundColor: colors.white, alignSelf: 'flex-start', paddingHorizontal: 5, zIndex: 1 }}>
+                Fecha de expiración del CAP
+              </Text>
+              <View style={{ flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: colors.mediumGray, borderRadius: 8, paddingHorizontal: 10, backgroundColor: colors.white }}>
+                <FontAwesome5 name="calendar" size={20} color={colors.primary} />
+                {Platform.OS === "web" ? (
+                  <input
+                    style={{ flex: 1, height: 40, paddingLeft: 8, outline:"none" }}
+                    type="date"
+                    value={formData.expiracionCAP} //value={date.toISOString().split("T")[0]}
+                    onChange={(e) => handleDateChange(null, new Date(e.target.value))}
+                  />
+                ) : (
+                  <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                    <Text style={styles.dateText}>{formData.expiracionCAP || "Selecciona una fecha"}</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+              {/*showDatePicker && Platform.OS !== 'web' && (
+                <DateTimePicker
+                  value={date}
+                  mode="date"
+                  display="default"
+                  onChange={handleDateChange}
+                />
+              )*/}
+            </View>
+          )}
 
           {/* Es autónomo/a? */}
           <View style={styles.inputContainer}>
@@ -286,6 +332,18 @@ const styles = StyleSheet.create({
   buttonText: {
     color: colors.white,
     fontSize: 16,
+  },
+  dateText: {
+    fontSize: 16,
+    color: colors.secondary,
+    paddingLeft: 8,
+  },
+  webDateInput: {
+    flex: 1,
+    fontSize: 16,
+    color: colors.secondary,
+    border: "none",
+    outline: "none",
   },
 });
 
