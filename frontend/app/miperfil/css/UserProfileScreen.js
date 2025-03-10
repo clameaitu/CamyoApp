@@ -546,12 +546,53 @@ const styles = StyleSheet.create({
             flex: 1,
             width: '65%',
             position: 'absolute',
-            top: 50, // Adjusted to place the offers below the header
+            top: 90, // Adjusted to place the offers below the header
             left: 400,
             height  : 1000,
             padding: 10,
             marginLeft: 20, // Adjust as needed to position next to the details column
             marginTop: 1, // Adjust to start at the height of the email
+        },
+        offersButtonContainer: {
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '65%',
+            position: 'absolute', // Match the position of the offers container
+            top: 10, // Adjust as needed to match the offers container
+            left: 210, // Adjust as needed to match the offers container
+            right: 0, // Adjust as needed to match the offers container
+            
+        },
+        
+        offersButton: {
+            flex: 1,
+            backgroundColor: colors.primary,
+            paddingVertical: 10,
+            marginHorizontal: 5,
+            borderRadius: 5,
+            alignItems: 'center',
+        },
+        
+        offersButtonText: {
+            color: colors.white,
+            fontWeight: 'bold',
+        },
+        // Add styles for the description box and text
+       // Add styles for the description box and text
+descriptionBox: {
+    backgroundColor: '#f0f0f0',
+    padding: 10,
+    borderRadius: 5,
+    width: '100%',
+    minHeight: 500, // Set a minimum height
+    maxHeight: 500, // Set a maximum height
+    overflow: 'hidden', // Hide overflow text
+},
+
+descriptionText: {
+    fontSize: 15,
+    color: 'dark-gray',
 },
 });
 

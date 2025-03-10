@@ -11,6 +11,7 @@ import defaultBanner from '../../assets/images/banner_default.jpg'; // Ensure th
 import defaultCompanyLogo from '../../assets/images/defaultCompImg.png'; // Ensure this path is correct or update it accordingly
 import { useAuth } from '../../contexts/AuthContext';
 import axios from 'axios';
+import { router } from 'expo-router';
 
 interface UserProfile {
     id: number;
@@ -55,15 +56,24 @@ const reviews: Review[] = [
 ];
 
 const UserProfileScreen: React.FC = () => {
-    const [user, setUser] = useState<UserProfile | null>(placeholderUser);
+    //const [user, setUser] = useState<UserProfile | null>(placeholderUser);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const navigation = useNavigation();
-    const { userToken, userId } = useAuth();
+    const { userToken, user } = useAuth();
     const [offers, setOffers] = useState<any[]>([]);
+    const placeholderAvatar = 'https://ui-avatars.com/api/?name='
+    const PlaceHolderLicencias = 'No tiene licencias'
+
+    const capitalizeFirstLetter = (string) => {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    };
 
     useEffect(() => {
-
+       /* if (!userToken) {
+            router.push('/login');
+        }
+            */
         fetchOffers();
         // Hide the default header
         navigation.setOptions({ headerShown: false });
@@ -73,7 +83,7 @@ const UserProfileScreen: React.FC = () => {
         
 
         
-    }, [userToken,userId]);
+    }, [userToken,user]);
 
     const fetchOffers = async () => {
         try {
@@ -96,7 +106,7 @@ const UserProfileScreen: React.FC = () => {
       }
 
     console.log(userToken)
-    console.log("id" + userId)
+    console.log("id" + user)
     const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 
     return (
@@ -106,13 +116,13 @@ const UserProfileScreen: React.FC = () => {
                 <Image source={defaultBanner} style={styles.bannerImage} />
                 <View style={isMobile ? styles.profileContainer : styles.desktopProfileContainer}>
                     <Image 
-                        source={{ uri: user?.avatar }} 
+                        source={{ uri: user?.avatar || 'https://ui-avatars.com/api/?name=' + user?.nombre }} 
                         style={isMobile ? styles.avatar : styles.desktopAvatar} 
                     />
                     <View style={styles.profileDetailsContainer}>
                         <Text style={isMobile ? styles.name : styles.desktopName}>{user?.nombre}</Text>
                         <View style={styles.detailsRow}>
-                            <Text style={styles.infoText}>Tipo: {user?.tipo}</Text>
+                            <Text style={styles.infoText}>Tipo: {capitalizeFirstLetter(user?.descripcion || '')}</Text>
                             {user?.experiencia !== undefined && (
                                 <Text style={styles.infoText}>{user.experiencia} años de experiencia</Text>
                             )}
@@ -124,7 +134,7 @@ const UserProfileScreen: React.FC = () => {
                 {isMobile && (
                     <View style={styles.infoContainer}>
                         <View style={styles.infoButton}>
-                            <Text style={styles.infoText}>Tipo: {user?.tipo}</Text>
+                            <Text style={styles.infoText}>Descripción: {user?.descripcion}</Text>
                         </View>
                         {user?.experiencia !== undefined && (
                             <View style={styles.infoButton2}>
@@ -145,7 +155,7 @@ const UserProfileScreen: React.FC = () => {
                         </View>
                         {user?.licencias && (
                             <View style={styles.detailItem}>
-                                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="id-card" size={20}/>{user.licencias.join(', ')}</Text>
+                                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="id-card" size={20}/>{user?.licencias.join(', ') || PlaceHolderLicencias}</Text>
                             </View>
                         )}
                         {user?.vehiculo_propio !== undefined && (
@@ -154,10 +164,13 @@ const UserProfileScreen: React.FC = () => {
                             </View>
                         )}
                         <View style={styles.detailItem}>
-                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="map" size={20}/>{user?.ubicacion}</Text>
+                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="map" size={20}/>{user?.localizacion}</Text>
                         </View>
                         <View style={styles.detailItem}>
-                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="phone" size={20}/>123 456 789</Text>
+                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="phone" size={20}/>{user?.telefono}</Text>
+                        </View>
+                        <View style={styles.descriptionBox}>
+                            <Text style={styles.descriptionText}>{capitalizeFirstLetter(user?.descripcion || '')}</Text>
                         </View>
                     </View>
                 </View>
@@ -188,6 +201,14 @@ const UserProfileScreen: React.FC = () => {
                 /> */}
 
                 <View style={styles.offersContainer}>
+                                <View style={styles.offersButtonContainer}>
+                        <TouchableOpacity style={styles.offersButton}>
+                            <Text style={styles.offersButtonText}>Ofertas nuevas</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.offersButton}>
+                            <Text style={styles.offersButtonText}>Ofertas aplicadas</Text>
+                        </TouchableOpacity>
+                    </View>
                     <ScrollView style={styles.scrollview} showsVerticalScrollIndicator={false}>
                         <View style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                             {offers && offers.map((item) => (
