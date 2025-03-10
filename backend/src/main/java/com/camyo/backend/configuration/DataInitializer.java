@@ -34,21 +34,25 @@ public class DataInitializer {
                                 + "(205, 'cam_piloto5', '555666777', 'user5', 'user5@example.com', 'Valencia, España', 'EMPRESAPILOTO1', NULL, '$2a$10$UuMGQU9YECEKvuUMjiFXGuDHC.zzMfOhcAbcQj6Ql9ieOKUczQE9y',202),"
                                 + "(206, 'cam_piloto6', '111222333', 'user6', 'user6@example.com', 'Sevilla, España', 'EMPRESAPILOTO2', NULL, '$2a$10$UuMGQU9YECEKvuUMjiFXGuDHC.zzMfOhcAbcQj6Ql9ieOKUczQE9y9',202),"
                                 + "(207, 'cam_piloto7', '777666555', 'user7', 'user7@example.com', 'Alicante, España', 'EMPRESAPILOTO3', NULL, '$2a$10$UuMGQU9YECEKvuUMjiFXGuDHC.zzMfOhcAbcQj6Ql9ieOKUczQE9y',202),"
-                                + "(208, 'cam_piloto8', '333222111', 'user8', 'user8@example.com', 'Almería, España', 'EMPRESAPILOTO4', NULL, '$2a$10$UuMGQU9YECEKvuUMjiFXGuDHC.zzMfOhcAbcQj6Ql9ieOKUczQE9y9',202)");
+                                + "(208, 'cam_piloto8', '333222111', 'user8', 'user8@example.com', 'Almería, España', 'EMPRESAPILOTO4', NULL, '$2a$10$UuMGQU9YECEKvuUMjiFXGuDHC.zzMfOhcAbcQj6Ql9ieOKUczQE9y9',202),"
+                                + "(209, 'Isabel', '777666555', 'isabel', 'isabel@example.com', 'Badajoz, España', 'camionera autonoma', NULL, '$2a$10$Kgkh3hHPPmPeu4TxhzC1DeYbZq.spo9FqHNDcPHiKxXgprBSZznF2',201),"
+                                + "(210, 'mopa', '777666555', 'mopa', 'mopa@example.com', 'Badajoz, España', 'Empresa extremeña', NULL, '$2a$10$Kgkh3hHPPmPeu4TxhzC1DeYbZq.spo9FqHNDcPHiKxXgprBSZznF2',202)");
 
                         // Insert Empresas
                         statement.addBatch("INSERT IGNORE INTO empresas (id, web, nif, usuario_id) VALUES "
                                 + "(201, 'https://www.example1.com', 'A12345678', 205),"
                                 + "(202, 'https://www.example2.com', 'B87654321', 206),"
                                 + "(203, 'https://www.example3.com', 'A87654321', 207),"
-                                + "(204, 'https://www.example4.com', 'B12345678', 208)");
+                                + "(204, 'https://www.example4.com', 'B12345678', 208),"
+                                + "(205, 'https://www.example5.com', 'C12345678', 210)");
 
                         // Insert Camioneros
                         statement.addBatch("INSERT IGNORE INTO camioneros (id, experiencia, dni, disponibilidad, tieneCAP, expiracionCAP, usuario_id) VALUES "
                                 + "(201, 5, '12345678Z', 'NACIONAL', true, '2025-12-31', 201),"
                                 + "(202, 10, '23456789A', 'NACIONAL', false, '2025-12-31', 202),"
                                 + "(203, 5, '87654321Z', 'NACIONAL', true, '2026-12-31', 203),"
-                                + "(204, 22, '98765432A', 'NACIONAL', false, '2025-05-31', 204)");
+                                + "(204, 22, '98765432A', 'NACIONAL', false, '2025-05-31', 204),"
+                                + "(205, 7, '77777777A', 'NACIONAL', false, '2025-05-31', 209)");
 
                         // Insert Camiones
                         statement.addBatch("INSERT IGNORE INTO camion (id, matricula, modelo, foto, notas, camionero_id) VALUES "
