@@ -3,6 +3,7 @@ import { Platform } from "react-native";
 import { useEffect } from "react";
 import CamyoWebNavBar from "./_components/CamyoNavBar";
 import BottomBar from "./_components/BottomBar";
+import { AuthProvider } from "../contexts/AuthContext";
 
 export default function RootLayout() {
   const segments = useSegments();
@@ -26,20 +27,21 @@ export default function RootLayout() {
   }, [segments]);
 
   return (
-    <>
-      {!isMobile && <CamyoWebNavBar />}
-      {/*name es el nombre que se usa para navegar y hacer router.push(name)*/}
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index"/>
-        <Stack.Screen name="login"/>
-        <Stack.Screen name="registro"/>
-        <Stack.Screen name="miperfil"/>
-        <Stack.Screen name="miperfilempresa"/>
-        <Stack.Screen name="oferta/crear"/>
-        <Stack.Screen name="oferta/[ofertaid]" />
-      </Stack>
-      {isMobile && <BottomBar />}
-    </>
-
+    <AuthProvider>
+      <>
+        {!isMobile && <CamyoWebNavBar />}
+        {/*name es el nombre que se usa para navegar y hacer router.push(name)*/}
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index"/>
+          <Stack.Screen name="login"/>
+          <Stack.Screen name="registro"/>
+          <Stack.Screen name="miperfil"/>
+          <Stack.Screen name="miperfilempresa"/>
+          <Stack.Screen name="oferta/crear"/>
+          <Stack.Screen name="oferta/[ofertaid]" />
+        </Stack>
+        {isMobile && <BottomBar />}
+      </>
+    </AuthProvider>
   );
 }
