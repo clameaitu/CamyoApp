@@ -7,10 +7,11 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 const ProyectoLogo = require('frontend/assets/images/camyo.png');
 import routes from "./routes";
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+
 export default function CamyoWebNavBar() {
-
   const router = useRouter();
-
   const [isSidebar, setIsSidebar] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -22,10 +23,8 @@ export default function CamyoWebNavBar() {
       setIsSidebar(zoomLevel >= 230);
       if (zoomLevel < 230) setIsSidebarOpen(false);
     };
-
     window.addEventListener('resize', handleResize);
     handleResize();
-
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -70,7 +69,6 @@ export default function CamyoWebNavBar() {
               </View>
               <TouchableOpacity style={styles.shareButtonZoomed1} onPress={() => router.push(routes.login)}><Text style={styles.shareTextZoom1}>Iniciar Sesión</Text></TouchableOpacity>
               <TouchableOpacity style={styles.shareButtonZoomed2} onPress={() => router.push(routes.register)}><Text style={styles.shareTextZoom2}>Registrarse</Text></TouchableOpacity>
-
               <TouchableOpacity style={styles.buttonTextZoomed} onPress={() => router.push(routes.profile)}><Text style={styles.linkTextZoom}>Perfil (Cam)</Text></TouchableOpacity>
               <TouchableOpacity style={styles.buttonTextZoomed} onPress={() => router.push(routes.profileEmpresa)}><Text style={styles.linkTextZoom}>Perfil (Emp)</Text></TouchableOpacity>
             </ScrollView>
@@ -80,9 +78,9 @@ export default function CamyoWebNavBar() {
         <>
           <View style={styles.headerWeb}>
             <View style={[styles.leftSection, isZoomed && styles.centerSection]}>
-            <TouchableOpacity onPress={() => router.replace("/")}>
-              <Image source={ProyectoLogo} style={styles.logoZoomed} resizeMode="cover" />
-            </TouchableOpacity>
+              <TouchableOpacity onPress={() => router.replace("/")}>
+                <Image source={ProyectoLogo} style={styles.logoZoomed} resizeMode="cover" />
+              </TouchableOpacity>
             </View>
             <View style={styles.rightSection}>
               <TouchableOpacity style={styles.buttonText} onPress={() => router.push(routes.profile)}><Text style={styles.linkText}>Mi Perfil (Cam)</Text></TouchableOpacity>
@@ -164,6 +162,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    height: 60, // Altura fija
   },
   logoZoomed: {
     width: 60,
