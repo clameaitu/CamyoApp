@@ -138,7 +138,7 @@ export default function OfertaDetalleScreen() {
                         <View style={styles.detailRow}>
                             <MaterialIcons name="location-on" size={20} color="#0b4f6c" />
                             <Text style={styles.detalles}>
-                                <Text style={styles.detallesLabel}>Recogida (Localización):</Text> {offerCargaData.inicio}
+                                <Text style={styles.detallesLabel}>Recogida (Localización):</Text> {offerCargaData.origen}
                             </Text>
                         </View>
 
