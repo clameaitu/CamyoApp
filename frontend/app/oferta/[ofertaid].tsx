@@ -4,7 +4,6 @@ import { router, useLocalSearchParams } from "expo-router";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import colors from "frontend/assets/styles/colors";
 import { useAuth } from "@/contexts/AuthContext";
-import { BACKEND_URL } from '@env';
 import routes from "../_components/routes";
 
 const formatDate = (fecha: string) => {
@@ -17,6 +16,8 @@ const handleLoginRedirect = () => {
 };
 
 export default function OfertaDetalleScreen() {
+
+    const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
     const [offerData, setOfferData] = useState<any>(null);
     const [empresaData, setEmpresaData] = useState<any>(null);
     const [usuarioEmpresaData, setUsuarioEmpresaData] = useState<any>(null);
