@@ -1,11 +1,8 @@
 package com.camyo.backend.oferta;
 
 import java.util.List;
-import java.util.Set;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,45 +38,9 @@ public class OfertaController {
      * @return Lista de todas las ofertas disponibles.
      */
     @GetMapping
-    public List<OfertaCompletaDTO> obtenerOfertas() {
-        List<Oferta> ofertas = ofertaService.obtenerOfertas();
-        return ofertas.stream().map(oferta -> {
-            OfertaCompletaDTO dto = new OfertaCompletaDTO();
-            dto.setId(oferta.getId());
-            dto.setTitulo(oferta.getTitulo());
-            dto.setExperiencia(oferta.getExperiencia());
-            dto.setLicencia(oferta.getLicencia());
-            dto.setNotas(oferta.getNotas());
-            dto.setEstado(oferta.getEstado());
-            dto.setFechaPublicacion(oferta.getFechaPublicacion());
-            dto.setSueldo(oferta.getSueldo());
-            dto.setLocalizacion(oferta.getLocalizacion());
-            dto.setPrioridad(oferta.getPrioridad());
-            dto.setCamionero(oferta.getCamionero());
-            dto.setAplicados(oferta.getAplicados());
-            if (oferta.getEmpresa() != null && oferta.getEmpresa().getUsuario() != null) {
-                dto.setNombreEmpresa(oferta.getEmpresa().getUsuario().getNombre());
-            }
-            try {
-                Carga c = ofertaService.obtenerCarga(oferta.getId());
-                if (c != null) {
-                    dto.setTipoOferta("CARGA");
-                } else {
-                    Trabajo t = ofertaService.obtenerTrabajo(oferta.getId());
-                    if (t != null) {
-                        dto.setTipoOferta("TRABAJO");
-                    } else {
-                        dto.setTipoOferta("DESCONOCIDO");
-                    }
-                }
-            } catch (ResourceNotFoundException ex) {
-                dto.setTipoOferta("DESCONOCIDO");
-            }
-    
-            return dto;
-        }).toList();
+    public List<Oferta> obtenerOfertas() {
+        return ofertaService.obtenerOfertas();
     }
-    
 
     /**
      * GET: Obtener oferta por ID
@@ -130,36 +91,30 @@ public class OfertaController {
     @PostMapping
     public ResponseEntity<?> crearOferta(@RequestBody OfertaRequestDTO request) {
         try {
-            Empresa empresa = empresaService.obtenerEmpresaPorId(
-                request.getOferta().getEmpresa().getId()
-            );
+            Empresa empresa = empresaService.obtenerEmpresaPorId(request.getOferta().getEmpresa().getId());
             request.getOferta().setEmpresa(empresa);
 
-            request.getOferta().setPrioridad(request.getPrioridad());
             Oferta nuevaOferta = ofertaService.guardarOferta(request.getOferta());
-    
+
             if ("CARGA".equalsIgnoreCase(request.getTipoOferta()) && request.getCarga() != null) {
                 request.getCarga().setOferta(nuevaOferta);
-                cargaService.guardarCarga(request.getCarga());
-            } else if ("TRABAJO".equalsIgnoreCase(request.getTipoOferta()) && request.getTrabajo() != null) {
+                Carga cargaGuardada = cargaService.guardarCarga(request.getCarga());
+                return ResponseEntity.ok(cargaGuardada);
+            } 
+            else if ("TRABAJO".equalsIgnoreCase(request.getTipoOferta()) && request.getTrabajo() != null) {
                 request.getTrabajo().setOferta(nuevaOferta);
-                trabajoService.guardarTrabajo(request.getTrabajo());
-            } else {
-                return ResponseEntity.badRequest()
-                    .body("Tipo de oferta no válido o datos de carga/trabajo incompletos.");
+                Trabajo trabajoGuardado = trabajoService.guardarTrabajo(request.getTrabajo());
+                return ResponseEntity.ok(trabajoGuardado);
+            } 
+            else {
+                return ResponseEntity.badRequest().body("Debe especificar un tipo de oferta válido: 'CARGA' o 'TRABAJO'");
             }
-    
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuevaOferta);
-    
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.badRequest().body("Empresa no encontrada.");
         } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                .body("Error al crear la oferta: " + e.getMessage());
+            return ResponseEntity.internalServerError().body("Error al crear la oferta: " + e.getMessage());
         }
     }
-    
-
 
     /**
      * PUT: Actualizar una oferta existente
@@ -173,85 +128,33 @@ public class OfertaController {
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarOferta(@PathVariable Integer id, @RequestBody OfertaRequestDTO request) {
         try {
-            Oferta ofertaExistente = ofertaService.obtenerOfertaPorId(id);
-            if (request.getOferta() != null && request.getOferta().getEmpresa() != null) {
-                Empresa nuevaEmpresa = empresaService.obtenerEmpresaPorId(request.getOferta().getEmpresa().getId());
-                ofertaExistente.setEmpresa(nuevaEmpresa);
-            }
-            if (request.getPrioridad() != null) {
-                ofertaExistente.setPrioridad(request.getPrioridad());
-            }
-            if (request.getOferta() != null) {
-                Oferta nuevaData = request.getOferta();
-                if (nuevaData.getTitulo() != null) ofertaExistente.setTitulo(nuevaData.getTitulo());
-                if (nuevaData.getLicencia() != null) ofertaExistente.setLicencia(nuevaData.getLicencia());
-                if (nuevaData.getSueldo() != null) ofertaExistente.setSueldo(nuevaData.getSueldo());
-                if (nuevaData.getNotas() != null) ofertaExistente.setNotas(nuevaData.getNotas());
-            }
-    
-            Oferta ofertaActualizada = ofertaService.guardarOferta(ofertaExistente);
+            Oferta ofertaActualizada = ofertaService.modificarOferta(request.getOferta(), id);
+
             if ("CARGA".equalsIgnoreCase(request.getTipoOferta()) && request.getCarga() != null) {
-                Carga cargaExistente = ofertaService.obtenerCarga(id);
-                if (cargaExistente != null) {
-                    cargaExistente.setOferta(ofertaActualizada);
-                    cargaExistente.setPeso(request.getCarga().getPeso());
-                    cargaService.guardarCarga(cargaExistente);
-                } else {
+                Carga carga = ofertaService.obtenerCarga(id);
+                if (carga != null) {
+                    request.getCarga().setId(carga.getId());
                     request.getCarga().setOferta(ofertaActualizada);
-                    cargaService.guardarCarga(request.getCarga());
+                    Carga cargaActualizada = cargaService.guardarCarga(request.getCarga());
+                    return ResponseEntity.ok(cargaActualizada);
                 }
             } else if ("TRABAJO".equalsIgnoreCase(request.getTipoOferta()) && request.getTrabajo() != null) {
-                Trabajo trabajoExistente = ofertaService.obtenerTrabajo(id);
-                if (trabajoExistente != null) {
-                    trabajoExistente.setOferta(ofertaActualizada);
-                    trabajoExistente.setJornada(request.getTrabajo().getJornada());
-                    trabajoService.guardarTrabajo(trabajoExistente);
-                } else {
+                Trabajo trabajo = ofertaService.obtenerTrabajo(id);
+                if (trabajo != null) {
+                    request.getTrabajo().setId(trabajo.getId());
                     request.getTrabajo().setOferta(ofertaActualizada);
-                    trabajoService.guardarTrabajo(request.getTrabajo());
+                    Trabajo trabajoActualizado = trabajoService.guardarTrabajo(request.getTrabajo());
+                    return ResponseEntity.ok(trabajoActualizado);
                 }
             }
-    
+
             return ResponseEntity.ok(ofertaActualizada);
-    
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                .body("Error al actualizar la oferta: " + e.getMessage());
-        }
-    }
-    
-    
-    /**
-     * GET: Obtener el tipo de una oferta concreta
-     *
-     * Determina si una oferta es de tipo "CARGA" o "TRABAJO" (o "DESCONOCIDO" si no
-     * hay ninguna entidad asociada que la defina). 
-     *
-     * @param id  ID de la oferta a consultar
-     * @return String que indica el tipo ("CARGA", "TRABAJO" o "DESCONOCIDO"), 
-     *         o un código de estado 404 si no existe la oferta
-     */
-    @GetMapping("/{id}/tipo")
-    public ResponseEntity<String> obtenerTipoOferta(@PathVariable Integer id) {
-        try {
-            ofertaService.obtenerOfertaPorId(id); 
-            Carga carga = ofertaService.obtenerCarga(id);
-            if (carga != null) {
-                return ResponseEntity.ok("CARGA");
-            }
-            Trabajo trabajo = ofertaService.obtenerTrabajo(id);
-            if (trabajo != null) {
-                return ResponseEntity.ok("TRABAJO");
-            }
-            return ResponseEntity.ok("DESCONOCIDO");
-
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
+    
     /**
      * DELETE: Eliminar una oferta
      * 
@@ -478,7 +381,7 @@ public class OfertaController {
      * @return Lista de camioneros que han aplicado a la oferta.
      */
     @GetMapping("/{ofertaId}/camioneros")
-    public ResponseEntity<Set<Camionero>> obtenerCamionerosAplicados(@PathVariable Integer ofertaId) {
+    public ResponseEntity<List<Camionero>> obtenerCamionerosAplicados(@PathVariable Integer ofertaId) {
         try {
             Oferta oferta = ofertaService.obtenerOfertaPorId(ofertaId);
             return ResponseEntity.ok(oferta.getAplicados()); 

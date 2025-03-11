@@ -2,7 +2,6 @@ package com.camyo.backend.oferta;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -11,8 +10,6 @@ import com.camyo.backend.empresa.Empresa;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -45,7 +42,6 @@ public class Oferta {
     @Min(value = 0, message="Los años de experiencia no pueden ser negativos")
     Integer experiencia;
 
-    @Enumerated(EnumType.STRING)
     @Column(name="licencia")
     Licencia licencia;
 
@@ -64,26 +60,15 @@ public class Oferta {
     @DecimalMin(value = "0.0", inclusive = false, message = "El sueldo debe ser mayor a 0")
     Double sueldo;
 
-    @Column(name="localizacion")
-    @NotBlank
-    private String localizacion;
-
     @ManyToOne(optional=true)
     @JoinColumn(name = "camionero_id")
     private Camionero camionero;
 
     @ManyToMany
     @JoinTable(name = "aplicados", joinColumns = @JoinColumn(name = "oferta_id"), inverseJoinColumns = @JoinColumn(name = "camionero_id"))
-    private Set<Camionero> aplicados;
+    private List<Camionero> aplicados;
 
     @ManyToOne
     @JoinColumn(name = "empresa_id")
     private Empresa empresa;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name="prioridad")
-    private OfertaPrioridad prioridad;
-
-    
-
 }
