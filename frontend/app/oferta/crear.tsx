@@ -7,20 +7,23 @@ import colors from "../../assets/styles/colors";
 import globalStyles from "../../assets/styles/globalStyles";
 import Selector from "../_components/Selector";
 import MultiSelector from "../_components/MultiSelector";
+import { useRouter } from "expo-router";
 
 
 const CrearOfertaScreen = () => {
   const [tipoOferta, setTipoOferta] = useState("TRABAJO");
+  const BACKEND_URL = "http://localhost:8080";
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     titulo: "",
     experiencia: "",
     licencia: "",
     notas: "",
-    estado: "",
+    estado: "PENDIENTE",
     sueldo: "",
-    fechaPublicacion: "",
-    empresa: "",
+    fechaPublicacion: new Date().toISOString(), // Fecha actual del sistema
+    empresa: { id: 201 }, // Empresa fija con ID 201
 
     // Trabajo
     fechaIncorporacion: "",
@@ -42,18 +45,101 @@ const CrearOfertaScreen = () => {
   };
 
   const validateForm = () => {
-    if (!formData.titulo || !formData.empresa) {
-      alert("Los campos obligatorios deben completarse.");
+    if (!formData.titulo) {
+      alert("El título es obligatorio.");
       return false;
     }
     return true;
   };
 
-  const handlePublish = () => {
-    if (validateForm()) {
-      console.log("Publicando oferta:", formData);
-    }
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    const hours = String(d.getHours()).padStart(2, "0");
+    const minutes = String(d.getMinutes()).padStart(2, "0");
+    const seconds = String(d.getSeconds()).padStart(2, "0");
+  
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
   };
+  
+
+  const handlePublish = async () => {
+    if (validateForm()) {
+      // Construcción del objeto base de la oferta
+      let ofertaData: any = {
+        tipoOferta,
+        oferta: {
+          titulo: formData.titulo,
+          experiencia: Number(formData.experiencia), // Convertir a número
+          licencia: Array.isArray(formData.licencia) ? formData.licencia[0] : formData.licencia, // Convertir a string
+          notas: formData.notas,
+          estado: formData.estado || "PENDIENTE",
+          sueldo: parseFloat(formData.sueldo).toFixed(2), // Convertir a float con 2 decimal
+          fechaPublicacion: formatDate(new Date()), // Fecha en formato correcto sin Z y sin decimales
+          empresa: { id: 201 }
+        }
+      };
+  
+      // Agregar detalles según el tipo de oferta
+      if (tipoOferta === "TRABAJO" && formData.fechaIncorporacion && formData.jornada) {
+        ofertaData = {
+          ...ofertaData,
+          trabajo: {
+            fechaIncorporacion: formatDate(formData.fechaIncorporacion), // Aplicar formato correcto
+            jornada: formData.jornada
+          }
+        };
+      } else if (tipoOferta === "CARGA" && formData.mercancia && formData.origen && formData.destino) {
+        ofertaData = {
+          ...ofertaData,
+          carga: {
+            mercancia: formData.mercancia,
+            peso: Number(formData.peso), // Convertir a número
+            origen: formData.origen,
+            destino: formData.destino,
+            distancia: Number(formData.distancia), // Convertir a número
+            inicio: formData.inicio ? formatDate(formData.inicio) : null,
+            finMinimo: formData.finMinimo ? formatDate(formData.finMinimo) : null,
+            finMaximo: formData.finMaximo ? formatDate(formData.finMaximo) : null
+          }
+        };
+      } else {
+        alert("Faltan datos obligatorios para este tipo de oferta.");
+        return;
+      }
+  
+      console.log("Publicando oferta:", JSON.stringify(ofertaData, null, 2));
+
+
+      try {
+        const response = await fetch(`${BACKEND_URL}/ofertas`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(ofertaData),
+        });
+  
+        if (!response.ok) {
+          throw new Error(`Error al crear la oferta: ${response.statusText}`);
+        }
+  
+        const data = await response.json();
+        console.log("Oferta creada con éxito:", data);
+        router.push("/miperfilempresa");
+
+      } catch (error) {
+        console.error("Error al enviar la oferta:", error);
+        alert("Hubo un error al publicar la oferta.");
+      }
+    }
+
+    
+
+  };
+  
 
   // Función para renderizar cada input del formulario
   const renderInput = (label, field, icon, keyboardType = "default", secureTextEntry = false, multiline = false) => (
@@ -81,7 +167,7 @@ const CrearOfertaScreen = () => {
 
           {/* Campos generales */}
           {renderInput("Título", "titulo", <FontAwesome5 name="tag" size={20} color={colors.primary} />)}
-          {renderInput("Experiencia", "experiencia", <FontAwesome5 name="briefcase" size={20} color={colors.primary} />)}
+          {renderInput("Experiencia (años)", "experiencia", <FontAwesome5 name="briefcase" size={20} color={colors.primary} />)}
           <View style={styles.inputContainer}>
               <Text style={{ color: colors.secondary, fontSize: 16, marginRight: 10, flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
                 Licencia:
@@ -89,16 +175,13 @@ const CrearOfertaScreen = () => {
               <MultiSelector 
                 value={formData.licencia}
                 onChange={(value) => handleInputChange("licencia", value)}
-                options={["C1","C","C1+E","C+E","D1","D+E","E","D"]}
+                options={["AM","A1","A2","A","B","C1","C","C1+E","C+E","D1","D+E","E","D"]}
                 colors={colors} 
               />
             </View>
 
-          {renderInput("Descripción", "notas", <FontAwesome5 name="align-left" size={20} color={colors.primary} />, "default", true)}
-          {renderInput("Estado", "estado", <FontAwesome5 name="flag" size={20} color={colors.primary} />)}
-          {renderInput("Sueldo", "sueldo", <FontAwesome5 name="money-bill-wave" size={20} color={colors.primary} />)}
-          {renderInput("Fecha de publicación", "fechaPublicacion", <FontAwesome5 name="calendar" size={20} color={colors.primary} />)}
-          {renderInput("Empresa", "empresa", <FontAwesome5 name="building" size={20} color={colors.primary} />)}
+          {renderInput("Descripción", "notas", <FontAwesome5 name="align-left" size={20} color={colors.primary} />)}
+          {renderInput("Sueldo (€)", "sueldo", <FontAwesome5 name="money-bill-wave" size={20} color={colors.primary} />)}
 
           {/* Selector de tipo de oferta */}
           <Text style={styles.title}>¿Qué tipo de oferta quieres publicar?</Text>
@@ -136,7 +219,7 @@ const CrearOfertaScreen = () => {
                 <Selector 
                   value={formData.jornada} 
                   onChange={(value) => handleInputChange("jornada", value)} 
-                  options={["Regular", "Flexible", "Completa", "Nocturna", "Relevos", "Mixta"]} 
+                  options={["REGULAR", "FLEXIBLE", "COMPLETA", "NOCTURNA", "RELEVOS", "MIXTA"]} 
                   colors={colors} 
                   globalStyles={globalStyles} 
                   />
@@ -145,10 +228,10 @@ const CrearOfertaScreen = () => {
           ) : (
             <>
               {renderInput("Mercancía", "mercancia", <FontAwesome5 name="box" size={20} color={colors.primary} />)}
-              {renderInput("Peso", "peso", <FontAwesome5 name="weight" size={20} color={colors.primary} />)}
+              {renderInput("Peso (kg)", "peso", <FontAwesome5 name="weight" size={20} color={colors.primary} />)}
               {renderInput("Origen", "origen", <FontAwesome5 name="map-marker-alt" size={20} color={colors.primary} />)}
               {renderInput("Destino", "destino", <FontAwesome5 name="map-marker" size={20} color={colors.primary} />)}
-              {renderInput("Distancia", "distancia", <FontAwesome5 name="road" size={20} color={colors.primary} />)}
+              {renderInput("Distancia (km)", "distancia", <FontAwesome5 name="road" size={20} color={colors.primary} />)}
               {renderInput("Inicio", "inicio", <FontAwesome5 name="clock" size={20} color={colors.primary} />)}
               {renderInput("Fin mínimo", "finMinimo", <FontAwesome5 name="calendar-minus" size={20} color={colors.primary} />)}
               {renderInput("Fin máximo", "finMaximo", <FontAwesome5 name="calendar-plus" size={20} color={colors.primary} />)}
