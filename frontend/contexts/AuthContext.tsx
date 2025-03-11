@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { BACKEND_URL } from '@env';
+
+const BACKEND_URL = process.env.BACKEND_URL;
 
 interface AuthContextType {
   user: any | null;
