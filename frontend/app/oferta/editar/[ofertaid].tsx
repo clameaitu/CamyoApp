@@ -15,7 +15,7 @@ const EditarOfertaScreen = () => {
   const BACKEND_URL = "http://localhost:8080";
   const router = useRouter();
   const { ofertaid } = useLocalSearchParams();
-
+/****************************************************************/
   const [formData, setFormData] = useState({
     titulo: "",
     experiencia: "",
@@ -39,6 +39,8 @@ const EditarOfertaScreen = () => {
     inicio: "",
     finMinimo: "",
     finMaximo: "",
+      tipoAnterior: "", // Nuevo: Guarda el tipo original al cargar
+
   });
 
 
@@ -53,7 +55,6 @@ const EditarOfertaScreen = () => {
         console.log("🔍 Obteniendo oferta general...");
         const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`);
         const data = await response.json();
-        console.log("📩 Oferta general recibida:", data);
   
         if (!data || Object.keys(data).length === 0) {
           console.error("❌ Error: La oferta no tiene datos.");
@@ -61,72 +62,56 @@ const EditarOfertaScreen = () => {
         }
   
         let licencia = data.licencia;
-
-        // Si licencia es un string separado por comas, lo convertimos en array
         if (licencia && typeof licencia === "string") {
-          licencia = licencia.split(",").map(l => l.trim()); // Asegurar que no haya espacios extra
+          licencia = licencia.split(",").map(l => l.trim());
         }
   
-        setFormData((prevState) => ({
-          ...prevState,
-          ...data,
-          licencia: licencia || [], // Asegurar que siempre sea un array
-        }));
+        let tipoOfertaCargado = "";
+        let detallesOferta = {};
   
-        console.log("📊 Licencia en formData después de conversión:", licencia);  
-        // Intentamos primero obtener los datos de carga
-        console.log("🔍 Intentando obtener datos de carga...");
+        // Intentar obtener datos de carga
         const cargaResponse = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`);
-
-
         if (cargaResponse.ok) {
-          const text = await cargaResponse.text(); // Primero leemos el contenido como texto
-  
-          if (text) { // Si hay contenido, intentamos parsearlo como JSON
+          const text = await cargaResponse.text();
+          if (text) {
             const cargaData = JSON.parse(text);
-            console.log("📩 Datos de carga recibidos:", cargaData);
-  
-            if (cargaData && Object.keys(cargaData).length > 1) { // Verificamos que tenga contenido
-              setTipoOferta("CARGA");
-              setFormData((prevState) => ({
-                ...prevState,
-                ...cargaData,
-              }));
-              return;
+            if (cargaData && Object.keys(cargaData).length > 1) {
+              tipoOfertaCargado = "CARGA";
+              detallesOferta = cargaData;
             }
           }
         }
   
-  
-        // Si no es carga (o cargaData estaba vacío), intentamos obtener datos de trabajo
-      console.log("🔍 Intentando obtener datos de trabajo...");
-      const trabajoResponse = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`);
-
-      if (trabajoResponse.ok) {
-        const text = await trabajoResponse.text(); // Primero leemos el contenido como texto
-
-        if (text) { // Si hay contenido, intentamos parsearlo como JSON
-          const trabajoData = JSON.parse(text);
-          console.log("📩 Datos de trabajo recibidos:", trabajoData);
-
-          if (trabajoData && Object.keys(trabajoData).length > 1) {
-            setTipoOferta("TRABAJO");
-            setFormData((prevState) => ({
-              ...prevState,
-              ...trabajoData,
-            }));
+        // Intentar obtener datos de trabajo
+        const trabajoResponse = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`);
+        if (trabajoResponse.ok) {
+          const text = await trabajoResponse.text();
+          if (text) {
+            const trabajoData = JSON.parse(text);
+            if (trabajoData && Object.keys(trabajoData).length > 1) {
+              tipoOfertaCargado = "TRABAJO";
+              detallesOferta = trabajoData;
+            }
           }
         }
-      }
-
+  
+        setTipoOferta(tipoOfertaCargado);
+        setFormData(prevState => ({
+          ...prevState,
+          ...data,
+          ...detallesOferta,
+          licencia: licencia || [],
+          tipoAnterior: tipoOfertaCargado, // Guardamos el tipo original
+        }));
+  
       } catch (error) {
         console.error("❌ Error en fetchOferta:", error);
       }
-      
     };
   
     fetchOferta();
   }, []);
+  
   
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prevState) => ({ ...prevState, [field]: value }));
@@ -162,79 +147,144 @@ const EditarOfertaScreen = () => {
   
 
   const handlePublish = async () => {
-    if (validateForm()) {
-      // Construcción del objeto base de la oferta
-      let ofertaData: any = {
+    if (!validateForm()) return;
+  
+    try {
+      // 🚀 Verificar si el tipo de oferta ha cambiado
+      const tipoCambiado = tipoOferta !== formData.tipoAnterior;
+  
+      let ofertaData: {
+        tipoOferta: string;
+        oferta: {
+          titulo: string;
+          experiencia: number;
+          licencia: string;
+          notas: string;
+          estado: string;
+          sueldo: string;
+          fechaPublicacion: string;
+          empresa: { id: number };
+        };
+        carga?: {
+          mercancia: string;
+          peso: number;
+          origen: string;
+          destino: string;
+          distancia: number;
+          inicio?: string | null;
+          finMinimo?: string | null;
+          finMaximo?: string | null;
+        };
+        trabajo?: {
+          fechaIncorporacion: string;
+          jornada: string;
+        };
+      } = {
         tipoOferta,
         oferta: {
           titulo: formData.titulo,
-          experiencia: Number(formData.experiencia), // Convertir a número
-          licencia: Array.isArray(formData.licencia) ? formData.licencia[0] : formData.licencia, // Convertir a string
+          experiencia: Number(formData.experiencia),
+          licencia: Array.isArray(formData.licencia) ? formData.licencia.join(", ") : formData.licencia,
           notas: formData.notas,
           estado: formData.estado || "PENDIENTE",
-          sueldo: parseFloat(formData.sueldo).toFixed(2), // Convertir a float con 2 decimal
-          fechaPublicacion: formatDate(new Date()), // Fecha en formato correcto sin Z y sin decimales
-          empresa: { id: 201 }
-        }
+          sueldo: parseFloat(formData.sueldo).toFixed(2),
+          fechaPublicacion: formatDate(new Date()),
+          empresa: { id: 201 },
+        },
       };
   
-      // Agregar detalles según el tipo de oferta
-      if (tipoOferta === "TRABAJO" && formData.fechaIncorporacion && formData.jornada) {
-        ofertaData = {
-          ...ofertaData,
-          trabajo: {
-            fechaIncorporacion: formatDate(formData.fechaIncorporacion), // Aplicar formato correcto
-            jornada: formData.jornada
-          }
-        };
-      } else if (tipoOferta === "CARGA" && formData.mercancia && formData.origen && formData.destino) {
-        ofertaData = {
-          ...ofertaData,
-          carga: {
+      // 🔥 Si el tipo de oferta cambió, primero eliminar el tipo anterior
+      if (tipoCambiado) {
+        if (formData.tipoAnterior === "TRABAJO") {
+          console.log("🗑 Eliminando datos de TRABAJO...");
+          await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`, { method: "DELETE" });
+        } else if (formData.tipoAnterior === "CARGA") {
+          console.log("🗑 Eliminando datos de CARGA...");
+          await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`, { method: "DELETE" });
+        }
+      }
+  
+    // 🔥 2️⃣ **Crear el nuevo tipo de oferta si ha cambiado**
+    if (tipoCambiado) {
+      if (tipoOferta === "TRABAJO") {
+        console.log("🚀 Creando nueva oferta de TRABAJO...");
+        await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fechaIncorporacion: formatDate(formData.fechaIncorporacion),
+            jornada: formData.jornada,
+          }),
+        });
+      } else if (tipoOferta === "CARGA") {
+        console.log("🚀 Creando nueva oferta de CARGA...");
+        await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
             mercancia: formData.mercancia,
-            peso: Number(formData.peso), // Convertir a número
+            peso: Number(formData.peso),
             origen: formData.origen,
             destino: formData.destino,
-            distancia: Number(formData.distancia), // Convertir a número
+            distancia: Number(formData.distancia),
             inicio: formData.inicio ? formatDate(formData.inicio) : null,
             finMinimo: formData.finMinimo ? formatDate(formData.finMinimo) : null,
-            finMaximo: formData.finMaximo ? formatDate(formData.finMaximo) : null
-          }
-        };
-      } else {
-        alert("Faltan datos obligatorios para este tipo de oferta.");
-        return;
-      }
-  
-      console.log("Publicando oferta:", JSON.stringify(ofertaData, null, 2));
-
-
-      try {
-        const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(ofertaData),
+            finMaximo: formData.finMaximo ? formatDate(formData.finMaximo) : null,
+          }),
         });
-  
-        if (!response.ok) {
-          throw new Error(`Error al editar la oferta: ${response.statusText}`);
-        }
-  
-        const data = await response.json();
-        console.log("Oferta editada con éxito:", data);
-        router.push("/miperfilempresa");
-
-      } catch (error) {
-        console.error("Error al enviar la oferta:", error);
-        alert("Hubo un error al editar la oferta.");
+      }
+    } else {
+      // 🔥 3️⃣ **Si el tipo NO ha cambiado, solo actualizarlo**
+      if (tipoOferta === "TRABAJO") {
+        console.log("🔄 Actualizando oferta de TRABAJO...");
+        await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fechaIncorporacion: formatDate(formData.fechaIncorporacion),
+            jornada: formData.jornada,
+          }),
+        });
+      } else if (tipoOferta === "CARGA") {
+        console.log("🔄 Actualizando oferta de CARGA...");
+        await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            mercancia: formData.mercancia,
+            peso: Number(formData.peso),
+            origen: formData.origen,
+            destino: formData.destino,
+            distancia: Number(formData.distancia),
+            inicio: formData.inicio ? formatDate(formData.inicio) : null,
+            finMinimo: formData.finMinimo ? formatDate(formData.finMinimo) : null,
+            finMaximo: formData.finMaximo ? formatDate(formData.finMaximo) : null,
+          }),
+        });
       }
     }
-
-    
-
+  
+      console.log("📩 Publicando oferta:", JSON.stringify(ofertaData, null, 2));
+  
+      const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(ofertaData),
+      });
+  
+      if (!response.ok) throw new Error(`Error al editar la oferta: ${response.statusText}`);
+  
+      console.log("✅ Oferta editada con éxito.");
+      router.push("/miperfilempresa");
+  
+    } catch (error) {
+      console.error("❌ Error al enviar la oferta:", error);
+      alert("Hubo un error al editar la oferta.");
+    }
   };
+  
+  
+  
   
 
   // Función para renderizar cada input del formulario
@@ -256,63 +306,27 @@ const EditarOfertaScreen = () => {
     </View>
   );
 
-  const handleTipoOfertaChange = async (nuevoTipo) => {
-    if (tipoOferta === nuevoTipo) return; // No hacer nada si ya está seleccionado
-
-    try {
-        if (nuevoTipo === "TRABAJO") {
-            // Si antes era CARGA, eliminamos la carga
-            if (tipoOferta === "CARGA") {
-                console.log("🚀 Eliminando datos de carga...");
-                await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`, {
-                    method: "DELETE",
-                });
-            }
-
-            // Cambiar a TRABAJO y limpiar datos de carga
-            setTipoOferta("TRABAJO");
-            setFormData((prevState) => ({
-                ...prevState,
-                mercancia: "",
-                peso: "",
-                origen: "",
-                destino: "",
-                distancia: "",
-                inicio: "",
-                finMinimo: "",
-                finMaximo: "",
-                fechaIncorporacion: "",
-                jornada: "",
-            }));
-        } else if (nuevoTipo === "CARGA") {
-            // Si antes era TRABAJO, eliminamos el trabajo
-            if (tipoOferta === "TRABAJO") {
-                console.log("🚀 Eliminando datos de trabajo...");
-                await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`, {
-                    method: "DELETE",
-                });
-            }
-
-            // Cambiar a CARGA y limpiar datos de trabajo
-            setTipoOferta("CARGA");
-            setFormData((prevState) => ({
-                ...prevState,
-                fechaIncorporacion: "",
-                jornada: "",
-                mercancia: "",
-                peso: "",
-                origen: "",
-                destino: "",
-                distancia: "",
-                inicio: "",
-                finMinimo: "",
-                finMaximo: "",
-            }));
-        }
-    } catch (error) {
-        console.error("❌ Error al cambiar tipo de oferta:", error);
-    }
+  const handleTipoOfertaChange = (nuevoTipo) => {
+    if (tipoOferta === nuevoTipo) return;
+  
+    setTipoOferta(nuevoTipo);
+  
+    // Limpiamos solo el estado local, sin afectar el backend todavía
+    setFormData((prevState) => ({
+      ...prevState,
+      fechaIncorporacion: nuevoTipo === "TRABAJO" ? "" : prevState.fechaIncorporacion,
+      jornada: nuevoTipo === "TRABAJO" ? "" : prevState.jornada,
+      mercancia: nuevoTipo === "CARGA" ? "" : prevState.mercancia,
+      peso: nuevoTipo === "CARGA" ? "" : prevState.peso,
+      origen: nuevoTipo === "CARGA" ? "" : prevState.origen,
+      destino: nuevoTipo === "CARGA" ? "" : prevState.destino,
+      distancia: nuevoTipo === "CARGA" ? "" : prevState.distancia,
+      inicio: nuevoTipo === "CARGA" ? "" : prevState.inicio,
+      finMinimo: nuevoTipo === "CARGA" ? "" : prevState.finMinimo,
+      finMaximo: nuevoTipo === "CARGA" ? "" : prevState.finMaximo,
+    }));
   };
+  
 
 
   return (
