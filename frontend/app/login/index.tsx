@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import globalStyles from "../../assets/styles/globalStyles";
 import colors from "../../assets/styles/colors";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
+import { BACKEND_URL } from '@env';
 
 const LoginScreen = () => {
   const router = useRouter();
@@ -14,8 +15,6 @@ const LoginScreen = () => {
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
-  const API_URL = process.env.API_URL || "http://localhost:8080";
 
   const handleLogin = async () => {
     try {
@@ -27,13 +26,12 @@ const LoginScreen = () => {
         return;
       }
 
-      const response = await axios.post(`${API_URL}/auth/signin`, {
+      const response = await axios.post(`${BACKEND_URL}/auth/signin`, {
         username,
         password,
       });
-
-      const { token } = response.data;
-      login(token); // Guarda el token en el contexto
+      const { token, userData } = response.data;
+      login(response.data, token);
 
       // Redirigir al usuario a la pantalla principal de ofertas
       router.replace("/");
@@ -89,12 +87,6 @@ const LoginScreen = () => {
         <TouchableOpacity style={[globalStyles.button, { marginBottom: 10, borderRadius: 12, elevation: 5 }]} onPress={handleLogin}>
           <Text style={[globalStyles.buttonText, { fontSize: 25 }]}>Ingresar</Text>
         </TouchableOpacity>
-        
-        {/* 
-        <TouchableOpacity onPress={() => router.push("/")}> 
-          <Text style={{ color: colors.secondary, textAlign: "center", marginTop: 16, marginBottom: 9 }}>He olvidado mi contraseña</Text>
-        </TouchableOpacity>
-        */}
 
         <View style={globalStyles.separatorContainer}>
           <View style={globalStyles.separator} />
