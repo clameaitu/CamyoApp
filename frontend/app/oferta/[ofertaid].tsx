@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import colors from "frontend/assets/styles/colors";
+import { BACKEND_URL } from '@env';
 
 const formatDate = (fecha: string) => {
     const opciones = { day: "numeric", month: "long", year: "numeric" } as const;
@@ -17,8 +18,6 @@ export default function OfertaDetalleScreen() {
     const [offerCargaData, setOfferCargaData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const { ofertaid } = useLocalSearchParams();
-
-    const BACKEND_URL = "http://localhost:8080"; //http://ip:8080 para conectar al móvil
 
     useEffect(() => {
         if (ofertaid) {

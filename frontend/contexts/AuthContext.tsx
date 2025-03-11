@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { BACKEND_URL } from '@env';
 
 interface AuthContextType {
   user: any | null;
@@ -55,10 +56,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     await AsyncStorage.removeItem("user");
     await AsyncStorage.removeItem("userToken");
   };
-
   const validateToken = async (token: string) => {
     try {
-      const response = await axios.get("http://localhost:8080/auth/validate", {
+      const response = await axios.get(`${BACKEND_URL}/auth/validate`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -114,7 +114,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const getUserData = async (userRole: string, userId: number) => {
     try {
-      const response = await axios.get(`http://localhost:8080/${userRole}/por_usuario/${userId}`);
+      const response = await axios.get(`${BACKEND_URL}/${userRole}/por_usuario/${userId}`);
 
       const unifiedUser = unifyUserData(response.data);
       setUser(unifiedUser);
