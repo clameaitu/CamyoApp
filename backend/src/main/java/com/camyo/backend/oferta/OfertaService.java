@@ -93,7 +93,7 @@ public class OfertaService {
             toUpdate.setEmpresa(empresa);
         }
     
-        BeanUtils.copyProperties(oferta, toUpdate, "id", "empresa", "licencia");
+        BeanUtils.copyProperties(oferta, toUpdate, "id", "empresa");
     
         ofertaRepository.save(toUpdate);
         return toUpdate;

@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import colors from "frontend/assets/styles/colors";
-import { BACKEND_URL } from '@env';
 
 const formatDate = (fecha: string) => {
     const opciones = { day: "numeric", month: "long", year: "numeric" } as const;
@@ -18,6 +17,8 @@ export default function OfertaDetalleScreen() {
     const [offerCargaData, setOfferCargaData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const { ofertaid } = useLocalSearchParams();
+
+    const BACKEND_URL = "http://localhost:8080"; //http://ip:8080 para conectar al móvil
 
     useEffect(() => {
         if (ofertaid) {
@@ -44,12 +45,12 @@ export default function OfertaDetalleScreen() {
 
                     console.log(cargaData);
                     
-                    const empresaResponse = await fetch(`${BACKEND_URL}/empresas/${data.empresa.id}`); //http://localhost:8080/empresas/${data.empresaId}
+                    const empresaResponse = await fetch(`${BACKEND_URL}/empresas/1`); //http://localhost:8080/empresas/${data.empresaId}
                     const empresaData = await empresaResponse.json();
                     setEmpresaData(empresaData);
                     console.log(empresaData);
 
-                    const usuarioEmpresaResponse = await fetch(`${BACKEND_URL}/usuarios/${empresaData.usuario.id}`); //http://localhost:8080/usuarios/${empresaData.usuarioId}
+                    const usuarioEmpresaResponse = await fetch(`${BACKEND_URL}/usuarios/1`); //http://localhost:8080/usuarios/${empresaData.usuarioId}
                     const usuarioEmpresaData = await usuarioEmpresaResponse.json();
                     setUsuarioEmpresaData(usuarioEmpresaData);
                     console.log(usuarioEmpresaData);
@@ -87,7 +88,7 @@ export default function OfertaDetalleScreen() {
                     <>
                         <View style={styles.header}>
                             <Image
-                                source={require('frontend/assets/images/no-company-logo.png')} 
+                                source={require('../../assets/images/no-company-logo.png')} 
                                 style={styles.logo}
                             />
                             <View style={styles.headerText}>
@@ -130,14 +131,14 @@ export default function OfertaDetalleScreen() {
                         <View style={styles.detailRow}>
                             <FontAwesome5 name="truck" size={18} color="#0b4f6c" />
                             <Text style={styles.detalles}>
-                                <Text style={styles.detallesLabel}>Camión Requerido:</Text> Furgoneta/Camión furgón y Refrigerado {/*offerData.camionRequerido*/}
+                                <Text style={styles.detallesLabel}>Camión Requerido:</Text> Furgoneta/Camión furgón Refrigerado {/*offerData.camionRequerido*/}
                             </Text>
                         </View>
 
                         <View style={styles.detailRow}>
                             <MaterialIcons name="location-on" size={20} color="#0b4f6c" />
                             <Text style={styles.detalles}>
-                                <Text style={styles.detallesLabel}>Recogida (Localización):</Text> {offerCargaData.origen}
+                                <Text style={styles.detallesLabel}>Recogida (Localización):</Text> {offerCargaData.inicio}
                             </Text>
                         </View>
 
@@ -172,7 +173,7 @@ export default function OfertaDetalleScreen() {
                         <View style={styles.detailRow}>
                             <FontAwesome5 name="weight" size={18} color="#0b4f6c" />
                             <Text style={styles.detalles}>
-                                <Text style={styles.detallesLabel}>Peso:</Text> {offerCargaData.peso} kg
+                                <Text style={styles.detallesLabel}>Peso (en kg):</Text> {offerCargaData.peso} kg
                             </Text>
                         </View>
 
@@ -187,7 +188,7 @@ export default function OfertaDetalleScreen() {
                     <>
                         <View style={styles.header}>
                             <Image
-                                source={require('frontend/assets/images/no-company-logo.png')} 
+                                source={require('../../assets/images/no-company-logo.png')} 
                                 style={styles.logo}
                             />
                             <View style={styles.headerText}>
@@ -277,7 +278,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#e6e8e6',
         paddingVertical: 20,
-        paddingTop: Platform.OS === "web" ? '5.8%' : '0%',
+        paddingTop: Platform.OS === "web" ? 90 : 0,
         
     },
     scrollContainer: {
