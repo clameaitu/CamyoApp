@@ -17,7 +17,7 @@ const handleLoginRedirect = () => {
 
 export default function OfertaDetalleScreen() {
 
-    const BACKEND_URL = process.env.BACKEND_URL;
+    const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
     const [offerData, setOfferData] = useState<any>(null);
     const [empresaData, setEmpresaData] = useState<any>(null);
     const [usuarioEmpresaData, setUsuarioEmpresaData] = useState<any>(null);
