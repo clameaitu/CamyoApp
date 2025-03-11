@@ -1,6 +1,6 @@
 import { Text, View, ActivityIndicator, StyleSheet, TouchableOpacity, Image, Platform, ScrollView } from "react-native";
 import React, { useState, useEffect } from "react";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter  } from "expo-router";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import colors from "frontend/assets/styles/colors";
 
@@ -17,6 +17,7 @@ export default function OfertaDetalleScreen() {
     const [offerCargaData, setOfferCargaData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const { ofertaid } = useLocalSearchParams();
+    const router = useRouter(); // Para navegar entre pantallas
 
     const BACKEND_URL = "http://localhost:8080"; //http://ip:8080 para conectar al móvil
 
@@ -256,6 +257,16 @@ export default function OfertaDetalleScreen() {
 
                     </>
                 )}
+
+                                    {/* Botón de Editar Oferta */}
+                        <TouchableOpacity 
+                            style={styles.editButton} 
+                            onPress={() => router.push(`/oferta/editar/${ofertaid}`)}
+                        >
+                            <Text style={styles.editButtonText}>✏️ Editar Oferta</Text>
+                        </TouchableOpacity>
+                 
+
             </View>
         );
     };
@@ -382,5 +393,18 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: 'red',
         textAlign: 'center',
+    },
+    editButton: {
+        backgroundColor: colors.primary,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    editButtonText: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: 'bold',
     },
 });
