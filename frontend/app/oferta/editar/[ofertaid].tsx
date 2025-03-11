@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { 
-  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet 
+import {
+  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet
 } from "react-native";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
-import colors from "../../../assets/styles/colors"; 
+import colors from "../../../assets/styles/colors";
 import globalStyles from "../../../assets/styles/globalStyles";
 import Selector from "../../_components/Selector";
 import MultiSelector from "../../_components/MultiSelector";
@@ -15,7 +15,7 @@ const EditarOfertaScreen = () => {
   const BACKEND_URL = "http://localhost:8080";
   const router = useRouter();
   const { ofertaid } = useLocalSearchParams();
-/****************************************************************/
+  /****************************************************************/
   const [formData, setFormData] = useState({
     titulo: "",
     experiencia: "",
@@ -23,8 +23,8 @@ const EditarOfertaScreen = () => {
     notas: "",
     estado: "",
     sueldo: "",
-    fechaPublicacion: "", 
-    empresa: "", 
+    fechaPublicacion: "",
+    empresa: "",
 
     // Trabajo
     fechaIncorporacion: "",
@@ -39,7 +39,7 @@ const EditarOfertaScreen = () => {
     inicio: "",
     finMinimo: "",
     finMaximo: "",
-      tipoAnterior: "", // Nuevo: Guarda el tipo original al cargar
+    tipoAnterior: "", // Nuevo: Guarda el tipo original al cargar
 
   });
 
@@ -49,23 +49,23 @@ const EditarOfertaScreen = () => {
       console.error("❌ Error: ofertaid no está definido.");
       return;
     }
-  
+
     const fetchOferta = async () => {
       try {
         console.log("🔍 Obteniendo oferta general...");
         const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`);
         const data = await response.json();
-  
+
         if (!data || Object.keys(data).length === 0) {
           console.error("❌ Error: La oferta no tiene datos.");
           return;
         }
-  
+
         let licencia = data.licencia || ""; // Asegurar que no sea undefined o null
-  
+
         let tipoOfertaCargado = "";
         let detallesOferta = {};
-  
+
         // Intentar obtener datos de carga
         const cargaResponse = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`);
         if (cargaResponse.ok) {
@@ -78,7 +78,7 @@ const EditarOfertaScreen = () => {
             }
           }
         }
-  
+
         // Intentar obtener datos de trabajo
         const trabajoResponse = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`);
         if (trabajoResponse.ok) {
@@ -91,7 +91,7 @@ const EditarOfertaScreen = () => {
             }
           }
         }
-  
+
         setTipoOferta(tipoOfertaCargado);
         setFormData(prevState => ({
           ...prevState,
@@ -100,18 +100,25 @@ const EditarOfertaScreen = () => {
           licencia, // Ahora es siempre un string
           tipoAnterior: tipoOfertaCargado, // Guardamos el tipo original
         }));
-  
+
       } catch (error) {
         console.error("❌ Error en fetchOferta:", error);
       }
     };
-  
+
     fetchOferta();
   }, []);
-  
-  
+
+
   const handleInputChange = (field, value) => {
+    let formattedValue = value;
+
+    // Si el campo es "licencia", reemplazamos "+" por "_"
+    if (field === "licencia") {
+      formattedValue = value.replace(/\+/g, "_");
+    }
     setFormData((prevState) => ({ ...prevState, [field]: String(value) }));
+
   };
 
   const validateForm = () => {
@@ -124,8 +131,8 @@ const EditarOfertaScreen = () => {
       return false;
     }
     if (tipoOferta === "CARGA" && (formData.fechaIncorporacion || formData.jornada)) {
-        alert("No puedes mezclar datos de CARGA y TRABAJO. Por favor, elige solo un tipo.");
-        return false;
+      alert("No puedes mezclar datos de CARGA y TRABAJO. Por favor, elige solo un tipo.");
+      return false;
     }
     return true;
   };
@@ -138,18 +145,18 @@ const EditarOfertaScreen = () => {
     const hours = String(d.getHours()).padStart(2, "0");
     const minutes = String(d.getMinutes()).padStart(2, "0");
     const seconds = String(d.getSeconds()).padStart(2, "0");
-  
+
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
   };
-  
+
 
   const handlePublish = async () => {
     if (!validateForm()) return;
-  
+
     try {
       // 🚀 Verificar si el tipo de oferta ha cambiado
       const tipoCambiado = tipoOferta !== formData.tipoAnterior;
-  
+
       let ofertaData: {
         tipoOferta: string;
         oferta: {
@@ -189,7 +196,7 @@ const EditarOfertaScreen = () => {
           empresa: { id: 201 },
         },
       };
-  
+
       // 🔥 Si el tipo de oferta cambió, primero eliminar el tipo anterior
       if (tipoCambiado) {
         if (formData.tipoAnterior === "TRABAJO") {
@@ -200,94 +207,94 @@ const EditarOfertaScreen = () => {
           await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`, { method: "DELETE" });
         }
       }
-  
-    // 🔥 2️⃣ **Crear el nuevo tipo de oferta si ha cambiado**
-    if (tipoCambiado) {
-      if (tipoOferta === "TRABAJO") {
-        console.log("🚀 Creando nueva oferta de TRABAJO...");
-        await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            fechaIncorporacion: formatDate(formData.fechaIncorporacion),
-            jornada: formData.jornada,
-          }),
-        });
-      } else if (tipoOferta === "CARGA") {
-        console.log("🚀 Creando nueva oferta de CARGA...");
-        await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            mercancia: formData.mercancia,
-            peso: Number(formData.peso),
-            origen: formData.origen,
-            destino: formData.destino,
-            distancia: Number(formData.distancia),
-            inicio: formData.inicio ? formatDate(formData.inicio) : null,
-            finMinimo: formData.finMinimo ? formatDate(formData.finMinimo) : null,
-            finMaximo: formData.finMaximo ? formatDate(formData.finMaximo) : null,
-          }),
-        });
+
+      // 🔥 2️⃣ **Crear el nuevo tipo de oferta si ha cambiado**
+      if (tipoCambiado) {
+        if (tipoOferta === "TRABAJO") {
+          console.log("🚀 Creando nueva oferta de TRABAJO...");
+          await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              fechaIncorporacion: formatDate(formData.fechaIncorporacion),
+              jornada: formData.jornada,
+            }),
+          });
+        } else if (tipoOferta === "CARGA") {
+          console.log("🚀 Creando nueva oferta de CARGA...");
+          await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              mercancia: formData.mercancia,
+              peso: Number(formData.peso),
+              origen: formData.origen,
+              destino: formData.destino,
+              distancia: Number(formData.distancia),
+              inicio: formData.inicio ? formatDate(formData.inicio) : null,
+              finMinimo: formData.finMinimo ? formatDate(formData.finMinimo) : null,
+              finMaximo: formData.finMaximo ? formatDate(formData.finMaximo) : null,
+            }),
+          });
+        }
+      } else {
+        // 🔥 3️⃣ **Si el tipo NO ha cambiado, solo actualizarlo**
+        if (tipoOferta === "TRABAJO") {
+          console.log("🔄 Actualizando oferta de TRABAJO...");
+          await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              fechaIncorporacion: formatDate(formData.fechaIncorporacion),
+              jornada: formData.jornada,
+            }),
+          });
+        } else if (tipoOferta === "CARGA") {
+          console.log("🔄 Actualizando oferta de CARGA...");
+          await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              mercancia: formData.mercancia,
+              peso: Number(formData.peso),
+              origen: formData.origen,
+              destino: formData.destino,
+              distancia: Number(formData.distancia),
+              inicio: formData.inicio ? formatDate(formData.inicio) : null,
+              finMinimo: formData.finMinimo ? formatDate(formData.finMinimo) : null,
+              finMaximo: formData.finMaximo ? formatDate(formData.finMaximo) : null,
+            }),
+          });
+        }
       }
-    } else {
-      // 🔥 3️⃣ **Si el tipo NO ha cambiado, solo actualizarlo**
-      if (tipoOferta === "TRABAJO") {
-        console.log("🔄 Actualizando oferta de TRABAJO...");
-        await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            fechaIncorporacion: formatDate(formData.fechaIncorporacion),
-            jornada: formData.jornada,
-          }),
-        });
-      } else if (tipoOferta === "CARGA") {
-        console.log("🔄 Actualizando oferta de CARGA...");
-        await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            mercancia: formData.mercancia,
-            peso: Number(formData.peso),
-            origen: formData.origen,
-            destino: formData.destino,
-            distancia: Number(formData.distancia),
-            inicio: formData.inicio ? formatDate(formData.inicio) : null,
-            finMinimo: formData.finMinimo ? formatDate(formData.finMinimo) : null,
-            finMaximo: formData.finMaximo ? formatDate(formData.finMaximo) : null,
-          }),
-        });
-      }
-    }
-  
+
       console.log("📩 Publicando oferta:", JSON.stringify(ofertaData, null, 2));
-  
+
       const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(ofertaData),
       });
-  
+
       if (!response.ok) throw new Error(`Error al editar la oferta: ${response.statusText}`);
-  
+
       console.log("✅ Oferta editada con éxito.");
       router.push("/miperfilempresa");
-  
+
     } catch (error) {
       console.error("❌ Error al enviar la oferta:", error);
       alert("Hubo un error al editar la oferta.");
     }
   };
-  
+
   // Función para renderizar cada input del formulario
   const renderInput = (label, field, icon, keyboardType = "default", secureTextEntry = false, multiline = false, placeholder = "") => (
     <View style={{ width: '90%', marginBottom: 15 }}>
       <Text style={{ fontSize: 16, color: colors.secondary, marginLeft: 8, marginBottom: -6, backgroundColor: colors.white, alignSelf: 'flex-start', paddingHorizontal: 5, zIndex: 1 }}>{label}</Text>
-      <View style={{ flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: colors.mediumGray, borderRadius: 8, paddingHorizontal: 10, backgroundColor: colors.white }}>      
+      <View style={{ flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: colors.mediumGray, borderRadius: 8, paddingHorizontal: 10, backgroundColor: colors.white }}>
         {icon}
         <TextInput
-          style={{ flex: 1, height: multiline ? 80 : 40, paddingLeft: 8, outline:"none", textAlignVertical: multiline ? 'top' : 'center' }}
+          style={{ flex: 1, height: multiline ? 80 : 40, paddingLeft: 8, outline: "none", textAlignVertical: multiline ? 'top' : 'center' }}
           keyboardType={keyboardType}
           secureTextEntry={secureTextEntry}
           multiline={multiline}
@@ -303,9 +310,9 @@ const EditarOfertaScreen = () => {
 
   const handleTipoOfertaChange = (nuevoTipo) => {
     if (tipoOferta === nuevoTipo) return;
-  
+
     setTipoOferta(nuevoTipo);
-  
+
     // Limpiamos solo el estado local, sin afectar el backend todavía
     setFormData((prevState) => ({
       ...prevState,
@@ -321,7 +328,7 @@ const EditarOfertaScreen = () => {
       finMaximo: nuevoTipo === "CARGA" ? "" : prevState.finMaximo,
     }));
   };
-  
+
 
 
   return (
@@ -334,29 +341,34 @@ const EditarOfertaScreen = () => {
           {renderInput("Título", "titulo", <FontAwesome5 name="tag" size={20} color={colors.primary} />)}
           {renderInput("Experiencia (años)", "experiencia", <FontAwesome5 name="briefcase" size={20} color={colors.primary} />)}
           <View style={styles.inputContainer}>
-              <Text style={{ color: colors.secondary, fontSize: 16, marginBottom: 10 }}>
-                Licencia:
-              </Text>
-              <View style={styles.licenciaContainer}>
-               {["AM", "A1", "A2", "A", "B", "C1", "C", "C1+E", "C+E", "D1", "D+E", "E", "D"].map((licencia) => (
-                 <TouchableOpacity
-                   key={licencia}
-                   style={[
-                     styles.licenciaButton,
-                     formData.licencia === licencia && styles.licenciaButtonSelected
-                   ]}
-                   onPress={() => handleInputChange("licencia", licencia)}
-                 >
-                   <Text style={[
-                     styles.licenciaText,
-                     formData.licencia === licencia && styles.licenciaTextSelected
-                   ]}>
-                     {licencia}
-                   </Text>
-                 </TouchableOpacity>
-               ))}
-             </View>
+            <Text style={{ color: colors.secondary, fontSize: 16, marginBottom: 10 }}>
+              Licencia:
+            </Text>
+            <View style={styles.licenciaContainer}>
+              {["AM", "A1", "A2", "A", "B", "C1", "C", "C1+E", "C+E", "D1", "D+E", "E", "D"].map((licencia) => {
+                const storedValue = licencia.replace(/\+/g, "_");
+                const isSelected = formData.licencia === storedValue;
+
+                return (
+                  <TouchableOpacity
+                    key={licencia}
+                    style={[
+                      styles.licenciaButton,
+                      isSelected && styles.licenciaButtonSelected
+                    ]}
+                    onPress={() => handleInputChange("licencia", storedValue)}
+                  >
+                    <Text style={[
+                      styles.licenciaText,
+                      isSelected && styles.licenciaTextSelected
+                    ]}>
+                      {licencia} {/* Mostramos el valor con + en la UI */}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
+          </View>
 
           {renderInput("Descripción", "notas", <FontAwesome5 name="align-left" size={20} color={colors.primary} />)}
           {renderInput("Sueldo (€)", "sueldo", <FontAwesome5 name="money-bill-wave" size={20} color={colors.primary} />)}
@@ -367,7 +379,7 @@ const EditarOfertaScreen = () => {
             <TouchableOpacity
               style={[styles.userTypeButton, tipoOferta === "TRABAJO" ? styles.selectedButton : styles.unselectedButton]}
               onPress={() => handleTipoOfertaChange("TRABAJO")}
-              >
+            >
               <FontAwesome5 size={24} color={tipoOferta === "TRABAJO" ? colors.white : colors.secondary} />
               <Text style={[styles.userTypeText, tipoOferta === "TRABAJO" ? styles.selectedText : styles.unselectedText]}>
                 TRABAJO
@@ -377,7 +389,7 @@ const EditarOfertaScreen = () => {
             <TouchableOpacity
               style={[styles.userTypeButton, tipoOferta === "CARGA" ? styles.selectedButton : styles.unselectedButton]}
               onPress={() => handleTipoOfertaChange("CARGA")}
-              >
+            >
               <FontAwesome5 size={24} color={tipoOferta === "CARGA" ? colors.white : colors.secondary} />
               <Text style={[styles.userTypeText, tipoOferta === "CARGA" ? styles.selectedText : styles.unselectedText]}>
                 CARGA
@@ -393,26 +405,26 @@ const EditarOfertaScreen = () => {
               <View style={styles.inputContainer}>
                 <Text style={{ color: colors.secondary, fontSize: 16, marginBottom: 10 }}>
                   Jornada:
-                </Text>              
+                </Text>
                 <View style={styles.jornadaContainer}>
-                   {["REGULAR", "FLEXIBLE", "COMPLETA", "NOCTURNA", "RELEVOS", "MIXTA"].map((jornada) => (
-                     <TouchableOpacity
-                       key={jornada}
-                       style={[
-                         styles.jornadaButton,
-                         formData.jornada === jornada && styles.jornadaButtonSelected
-                       ]}
-                       onPress={() => handleInputChange("jornada", jornada)}
-                     >
-                       <Text style={[
-                         styles.jornadaText,
-                         formData.jornada === jornada && styles.jornadaTextSelected
-                       ]}>
-                         {jornada}
-                       </Text>
-                     </TouchableOpacity>
-                   ))}
-                 </View>
+                  {["REGULAR", "FLEXIBLE", "COMPLETA", "NOCTURNA", "RELEVOS", "MIXTA"].map((jornada) => (
+                    <TouchableOpacity
+                      key={jornada}
+                      style={[
+                        styles.jornadaButton,
+                        formData.jornada === jornada && styles.jornadaButtonSelected
+                      ]}
+                      onPress={() => handleInputChange("jornada", jornada)}
+                    >
+                      <Text style={[
+                        styles.jornadaText,
+                        formData.jornada === jornada && styles.jornadaTextSelected
+                      ]}>
+                        {jornada}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
               </View>
             </>
           ) : (
@@ -519,13 +531,13 @@ const styles = StyleSheet.create({
   },
   licenciaContainer: {
     flexDirection: "row",
-    flexWrap: "wrap",  
-    justifyContent: "center", 
-    gap: 10, 
-    width: "100%", 
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 10,
+    width: "100%",
   },
   licenciaButton: {
-    width: "30%", 
+    width: "30%",
     paddingVertical: 10,
     alignItems: "center",
     borderRadius: 10,
@@ -534,7 +546,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   licenciaButtonSelected: {
-    backgroundColor: colors.primary, 
+    backgroundColor: colors.primary,
     borderColor: colors.primary,
   },
   licenciaText: {
@@ -542,17 +554,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   licenciaTextSelected: {
-    color: colors.white, 
+    color: colors.white,
   },
   jornadaContainer: {
     flexDirection: "row",
-    flexWrap: "wrap",  
-    justifyContent: "center", 
-    gap: 10, 
-    width: "100%", 
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 10,
+    width: "100%",
   },
   jornadaButton: {
-    width: "30%", 
+    width: "30%",
     paddingVertical: 10,
     alignItems: "center",
     borderRadius: 10,
@@ -561,7 +573,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   jornadaButtonSelected: {
-    backgroundColor: colors.primary, 
+    backgroundColor: colors.primary,
     borderColor: colors.primary,
   },
   jornadaText: {
@@ -570,7 +582,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   jornadaTextSelected: {
-    color: colors.white, 
+    color: colors.white,
   },
 });
 
