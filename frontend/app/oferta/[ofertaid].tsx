@@ -1,10 +1,11 @@
 import { Text, View, ActivityIndicator, StyleSheet, TouchableOpacity, Image, Platform, ScrollView, Linking, Alert, Modal } from "react-native";
 import React, { useState, useEffect } from "react";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import colors from "frontend/assets/styles/colors";
 import { useAuth } from "@/contexts/AuthContext";
 import { BACKEND_URL } from '@env';
+import routes from "../_components/routes";
 
 const formatDate = (fecha: string) => {
     const opciones = { day: "numeric", month: "long", year: "numeric" } as const;
@@ -12,9 +13,7 @@ const formatDate = (fecha: string) => {
 };
 
 const handleLoginRedirect = () => {
-    Linking.openURL('http://localhost:8081/login').catch(err => 
-      console.error("Failed to open login URL:", err)
-    );
+    router.push("/login")
 };
 
 export default function OfertaDetalleScreen() {
