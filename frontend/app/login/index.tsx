@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import globalStyles from "../../assets/styles/globalStyles";
 import colors from "../../assets/styles/colors";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
+import { BACKEND_URL } from '@env';
 
 const LoginScreen = () => {
   const router = useRouter();
@@ -14,8 +15,6 @@ const LoginScreen = () => {
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
-  const API_URL = process.env.API_URL || "http://localhost:8080";
 
   const handleLogin = async () => {
     try {
@@ -27,7 +26,7 @@ const LoginScreen = () => {
         return;
       }
 
-      const response = await axios.post(`${API_URL}/auth/signin`, {
+      const response = await axios.post(`${BACKEND_URL}/auth/signin`, {
         username,
         password,
       });
@@ -68,10 +67,11 @@ const LoginScreen = () => {
           <View style={{ flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: colors.mediumGray, borderRadius: 8, paddingHorizontal: 10, backgroundColor: colors.white }}>
             <Entypo name="lock" size={20} color={colors.primary} />
             <TextInput
-              style={{ flex: 1, height: 40, paddingLeft: 8, outline:"none" }}
+              style={{ flex: 1, height: 40, paddingLeft: 8, outline: "none" }}
               secureTextEntry={!passwordVisible}
               value={password}
               onChangeText={setPassword}
+              onSubmitEditing={handleLogin}
             />
             <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
               <Entypo name={passwordVisible ? "eye-with-line" : "eye"} size={18} color={colors.mediumGray} />
@@ -88,12 +88,6 @@ const LoginScreen = () => {
         <TouchableOpacity style={[globalStyles.button, { marginBottom: 10, borderRadius: 12, elevation: 5 }]} onPress={handleLogin}>
           <Text style={[globalStyles.buttonText, { fontSize: 25 }]}>Ingresar</Text>
         </TouchableOpacity>
-        
-        {/* 
-        <TouchableOpacity onPress={() => router.push("/")}> 
-          <Text style={{ color: colors.secondary, textAlign: "center", marginTop: 16, marginBottom: 9 }}>He olvidado mi contraseña</Text>
-        </TouchableOpacity>
-        */}
 
         <View style={globalStyles.separatorContainer}>
           <View style={globalStyles.separator} />
