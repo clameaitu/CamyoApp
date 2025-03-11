@@ -11,13 +11,15 @@ import BottomBar from './_components/BottomBar';
 import { MaterialIcons } from "@expo/vector-icons";
 import CamyoWebNavBar from "./_components/CamyoNavBar";
 import defaultCompanyLogo from "frontend/assets/images/defaultCompImg.png"
+import { useAuth } from "@/contexts/AuthContext";
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 export default function Index() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+  const { user, userToken, logout } = useAuth();
   useEffect(() => {
     fetchData();
     console.log(data); // Elimina las llaves innecesarias
@@ -27,7 +29,7 @@ export default function Index() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/ofertas');
+      const response = await axios.get(`${BACKEND_URL}/ofertas`);
       console.log(response.data);
       setData(response.data);
     } catch (error) {
@@ -40,7 +42,7 @@ export default function Index() {
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color={colors.secondary} />
       </View>
     );
   }
@@ -59,8 +61,17 @@ export default function Index() {
                     <Text style={styles.offerTitle}>{item.titulo}</Text>
 
                     <View style={{ display: "flex", flexDirection: "row" }}>
-                      <Text style={styles.offerDetailsTagExperience}>{">"}{item.experiencia} años</Text>
+                      <Text style={styles.offerDetailsTagType}>{item.tipoOferta}</Text>
                       <Text style={styles.offerDetailsTagLicense}>{item.licencia}</Text>
+                      <Text style={styles.offerDetailsTagExperience}>{">"}{item.experiencia} años</Text> 
+
+                      <View style={{display:"flex",alignItems:"center",flexDirection:"row"}}>
+                      <Text style={styles.localizacion}>|</Text>
+                      <MaterialIcons name="location-on" size={20} color="#696969" />
+                      <Text style={styles.localizacion}>{item.localizacion}</Text>
+
+                      </View>
+                      
                     </View>
 
                     <Text style={styles.offerInfo}>{item.notas}</Text>
@@ -98,24 +109,6 @@ export default function Index() {
         </View>
       )
       }
-        {/* Mostrar el perfil solo si estamos en la plataforma web y el usuario está logueado */}
-        {Platform.OS === 'web' && user ? (
-        <View style={styles.profileContainer}>
-          <TouchableOpacity onPress={() => router.push("/ejemplo")}>
-            <Text style={styles.profileLink}>Ejemplo de uso</Text>
-          </TouchableOpacity>
-        </View>
-      ) : null}
-
-      {/* Mostrar un mensaje si no está logueado en web */}
-      {Platform.OS === 'web' && !user ? (
-        <View style={styles.greetingContainer}>
-          <Text style={styles.greetingText}>Bienvenido, por favor inicia sesión para continuar.</Text>
-          <TouchableOpacity onPress={() => router.push("/login")}>
-            <Text style={styles.loginLink}>Iniciar sesión</Text>
-          </TouchableOpacity>
-        </View>
-      ) : null}
     </>
   );
 }
@@ -239,7 +232,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     flexWrap: "wrap",
   },
-  offerDetailsTagExperience: {
+  offerDetailsTagLicense: {
     fontSize: 9,
     backgroundColor: colors.secondary,
     borderRadius: 10,
@@ -254,7 +247,24 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     flexWrap: "wrap",
   },
-  offerDetailsTagLicense: {
+  
+  offerDetailsTagExperience: {
+    fontSize: 9,
+    borderColor: colors.primary,
+    borderWidth: 2,
+    borderRadius: 10,
+    color: colors.primary,
+    paddingTop: 2,
+    textAlign: "center",
+    textAlignVertical: "center",
+    paddingBottom: 2,
+    paddingLeft: 5,
+    paddingRight: 6,
+    marginRight: 3,
+    fontWeight: "bold",
+    flexWrap: "wrap",
+  },
+  offerDetailsTagType: {
     fontSize: 9,
     backgroundColor: colors.primary,
     color: colors.white,
@@ -262,7 +272,7 @@ const styles = StyleSheet.create({
     paddingTop: 2,
     textAlign: "center",
     textAlignVertical: "center",
-    paddingBottom: 3,
+    paddingBottom: 2,
     paddingLeft: 5,
     paddingRight: 6,
     marginRight: 3,
@@ -351,6 +361,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
     textDecorationLine: "underline",
   },
+  localizacion: {
+    fontSize: 15,
+    color: "#696969",
+},
 
 
 });
