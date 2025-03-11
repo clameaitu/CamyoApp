@@ -408,4 +408,26 @@ public class OfertaController {
     }
 
 
+    /**
+     * GET: Obtener las ofertas a las que ha aplicado un camionero, filtradas por estado y ordenadas por fecha de publicación.
+     * 
+     * @param camioneroId ID del camionero
+     * @param estado (Opcional) Estado de la oferta (ACEPTADA, RECHAZADA, PENDIENTE)
+     * @return Lista de ofertas aplicadas filtradas y ordenadas.
+     */
+    @GetMapping("/aplicadas/{camioneroId}")
+    public ResponseEntity<List<Oferta>> obtenerOfertasAplicadas(
+            @PathVariable Integer camioneroId,
+            @RequestParam(required = false) OfertaEstado estado) {
+        try {
+            List<Oferta> ofertas = ofertaService.obtenerAplicadasFiltradas(camioneroId, estado);
+            return ResponseEntity.ok(ofertas);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+
+
 }

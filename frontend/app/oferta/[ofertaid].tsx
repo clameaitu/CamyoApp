@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import colors from "frontend/assets/styles/colors";
+import { useAuth } from "@/contexts/AuthContext";
+import routes from "../_components/routes";
 
 const formatDate = (fecha: string) => {
     const opciones = { day: "numeric", month: "long", year: "numeric" } as const;
@@ -10,6 +12,8 @@ const formatDate = (fecha: string) => {
 };
 
 export default function OfertaDetalleScreen() {
+
+    const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
     const [offerData, setOfferData] = useState<any>(null);
     const [empresaData, setEmpresaData] = useState<any>(null);
     const [usuarioEmpresaData, setUsuarioEmpresaData] = useState<any>(null);

@@ -8,6 +8,9 @@ import axios, { AxiosError } from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 
 const LoginScreen = () => {
+
+  const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+
   const router = useRouter();
   const { login } = useAuth();
   const [username, setUsername] = useState("");
