@@ -7,13 +7,14 @@ import colors from "../../assets/styles/colors";
 import globalStyles from "../../assets/styles/globalStyles";
 import Selector from "../_components/Selector";
 import MultiSelector from "../_components/MultiSelector";
-import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 
 
 const CrearOfertaScreen = () => {
   const [tipoOferta, setTipoOferta] = useState("TRABAJO");
-  const navigation = useNavigation();
   const BACKEND_URL = "http://localhost:8080";
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     titulo: "",
     experiencia: "",
@@ -127,9 +128,8 @@ const CrearOfertaScreen = () => {
   
         const data = await response.json();
         console.log("Oferta creada con éxito:", data);
-        alert("Oferta publicada exitosamente.");
-  
-        navigation.navigate("miperfilempresa");
+        router.push("/miperfilempresa");
+
       } catch (error) {
         console.error("Error al enviar la oferta:", error);
         alert("Hubo un error al publicar la oferta.");
@@ -167,7 +167,7 @@ const CrearOfertaScreen = () => {
 
           {/* Campos generales */}
           {renderInput("Título", "titulo", <FontAwesome5 name="tag" size={20} color={colors.primary} />)}
-          {renderInput("Experiencia", "experiencia", <FontAwesome5 name="briefcase" size={20} color={colors.primary} />)}
+          {renderInput("Experiencia (años)", "experiencia", <FontAwesome5 name="briefcase" size={20} color={colors.primary} />)}
           <View style={styles.inputContainer}>
               <Text style={{ color: colors.secondary, fontSize: 16, marginRight: 10, flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
                 Licencia:
@@ -181,7 +181,7 @@ const CrearOfertaScreen = () => {
             </View>
 
           {renderInput("Descripción", "notas", <FontAwesome5 name="align-left" size={20} color={colors.primary} />)}
-          {renderInput("Sueldo", "sueldo", <FontAwesome5 name="money-bill-wave" size={20} color={colors.primary} />)}
+          {renderInput("Sueldo (€)", "sueldo", <FontAwesome5 name="money-bill-wave" size={20} color={colors.primary} />)}
 
           {/* Selector de tipo de oferta */}
           <Text style={styles.title}>¿Qué tipo de oferta quieres publicar?</Text>
@@ -228,10 +228,10 @@ const CrearOfertaScreen = () => {
           ) : (
             <>
               {renderInput("Mercancía", "mercancia", <FontAwesome5 name="box" size={20} color={colors.primary} />)}
-              {renderInput("Peso", "peso", <FontAwesome5 name="weight" size={20} color={colors.primary} />)}
+              {renderInput("Peso (kg)", "peso", <FontAwesome5 name="weight" size={20} color={colors.primary} />)}
               {renderInput("Origen", "origen", <FontAwesome5 name="map-marker-alt" size={20} color={colors.primary} />)}
               {renderInput("Destino", "destino", <FontAwesome5 name="map-marker" size={20} color={colors.primary} />)}
-              {renderInput("Distancia", "distancia", <FontAwesome5 name="road" size={20} color={colors.primary} />)}
+              {renderInput("Distancia (km)", "distancia", <FontAwesome5 name="road" size={20} color={colors.primary} />)}
               {renderInput("Inicio", "inicio", <FontAwesome5 name="clock" size={20} color={colors.primary} />)}
               {renderInput("Fin mínimo", "finMinimo", <FontAwesome5 name="calendar-minus" size={20} color={colors.primary} />)}
               {renderInput("Fin máximo", "finMaximo", <FontAwesome5 name="calendar-plus" size={20} color={colors.primary} />)}
