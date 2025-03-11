@@ -98,6 +98,24 @@ export default function Index() {
         </View>
       )
       }
+        {/* Mostrar el perfil solo si estamos en la plataforma web y el usuario está logueado */}
+        {Platform.OS === 'web' && user ? (
+        <View style={styles.profileContainer}>
+          <TouchableOpacity onPress={() => router.push("/ejemplo")}>
+            <Text style={styles.profileLink}>Ejemplo de uso</Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
+
+      {/* Mostrar un mensaje si no está logueado en web */}
+      {Platform.OS === 'web' && !user ? (
+        <View style={styles.greetingContainer}>
+          <Text style={styles.greetingText}>Bienvenido, por favor inicia sesión para continuar.</Text>
+          <TouchableOpacity onPress={() => router.push("/login")}>
+            <Text style={styles.loginLink}>Iniciar sesión</Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
     </>
   );
 }
@@ -303,6 +321,35 @@ const styles = StyleSheet.create({
     marginTop:3,
     marginRight:5,
 
+  },// Estilos para el perfil
+  profileContainer: {
+    alignItems: "center",
+    marginTop: 100,
+  },
+  profileText: {
+    fontSize: 18,
+    color: colors.primary,
+  },
+  profileLink: {
+    fontSize: 16,
+    color: colors.secondary,
+    marginTop: 10,
+    textDecorationLine: "underline",
+  },
+  // Estilos cuando el usuario no está logueado
+  greetingContainer: {
+    alignItems: "center",
+    marginTop: 20,
+  },
+  greetingText: {
+    fontSize: 18,
+    color: colors.primary,
+  },
+  loginLink: {
+    fontSize: 16,
+    color: colors.secondary,
+    marginTop: 10,
+    textDecorationLine: "underline",
   },
 
 
