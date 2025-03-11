@@ -11,5 +11,7 @@ public class OfertaRequestDTO {
     private Oferta oferta;
     private Carga carga; 
     private Trabajo trabajo;
+
+    private OfertaPrioridad prioridad;
 }
 
