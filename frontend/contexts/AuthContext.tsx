@@ -9,7 +9,7 @@ interface AuthContextType {
   login: (userData: any, token: string) => void;
   logout: () => void;
   validateToken: (token: string) => Promise<boolean>;
-  getUserData: (userId: number) => void;
+  getUserData: (userRole: string, userId: number) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -45,6 +45,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (userData: any, token: string) => {
     setUser(userData);
     setUserToken(token);
+    
+    await AsyncStorage.setItem("user", JSON.stringify(userData));
+    await AsyncStorage.setItem("userToken", token);
 
     const rol = userData.roles[0] === "EMPRESA" ? "empresas" : "camioneros";
     getUserData(rol, userData.id);
