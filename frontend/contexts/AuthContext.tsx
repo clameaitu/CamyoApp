@@ -31,14 +31,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const loadAuthData = async () => {
-      console.log("Loading auth data from asyncstorage");
       const storedUser = await AsyncStorage.getItem("user");
       const storedToken = await AsyncStorage.getItem("userToken");
 
       if (storedUser && storedToken) {
-        console.log("Session data found in AsyncStorage.");
-        console.log("Stored User:", JSON.parse(storedUser));
-        console.log("Stored Token:", storedToken);
         setUser(JSON.parse(storedUser));
         setUserToken(storedToken);
       }
@@ -47,9 +43,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = async (userData: any, token: string) => {
-    console.log("Logging in user...");
-    console.log("User Data:", userData);
-    console.log("Token:", token);
     setUser(userData);
     setUserToken(token);
     
@@ -57,7 +50,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     await AsyncStorage.setItem("userToken", token);
 
     const rol = userData.roles[0] === "EMPRESA" ? "empresas" : "camioneros";
-    console.log(`Fetching user data for role: ${rol} and user ID: ${userData.id}`);
     getUserData(rol, userData.id);
   };
 
