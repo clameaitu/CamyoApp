@@ -67,10 +67,11 @@ const LoginScreen = () => {
           <View style={{ flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: colors.mediumGray, borderRadius: 8, paddingHorizontal: 10, backgroundColor: colors.white }}>
             <Entypo name="lock" size={20} color={colors.primary} />
             <TextInput
-              style={{ flex: 1, height: 40, paddingLeft: 8, outline:"none" }}
+              style={{ flex: 1, height: 40, paddingLeft: 8, outline: "none" }}
               secureTextEntry={!passwordVisible}
               value={password}
               onChangeText={setPassword}
+              onSubmitEditing={handleLogin}
             />
             <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
               <Entypo name={passwordVisible ? "eye-with-line" : "eye"} size={18} color={colors.mediumGray} />
