@@ -40,8 +40,15 @@ const CrearOfertaScreen = () => {
     finMaximo: "",
   });
 
-  const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData((prevState) => ({ ...prevState, [field]: value }));
+  const handleInputChange = (field, value) => {
+    let formattedValue = value;
+  
+    // Si el campo es "licencia", reemplazamos "+" por "_"
+    if (field === "licencia") {
+      formattedValue = value.replace(/\+/g, "_");
+    }
+  
+    setFormData((prevState) => ({ ...prevState, [field]: formattedValue }));
   };
 
   const validateForm = () => {
@@ -153,7 +160,7 @@ const CrearOfertaScreen = () => {
           secureTextEntry={secureTextEntry}
           multiline={multiline}
           numberOfLines={multiline ? 3 : 1}
-          placeholder={placeholder} 
+          placeholder={placeholder}
           placeholderTextColor={colors.mediumGray}
           onChangeText={(value) => handleInputChange(field, value)}
         />
@@ -174,25 +181,36 @@ const CrearOfertaScreen = () => {
             <Text style={{ color: colors.secondary, fontSize: 16, marginBottom: 10 }}>
               Licencia:
             </Text>
-            <View style={styles.licenciaContainer}>
-              {["AM", "A1", "A2", "A", "B", "C1", "C", "C1+E", "C+E", "D1", "D+E", "E", "D"].map((licencia, index) => (
-                <TouchableOpacity
-                  key={licencia}
-                  style={[
-                    styles.licenciaButton,
-                    formData.licencia === licencia && styles.licenciaButtonSelected
-                  ]}
-                  onPress={() => handleInputChange("licencia", licencia)}
-                >
-                  <Text style={[
-                    styles.licenciaText,
-                    formData.licencia === licencia && styles.licenciaTextSelected
-                  ]}>
-                    {licencia}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <View style={styles.inputContainer}>
+  <Text style={{ color: colors.secondary, fontSize: 16, marginBottom: 10 }}>
+    Licencia:
+  </Text>
+  <View style={styles.licenciaContainer}>
+    {["AM", "A1", "A2", "A", "B", "C1", "C", "C1+E", "C+E", "D1", "D+E", "E", "D"].map((licencia) => {
+      const storedValue = licencia.replace(/\+/g, "_"); 
+      const isSelected = formData.licencia === storedValue;
+
+      return (
+        <TouchableOpacity
+          key={licencia}
+          style={[
+            styles.licenciaButton,
+            isSelected && styles.licenciaButtonSelected 
+          ]}
+          onPress={() => handleInputChange("licencia", storedValue)}
+        >
+          <Text style={[
+            styles.licenciaText,
+            isSelected && styles.licenciaTextSelected
+          ]}>
+            {licencia} {/* Mostramos el valor con + en la UI */}
+          </Text>
+        </TouchableOpacity>
+      );
+    })}
+  </View>
+</View>
+
           </View>
 
           {renderInput("Descripción", "notas", <FontAwesome5 name="align-left" size={20} color={colors.primary} />)}
