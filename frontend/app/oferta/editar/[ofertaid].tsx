@@ -61,10 +61,7 @@ const EditarOfertaScreen = () => {
           return;
         }
   
-        let licencia = data.licencia;
-        if (licencia && typeof licencia === "string") {
-          licencia = licencia.split(",").map(l => l.trim());
-        }
+        let licencia = data.licencia || ""; // Asegurar que no sea undefined o null
   
         let tipoOfertaCargado = "";
         let detallesOferta = {};
@@ -100,7 +97,7 @@ const EditarOfertaScreen = () => {
           ...prevState,
           ...data,
           ...detallesOferta,
-          licencia: licencia || [],
+          licencia, // Ahora es siempre un string
           tipoAnterior: tipoOfertaCargado, // Guardamos el tipo original
         }));
   
@@ -113,8 +110,8 @@ const EditarOfertaScreen = () => {
   }, []);
   
   
-  const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData((prevState) => ({ ...prevState, [field]: value }));
+  const handleInputChange = (field, value) => {
+    setFormData((prevState) => ({ ...prevState, [field]: String(value) }));
   };
 
   const validateForm = () => {
@@ -283,10 +280,6 @@ const EditarOfertaScreen = () => {
     }
   };
   
-  
-  
-  
-
   // Función para renderizar cada input del formulario
   const renderInput = (label, field, icon, keyboardType = "default", secureTextEntry = false, multiline = false) => (
     <View style={{ width: '90%', marginBottom: 15 }}>
@@ -339,15 +332,28 @@ const EditarOfertaScreen = () => {
           {renderInput("Título", "titulo", <FontAwesome5 name="tag" size={20} color={colors.primary} />)}
           {renderInput("Experiencia (años)", "experiencia", <FontAwesome5 name="briefcase" size={20} color={colors.primary} />)}
           <View style={styles.inputContainer}>
-              <Text style={{ color: colors.secondary, fontSize: 16, marginRight: 10, flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
+              <Text style={{ color: colors.secondary, fontSize: 16, marginBottom: 10 }}>
                 Licencia:
               </Text>
-              <MultiSelector 
-                value={formData.licencia}
-                onChange={(value) => handleInputChange("licencia", value)}
-                options={["AM","A1","A2","A","B","C1","C","C1+E","C+E","D1","D+E","E","D"]}
-                colors={colors} 
-              />
+              <View style={styles.licenciaContainer}>
+               {["AM", "A1", "A2", "A", "B", "C1", "C", "C1+E", "C+E", "D1", "D+E", "E", "D"].map((licencia) => (
+                 <TouchableOpacity
+                   key={licencia}
+                   style={[
+                     styles.licenciaButton,
+                     formData.licencia === licencia && styles.licenciaButtonSelected
+                   ]}
+                   onPress={() => handleInputChange("licencia", licencia)}
+                 >
+                   <Text style={[
+                     styles.licenciaText,
+                     formData.licencia === licencia && styles.licenciaTextSelected
+                   ]}>
+                     {licencia}
+                   </Text>
+                 </TouchableOpacity>
+               ))}
+             </View>
             </View>
 
           {renderInput("Descripción", "notas", <FontAwesome5 name="align-left" size={20} color={colors.primary} />)}
@@ -383,16 +389,28 @@ const EditarOfertaScreen = () => {
               {renderInput("Fecha de incorporación", "fechaIncorporacion", <FontAwesome5 name="calendar-check" size={20} color={colors.primary} />)}
 
               <View style={styles.inputContainer}>
-                <Text style={{ color: colors.secondary, fontSize: 16, marginRight: 10, flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
+                <Text style={{ color: colors.secondary, fontSize: 16, marginBottom: 10 }}>
                   Jornada:
                 </Text>              
-                <Selector 
-                  value={formData.jornada} 
-                  onChange={(value) => handleInputChange("jornada", value)} 
-                  options={["REGULAR", "FLEXIBLE", "COMPLETA", "NOCTURNA", "RELEVOS", "MIXTA"]} 
-                  colors={colors} 
-                  globalStyles={globalStyles} 
-                  />
+                <View style={styles.jornadaContainer}>
+                   {["REGULAR", "FLEXIBLE", "COMPLETA", "NOCTURNA", "RELEVOS", "MIXTA"].map((jornada) => (
+                     <TouchableOpacity
+                       key={jornada}
+                       style={[
+                         styles.jornadaButton,
+                         formData.jornada === jornada && styles.jornadaButtonSelected
+                       ]}
+                       onPress={() => handleInputChange("jornada", jornada)}
+                     >
+                       <Text style={[
+                         styles.jornadaText,
+                         formData.jornada === jornada && styles.jornadaTextSelected
+                       ]}>
+                         {jornada}
+                       </Text>
+                     </TouchableOpacity>
+                   ))}
+                 </View>
               </View>
             </>
           ) : (
@@ -496,6 +514,61 @@ const styles = StyleSheet.create({
   },
   unselectedText: {
     color: colors.secondary,
+  },
+  licenciaContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",  
+    justifyContent: "center", 
+    gap: 10, 
+    width: "100%", 
+  },
+  licenciaButton: {
+    width: "30%", 
+    paddingVertical: 10,
+    alignItems: "center",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.secondary,
+    backgroundColor: "transparent",
+  },
+  licenciaButtonSelected: {
+    backgroundColor: colors.primary, 
+    borderColor: colors.primary,
+  },
+  licenciaText: {
+    color: colors.secondary,
+    fontSize: 16,
+  },
+  licenciaTextSelected: {
+    color: colors.white, 
+  },
+  jornadaContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",  
+    justifyContent: "center", 
+    gap: 10, 
+    width: "100%", 
+  },
+  jornadaButton: {
+    width: "30%", 
+    paddingVertical: 10,
+    alignItems: "center",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.secondary,
+    backgroundColor: "transparent",
+  },
+  jornadaButtonSelected: {
+    backgroundColor: colors.primary, 
+    borderColor: colors.primary,
+  },
+  jornadaText: {
+    color: colors.secondary,
+    fontSize: 16,
+    textAlign: "center",
+  },
+  jornadaTextSelected: {
+    color: colors.white, 
   },
 });
 
