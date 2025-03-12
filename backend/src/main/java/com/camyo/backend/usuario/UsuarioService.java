@@ -97,13 +97,15 @@ public class UsuarioService {
         }
         return (float) media / list.size();     
     }
-	public Usuario updateUser(@Valid Usuario usuario, Integer idToUpdate) {
-		Usuario toUpdate = obtenerUsuarioPorId(idToUpdate);
-		BeanUtils.copyProperties(usuario, toUpdate, "id");
-		toUpdate.setPassword(encoder.encode(toUpdate.getPassword()));
-		usuarioRepository.save(toUpdate);
+    public Usuario updateUser(@Valid Usuario usuario, Integer idToUpdate) {
+        Usuario toUpdate = obtenerUsuarioPorId(idToUpdate);
+        BeanUtils.copyProperties(usuario, toUpdate, "id", "reseñas", "password");
+        if (usuario.getPassword() != null && !usuario.getPassword().isEmpty()) {
+            toUpdate.setPassword(encoder.encode(usuario.getPassword()));
+        }
+        usuarioRepository.save(toUpdate);
 
-		return toUpdate;
-	}
+        return toUpdate;
+    }
     
 }
