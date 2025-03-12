@@ -1,14 +1,21 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Image } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Image, Alert } from "react-native";
 import globalStyles from "../../assets/styles/globalStyles";
 import colors from "../../assets/styles/colors";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
+import axios from "axios";
 import defaultProfileImage from "../../assets/images/react-logo.png";
+//import { BACKEND_URL } from '@env';
+import { useRouter } from "expo-router";
+
+const BACKEND_URL = "http://localhost:8080";
 
 const EmpresaScreen = () => {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
-
   const [formData, setFormData] = useState({
     nombre: "",
     username: "",
@@ -34,10 +41,34 @@ const EmpresaScreen = () => {
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
+      base64: true,  // Poner la imagen en base64
     });
-
+  
     if (!result.canceled) {
-      setFormData({ ...formData, foto: result.assets[0].uri });
+      const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+      setFormData((prevState) => ({ ...prevState, foto: base64Image }));
+    }
+  };
+
+  const handleRegister = async () => {
+    setLoading(true);
+    try {
+      const formDataToSend = new FormData();
+      Object.keys(formData).forEach((key) => {
+        if (formData[key]) {
+          formDataToSend.append(key, formData[key]);
+        }
+      });
+
+      const response = await axios.post("http://localhost:8080/signup/empresa", formDataToSend, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      Alert.alert("Éxito", response.data.message);
+    } catch (error) {
+      Alert.alert("Error", error.response?.data?.message || "Hubo un problema en el registro");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -122,10 +153,10 @@ const EmpresaScreen = () => {
 
           {/* Campos del formulario específicos de la empresa */}
           {renderInput("Página web (Opcional)", "web", <FontAwesome5 name="globe" size={20} color={colors.primary} />, "url")}
-        {renderInput("Número de Identificación", "numId", <FontAwesome5 name="id-card" size={20} color={colors.primary} />, "default")}
+          {renderInput("Número de Identificación", "numId", <FontAwesome5 name="id-card" size={20} color={colors.primary} />, "default")}
             
           {/* Botón de registro */}
-          <TouchableOpacity style={[globalStyles.button, { width: "100%", borderRadius: 12, elevation: 5 }]}>
+          <TouchableOpacity style={[globalStyles.button, { width: "100%", borderRadius: 12, elevation: 5 }]} onPress={handleRegister}>
             <Text style={[globalStyles.buttonText, { fontSize: 25 }]}>Registrarse</Text>
           </TouchableOpacity>
         </View>
