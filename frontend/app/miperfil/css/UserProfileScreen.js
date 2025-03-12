@@ -616,8 +616,8 @@ editButton: {
     alignItems: 'center',
     alignSelf: 'flex-start',
     position: 'fixed',
-    top: 580,
-    left:370 // Adjusted to place the button below the profile picture
+    top: 250,
+    left:1370 // Adjusted to place the button below the profile picture
   },
   editButtonText: {
     color: '#fff',

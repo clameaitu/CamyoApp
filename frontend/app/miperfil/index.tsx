@@ -161,7 +161,7 @@ const UserProfileScreen: React.FC = () => {
                         <View style={styles.profileDetailsContainer}>
                         <TouchableOpacity
               style = {styles.editButton}
-              onPress={() => router.push(`/miperfilempresa/editar`)}
+              onPress={() => router.push(`/miperfil/editar`)}
             >
               <Text style = {styles.editButtonText}> Editar Perfil</Text>
             </TouchableOpacity>
