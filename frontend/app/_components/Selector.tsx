@@ -16,7 +16,9 @@ const Selector = ({ value, onChange, options, colors, globalStyles }) => {
           ]}
           onPress={() => onChange(option)}
         >
-          <Text style={{ color: value === option ? colors.white : colors.secondary }}>{option}</Text>
+          <Text style={{ fontSize: 16, color: value === option ? colors.white : colors.secondary }}>
+            {option}
+          </Text>
         </TouchableOpacity>
       ))}
     </View>
