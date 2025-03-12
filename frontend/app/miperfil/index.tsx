@@ -62,6 +62,7 @@ const UserProfileScreen: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [camionero,setCamionero] = useState<Camionero| null>(null);
+    const [userData,setUserData] = useState<Camionero| null>(null);
     const navigation = useNavigation();
     const { userToken, user,getUserData } = useAuth();
     const [offers, setOffers] = useState<any[]>([]);
@@ -90,6 +91,7 @@ const UserProfileScreen: React.FC = () => {
             */
         fetchCamioneroData(); 
         fetchOffers();
+        fetchUserData();
         // Hide the default header
         navigation.setOptions({ headerShown: false });
 
@@ -101,8 +103,19 @@ const UserProfileScreen: React.FC = () => {
           setCamionero(response.data.usuario);
           setLicencias(response.data.licencias);
           setDisp(response.data.disponibilidad);
-          console.log(response.data);
           console.log(response.data.licencias);
+        } catch (err) {
+          setError((err as Error)?.message || "Error desconocido");
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const fetchUserData = async () => {
+        try {
+          const response = await axios.get(`${BACKEND_URL}/usuarios/${user.id}`);
+          setUserData(response.data);
+          console.log("userdata`   " +response.data.nombre);
         } catch (err) {
           setError((err as Error)?.message || "Error desconocido");
         } finally {
@@ -113,7 +126,7 @@ const UserProfileScreen: React.FC = () => {
     const fetchOffers = async () => {
         try {
             const response = await axios.get(`${BACKEND_URL}/ofertas/aplicadas/${user.id}?estado=${offerStatus}`);
-            console.log(response.data);
+            console.log( +response.data);
             setOffers(response.data);
         } catch (error) {
             console.error('Error al cargar los datos:', error);
@@ -131,6 +144,7 @@ const UserProfileScreen: React.FC = () => {
     }
 
     console.log(userToken)
+    console.log(user)
 
     const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 
@@ -155,7 +169,7 @@ const UserProfileScreen: React.FC = () => {
                     <Image source={defaultBanner} style={styles.bannerImage} />
                     <View style={isMobile ? styles.profileContainer : styles.desktopProfileContainer}>
                         <Image 
-                            source={{ uri: camionero?.foto || 'https://ui-avatars.com/api/?name=' + camionero?.nombre }} 
+                            source={{ uri: userData?.foto || 'https://ui-avatars.com/api/?name=' + userData?.nombre }} 
                             style={isMobile ? styles.avatar : styles.desktopAvatar} 
                         />
                         <View style={styles.profileDetailsContainer}>
@@ -166,7 +180,7 @@ const UserProfileScreen: React.FC = () => {
               <Text style = {styles.editButtonText}> Editar Perfil</Text>
             </TouchableOpacity>
 
-                            <Text style={isMobile ? styles.name : styles.desktopName}>{camionero?.nombre}</Text>
+                            <Text style={isMobile ? styles.name : styles.desktopName}>{userData?.nombre}</Text>
                             <View style={styles.detailsRow}>
                                 <Text style={styles.infoText}>DIsponibilidad: {normalizeFirstLetter(disp || '')}</Text>
                                 {user?.experiencia !== undefined && (
@@ -195,7 +209,7 @@ const UserProfileScreen: React.FC = () => {
                             <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>
                                 <FontAwesome style={styles.envelopeIcon} name="envelope" size={20}/>
                                 <Text style={styles.linkText}>
-                                    <Text onPress={() => Linking.openURL(`mailto:${camionero?.email}`)}>{camionero?.email}</Text>
+                                    <Text onPress={() => Linking.openURL(`mailto:${userData?.email}`)}>{userData?.email}</Text>
                                 </Text>  
                             </Text>
                         </View>
@@ -210,13 +224,13 @@ const UserProfileScreen: React.FC = () => {
                             </View>
                         )}
                         <View style={styles.detailItem}>
-                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="map" size={20}/>{camionero?.localizacion}</Text>
+                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="map" size={20}/>{userData?.localizacion}</Text>
                         </View>
                         <View style={styles.detailItem}>
-                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="phone" size={20}/>{camionero?.telefono}</Text>
+                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="phone" size={20}/>{userData?.telefono}</Text>
                         </View>
                         <View style={styles.descriptionBox}>
-                            <Text style={styles.descriptionText}>{capitalizeFirstLetter(camionero?.descripcion || '')}</Text>
+                            <Text style={styles.descriptionText}>{capitalizeFirstLetter(userData?.descripcion || '')}</Text>
                         </View>
                     </View>
                 </View>
