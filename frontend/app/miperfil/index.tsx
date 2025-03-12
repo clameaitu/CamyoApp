@@ -13,16 +13,19 @@ import { useAuth } from '../../contexts/AuthContext';
 import axios from 'axios';
 import { router } from 'expo-router';
 
-interface UserProfile {
+interface Camionero {
     id: number;
     nombre: string;
     email: string;
-    tipo: string;
+    disponibilidad: string;
     experiencia?: number;
     licencias?: string[];
     vehiculo_propio?: boolean;
-    ubicacion: string;
+    localizacion: string;
     avatar: string;
+    telefono: string;
+    foto: string;
+    descripcion: string;
 }
 
 interface Review {
@@ -34,7 +37,7 @@ interface Review {
 }
 
 // Get the first user from the JSON data
-const placeholderUser: UserProfile = {
+const placeholderUser: Camionero = {
     id: frontendData.usuarios[0].id,
     nombre: frontendData.usuarios[0].nombre,
     email: frontendData.usuarios[0].email,
@@ -58,28 +61,54 @@ const reviews: Review[] = [
 const UserProfileScreen: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const [camionero,setCamionero] = useState<Camionero| null>(null);
     const navigation = useNavigation();
-    const { userToken, user } = useAuth();
+    const { userToken, user,getUserData } = useAuth();
     const [offers, setOffers] = useState<any[]>([]);
     const [offerStatus, setOfferStatus] = useState<string>('ACEPTADA'); // State to track selected offer status
     const placeholderAvatar = 'https://ui-avatars.com/api/?name='
     const PlaceHolderLicencias = 'No tiene licencias'
+    const [licencias,setLicencias] = useState<string[]>([]);
+    const [disp,setDisp] = useState<string>('');
     const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
-
+    var data;
     const capitalizeFirstLetter = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
+    };
+    const normalizeFirstLetter = (string) => {
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
     };
 
     useEffect(() => {
         if (!userToken) {
             router.push('/login');
         }
-            
+        /*if (!user || user.usuario.authority.authority !== "CAMIONERO") {
+            console.warn("Acceso denegado. Redirigiendo...")
+            router.replace("/")
+          }
+            */
+        fetchCamioneroData(); 
         fetchOffers();
         // Hide the default header
         navigation.setOptions({ headerShown: false });
 
     }, [userToken, user, offerStatus]); // Add offerStatus to dependency array
+
+    const fetchCamioneroData = async () => {
+        try {
+          const response = await axios.get(`${BACKEND_URL}/camioneros/${user.id}`);
+          setCamionero(response.data.usuario);
+          setLicencias(response.data.licencias);
+          setDisp(response.data.disponibilidad);
+          console.log(response.data);
+          console.log(response.data.licencias);
+        } catch (err) {
+          setError((err as Error)?.message || "Error desconocido");
+        } finally {
+          setLoading(false);
+        }
+      };
 
     const fetchOffers = async () => {
         try {
@@ -102,7 +131,7 @@ const UserProfileScreen: React.FC = () => {
     }
 
     console.log(userToken)
-    console.log("id" + user)
+    console.log("id" + user.id )
     const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 
     const getNoOffersMessage = () => {
@@ -126,15 +155,22 @@ const UserProfileScreen: React.FC = () => {
                     <Image source={defaultBanner} style={styles.bannerImage} />
                     <View style={isMobile ? styles.profileContainer : styles.desktopProfileContainer}>
                         <Image 
-                            source={{ uri: user?.avatar || 'https://ui-avatars.com/api/?name=' + user?.nombre }} 
+                            source={{ uri: camionero?.foto || 'https://ui-avatars.com/api/?name=' + camionero?.nombre }} 
                             style={isMobile ? styles.avatar : styles.desktopAvatar} 
                         />
                         <View style={styles.profileDetailsContainer}>
-                            <Text style={isMobile ? styles.name : styles.desktopName}>{user?.nombre}</Text>
+                        <TouchableOpacity
+              style = {styles.editButton}
+              onPress={() => router.push(`/miperfilempresa/editar`)}
+            >
+              <Text style = {styles.editButtonText}> Editar Perfil</Text>
+            </TouchableOpacity>
+
+                            <Text style={isMobile ? styles.name : styles.desktopName}>{camionero?.nombre}</Text>
                             <View style={styles.detailsRow}>
-                                <Text style={styles.infoText}>Tipo: {capitalizeFirstLetter(user?.descripcion || '')}</Text>
+                                <Text style={styles.infoText}>DIsponibilidad: {normalizeFirstLetter(disp || '')}</Text>
                                 {user?.experiencia !== undefined && (
-                                    <Text style={styles.infoText}>{user.experiencia} años de experiencia</Text>
+                                    <Text style={styles.infoText}>{camionero.experiencia} años de experiencia</Text>
                                 )}
                             </View>
                         </View>
@@ -159,28 +195,28 @@ const UserProfileScreen: React.FC = () => {
                             <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>
                                 <FontAwesome style={styles.envelopeIcon} name="envelope" size={20}/>
                                 <Text style={styles.linkText}>
-                                    <Text onPress={() => Linking.openURL(`mailto:${user?.email}`)}>{user?.email}</Text>
+                                    <Text onPress={() => Linking.openURL(`mailto:${camionero?.email}`)}>{camionero?.email}</Text>
                                 </Text>  
                             </Text>
                         </View>
-                        {user?.licencias && (
+                        
                             <View style={styles.detailItem}>
-                                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="id-card" size={20}/>{user?.licencias.join(', ') || PlaceHolderLicencias}</Text>
+                                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="id-card" size={20}/>{licencias.join(', ') || PlaceHolderLicencias}</Text>
                             </View>
-                        )}
+                        
                         {user?.vehiculo_propio !== undefined && (
                             <View style={styles.detailItem}>
-                                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.truckIcon} name="truck" size={23}/>{user.vehiculo_propio ? 'Vehículo propio' : 'Sin vehículo propio'}</Text>
+                                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.truckIcon} name="truck" size={23}/>{camionero?.vehiculo_propio ? 'Vehículo propio' : 'Sin vehículo propio'}</Text>
                             </View>
                         )}
                         <View style={styles.detailItem}>
-                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="map" size={20}/>{user?.localizacion}</Text>
+                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="map" size={20}/>{camionero?.localizacion}</Text>
                         </View>
                         <View style={styles.detailItem}>
-                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="phone" size={20}/>{user?.telefono}</Text>
+                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="phone" size={20}/>{camionero?.telefono}</Text>
                         </View>
                         <View style={styles.descriptionBox}>
-                            <Text style={styles.descriptionText}>{capitalizeFirstLetter(user?.descripcion || '')}</Text>
+                            <Text style={styles.descriptionText}>{capitalizeFirstLetter(camionero?.descripcion || '')}</Text>
                         </View>
                     </View>
                 </View>

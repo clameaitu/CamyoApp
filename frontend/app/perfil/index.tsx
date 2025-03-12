@@ -16,9 +16,9 @@ const UnifiedUserProfileScreen: React.FC = () => {
         router.replace('/login');
     }
 
-    if (user && user.rol === 'CAMIONERO') {
+    if (user && user.roles[0] === 'CAMIONERO') {
         return <UserProfileScreen />;
-    } else if (user && user.rol === 'EMPRESA') {
+    } else if (user && user.roles[0] === 'EMPRESA') {
         return <CompanyDetailScreen />;
     } else {
         return (

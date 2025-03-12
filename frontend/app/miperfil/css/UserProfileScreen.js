@@ -607,6 +607,23 @@ noOffersText: {
     fontSize: 20,
     color: colors.secondary
 },
+editButton: {
+    marginTop: 20,
+    backgroundColor: colors.primary,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    position: 'fixed',
+    top: 580,
+    left:370 // Adjusted to place the button below the profile picture
+  },
+  editButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;
