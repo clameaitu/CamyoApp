@@ -11,14 +11,6 @@ const formatDate = (fecha: string) => {
     return new Date(fecha).toLocaleDateString("es-ES", opciones);
 };
 
-const handleLoginRedirect = () => {
-    router.push("/login")
-};
-
-const handleEditarOferta = () => {
-    router.push("/oferta/editar")
-}
-
 export default function OfertaDetalleScreen() {
 
     const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
@@ -149,6 +141,14 @@ export default function OfertaDetalleScreen() {
         }
     };
 
+    const handleLoginRedirect = () => {
+        router.push("/login")
+    };    
+
+    const handleEditarOferta = () => {
+        router.push(`/oferta/editar/${ofertaid}`);
+    }
+
     const renderOfferCard = () => {
         return (
             <View style={styles.card}>
@@ -183,7 +183,7 @@ export default function OfertaDetalleScreen() {
                                         <Text style={styles.solicitarButtonText}>Solicitar Oferta</Text>
                                     </TouchableOpacity>
                                 )
-                            ) : user.rol === 'EMPRESA' && user.empresaId === offerData.empresaId ? (
+                            ) : user.rol === 'EMPRESA' && user.id === offerData.empresa.id ? (
                                 <TouchableOpacity style={styles.solicitarButton} onPress={handleEditarOferta}>
                                     <Text style={styles.solicitarButtonText}>Editar Oferta</Text>
                                 </TouchableOpacity>
@@ -297,16 +297,22 @@ export default function OfertaDetalleScreen() {
                             </View>
                         </View>
                         
-                        {user && user.rol === 'CAMIONERO' ? (
-                            userHasApplied ? (
-                                <TouchableOpacity style={styles.solicitarButton} onPress={handleDesaplicarOferta}>
-                                    <Text style={styles.solicitarButtonText}>Desaplicar Oferta</Text>
+                        {user ? (
+                            user.rol === 'CAMIONERO' ? (
+                                userHasApplied ? (
+                                    <TouchableOpacity style={styles.solicitarButton} onPress={handleDesaplicarOferta}>
+                                        <Text style={styles.solicitarButtonText}>Desaplicar Oferta</Text>
+                                    </TouchableOpacity>
+                                ) : (
+                                    <TouchableOpacity style={styles.solicitarButton} onPress={handleSolicitarOferta}>
+                                        <Text style={styles.solicitarButtonText}>Solicitar Oferta</Text>
+                                    </TouchableOpacity>
+                                )
+                            ) : user.rol === 'EMPRESA' && user.id === offerData.empresa.id ? (
+                                <TouchableOpacity style={styles.solicitarButton} onPress={handleEditarOferta}>
+                                    <Text style={styles.solicitarButtonText}>Editar Oferta</Text>
                                 </TouchableOpacity>
-                            ) : (
-                                <TouchableOpacity style={styles.solicitarButton} onPress={handleSolicitarOferta}>
-                                    <Text style={styles.solicitarButtonText}>Solicitar Oferta</Text>
-                                </TouchableOpacity>
-                            )
+                            ) : null
                         ) : (
                             <TouchableOpacity style={styles.solicitarButton} onPress={handleLoginRedirect}>
                                 <Text style={styles.solicitarButtonText}>Inicia sesión para aplicar</Text>
