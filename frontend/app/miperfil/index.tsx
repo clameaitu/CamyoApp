@@ -61,16 +61,16 @@ const reviews: Review[] = [
 const UserProfileScreen: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    const [camionero,setCamionero] = useState<Camionero| null>(null);
-    const [userData,setUserData] = useState<Camionero| null>(null);
+    const [camionero, setCamionero] = useState<Camionero | null>(null);
+    const [userData, setUserData] = useState<Camionero | null>(null);
     const navigation = useNavigation();
-    const { userToken, user,getUserData } = useAuth();
+    const { userToken, user, getUserData } = useAuth();
     const [offers, setOffers] = useState<any[]>([]);
     const [offerStatus, setOfferStatus] = useState<string>('ACEPTADA'); // State to track selected offer status
-    const placeholderAvatar = 'https://ui-avatars.com/api/?name='
-    const PlaceHolderLicencias = 'No tiene licencias'
-    const [licencias,setLicencias] = useState<string[]>([]);
-    const [disp,setDisp] = useState<string>('');
+    const placeholderAvatar = 'https://ui-avatars.com/api/?name=';
+    const PlaceHolderLicencias = 'No tiene licencias';
+    const [licencias, setLicencias] = useState<string[]>([]);
+    const [disp, setDisp] = useState<string>('');
     const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
     var data;
     const capitalizeFirstLetter = (string) => {
@@ -81,52 +81,48 @@ const UserProfileScreen: React.FC = () => {
     };
 
     useEffect(() => {
-        if (!userToken) {
-            router.push('/login');
+        if (!userToken || !user || user.roles[0] !== "CAMIONERO") {
+            setLoading(false);
+            return;
         }
-        /*if (!user || user.usuario.authority.authority !== "CAMIONERO") {
-            console.warn("Acceso denegado. Redirigiendo...")
-            router.replace("/")
-          }
-            */
-        fetchCamioneroData(); 
+
+        fetchCamioneroData();
         fetchOffers();
         fetchUserData();
         // Hide the default header
         navigation.setOptions({ headerShown: false });
-
     }, [userToken, user, offerStatus]); // Add offerStatus to dependency array
 
     const fetchCamioneroData = async () => {
         try {
-          const response = await axios.get(`${BACKEND_URL}/camioneros/${user.id}`);
-          setCamionero(response.data.usuario);
-          setLicencias(response.data.licencias);
-          setDisp(response.data.disponibilidad);
-          console.log(response.data.licencias);
+            const response = await axios.get(`${BACKEND_URL}/camioneros/${user.id}`);
+            setCamionero(response.data.usuario);
+            setLicencias(response.data.licencias);
+            setDisp(response.data.disponibilidad);
+            console.log(response.data.licencias);
         } catch (err) {
-          setError((err as Error)?.message || "Error desconocido");
+            setError((err as Error)?.message || "Error desconocido");
         } finally {
-          setLoading(false);
+            setLoading(false);
         }
-      };
+    };
 
-      const fetchUserData = async () => {
+    const fetchUserData = async () => {
         try {
-          const response = await axios.get(`${BACKEND_URL}/usuarios/${user.id}`);
-          setUserData(response.data);
-          console.log("userdata`   " +response.data.nombre);
+            const response = await axios.get(`${BACKEND_URL}/usuarios/${user.id}`);
+            setUserData(response.data);
+            console.log("userdata`   " + response.data.nombre);
         } catch (err) {
-          setError((err as Error)?.message || "Error desconocido");
+            setError((err as Error)?.message || "Error desconocido");
         } finally {
-          setLoading(false);
+            setLoading(false);
         }
-      };
+    };
 
     const fetchOffers = async () => {
         try {
             const response = await axios.get(`${BACKEND_URL}/ofertas/aplicadas/${user.id}?estado=${offerStatus}`);
-            console.log( +response.data);
+            console.log(response.data);
             setOffers(response.data);
         } catch (error) {
             console.error('Error al cargar los datos:', error);
@@ -143,8 +139,16 @@ const UserProfileScreen: React.FC = () => {
         );
     }
 
-    console.log(userToken)
-    console.log(user)
+    if (!userToken || !user || user.roles[0] !== "CAMIONERO") {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text>Acceso denegado, inicia sesión con tu cuenta de camionero</Text>
+            </View>
+        );
+    }
+
+    console.log(userToken);
+    console.log(user);
 
     const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 
@@ -168,21 +172,21 @@ const UserProfileScreen: React.FC = () => {
                 <View style={styles.bannerContainer}>
                     <Image source={defaultBanner} style={styles.bannerImage} />
                     <View style={isMobile ? styles.profileContainer : styles.desktopProfileContainer}>
-                        <Image 
-                            source={{ uri: userData?.foto || 'https://ui-avatars.com/api/?name=' + userData?.nombre }} 
-                            style={isMobile ? styles.avatar : styles.desktopAvatar} 
+                        <Image
+                            source={{ uri: userData?.foto || 'https://ui-avatars.com/api/?name=' + userData?.nombre }}
+                            style={isMobile ? styles.avatar : styles.desktopAvatar}
                         />
                         <View style={styles.profileDetailsContainer}>
-                        <TouchableOpacity
-              style = {styles.editButton}
-              onPress={() => router.push(`/miperfil/editar`)}
-            >
-              <Text style = {styles.editButtonText}> Editar Perfil</Text>
-            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.editButton}
+                                onPress={() => router.push(`/miperfil/editar`)}
+                            >
+                                <Text style={styles.editButtonText}> Editar Perfil</Text>
+                            </TouchableOpacity>
 
                             <Text style={isMobile ? styles.name : styles.desktopName}>{userData?.nombre}</Text>
                             <View style={styles.detailsRow}>
-                                <Text style={styles.infoText}>DIsponibilidad: {normalizeFirstLetter(disp || '')}</Text>
+                                <Text style={styles.infoText}>Disponibilidad: {normalizeFirstLetter(disp || '')}</Text>
                                 {user?.experiencia !== undefined && (
                                     <Text style={styles.infoText}>{camionero.experiencia} años de experiencia</Text>
                                 )}
@@ -190,7 +194,7 @@ const UserProfileScreen: React.FC = () => {
                         </View>
                     </View>
                 </View>
-                
+
                 {isMobile && (
                     <View style={styles.infoContainer}>
                         <View style={styles.infoButton}>
@@ -207,27 +211,27 @@ const UserProfileScreen: React.FC = () => {
                     <View style={styles.detailsColumn}>
                         <View style={styles.detailItem}>
                             <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>
-                                <FontAwesome style={styles.envelopeIcon} name="envelope" size={20}/>
+                                <FontAwesome style={styles.envelopeIcon} name="envelope" size={20} />
                                 <Text style={styles.linkText}>
                                     <Text onPress={() => Linking.openURL(`mailto:${userData?.email}`)}>{userData?.email}</Text>
-                                </Text>  
+                                </Text>
                             </Text>
                         </View>
-                        
-                            <View style={styles.detailItem}>
-                                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="id-card" size={20}/>{licencias.join(', ') || PlaceHolderLicencias}</Text>
-                            </View>
-                        
+
+                        <View style={styles.detailItem}>
+                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="id-card" size={20} />{licencias.join(', ') || PlaceHolderLicencias}</Text>
+                        </View>
+
                         {user?.vehiculo_propio !== undefined && (
                             <View style={styles.detailItem}>
-                                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.truckIcon} name="truck" size={23}/>{camionero?.vehiculo_propio ? 'Vehículo propio' : 'Sin vehículo propio'}</Text>
+                                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.truckIcon} name="truck" size={23} />{camionero?.vehiculo_propio ? 'Vehículo propio' : 'Sin vehículo propio'}</Text>
                             </View>
                         )}
                         <View style={styles.detailItem}>
-                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="map" size={20}/>{userData?.localizacion}</Text>
+                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="map" size={20} />{userData?.localizacion}</Text>
                         </View>
                         <View style={styles.detailItem}>
-                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="phone" size={20}/>{userData?.telefono}</Text>
+                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="phone" size={20} />{userData?.telefono}</Text>
                         </View>
                         <View style={styles.descriptionBox}>
                             <Text style={styles.descriptionText}>{capitalizeFirstLetter(userData?.descripcion || '')}</Text>
@@ -255,7 +259,7 @@ const UserProfileScreen: React.FC = () => {
                             <Text style={styles.reviewText}>{item.text}</Text>
                         </View>
                     )}
-                
+
                     contentContainerStyle={isMobile ? styles.reviewsContainer : styles.desktopReviewsContainer}
                 /> */}
                 <View style={styles.offersContainer}>
