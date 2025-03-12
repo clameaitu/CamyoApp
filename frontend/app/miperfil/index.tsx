@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, Platform, ScrollView, FlatList, TouchableOpacity, Linking, ActivityIndicator } from 'react-native';
+import { View, Text, Image, Platform, ScrollView, TouchableOpacity, Linking, ActivityIndicator } from 'react-native';
 import frontendData from '../../assets/frontendData.json'; // Adjust the path if necessary
 import styles from './css/UserProfileScreen'; // Adjust the path if necessary
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -56,54 +56,50 @@ const reviews: Review[] = [
 ];
 
 const UserProfileScreen: React.FC = () => {
-    //const [user, setUser] = useState<UserProfile | null>(placeholderUser);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const navigation = useNavigation();
     const { userToken, user } = useAuth();
     const [offers, setOffers] = useState<any[]>([]);
+    const [offerStatus, setOfferStatus] = useState<string>('ACEPTADA'); // State to track selected offer status
     const placeholderAvatar = 'https://ui-avatars.com/api/?name='
     const PlaceHolderLicencias = 'No tiene licencias'
+    const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
     const capitalizeFirstLetter = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
     };
 
     useEffect(() => {
-       /* if (!userToken) {
+        if (!userToken) {
             router.push('/login');
         }
-            */
+            
         fetchOffers();
         // Hide the default header
         navigation.setOptions({ headerShown: false });
 
-        // Fetch user profile based on session ID
-        
-        
-
-        
-    }, [userToken,user]);
+    }, [userToken, user, offerStatus]); // Add offerStatus to dependency array
 
     const fetchOffers = async () => {
         try {
-          const response = await axios.get('http://localhost:8080/ofertas');
-          console.log(response.data);
-          setOffers(response.data);
+            const response = await axios.get(`${BACKEND_URL}/ofertas/aplicadas/${user.id}?estado=${offerStatus}`);
+            console.log(response.data);
+            setOffers(response.data);
         } catch (error) {
-          console.error('Error al cargar los datos:', error);
+            console.error('Error al cargar los datos:', error);
         } finally {
-          setLoading(false);
+            setLoading(false);
         }
-      };
-    
-      if (loading) {
+    };
+
+    if (loading) {
         return (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <ActivityIndicator size="large" color="#0000ff" />
-          </View>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>
         );
-      }
+    }
 
     console.log(userToken)
     console.log("id" + user)
@@ -113,25 +109,25 @@ const UserProfileScreen: React.FC = () => {
         <>
             {isMobile ? <BottomBar /> : <CamyoWebNavBar />}
             <ScrollView contentContainerStyle={[isMobile ? styles.container : styles.desktopContainer, { paddingTop: isMobile ? 0 : 100, paddingLeft: 10 }]}>
-            <View style={styles.bannerContainer}>
-                <Image source={defaultBanner} style={styles.bannerImage} />
-                <View style={isMobile ? styles.profileContainer : styles.desktopProfileContainer}>
-                    <Image 
-                        source={{ uri: user?.avatar || 'https://ui-avatars.com/api/?name=' + user?.nombre }} 
-                        style={isMobile ? styles.avatar : styles.desktopAvatar} 
-                    />
-                    <View style={styles.profileDetailsContainer}>
-                        <Text style={isMobile ? styles.name : styles.desktopName}>{user?.nombre}</Text>
-                        <View style={styles.detailsRow}>
-                            <Text style={styles.infoText}>Tipo: {capitalizeFirstLetter(user?.descripcion || '')}</Text>
-                            {user?.experiencia !== undefined && (
-                                <Text style={styles.infoText}>{user.experiencia} años de experiencia</Text>
-                            )}
+                <View style={styles.bannerContainer}>
+                    <Image source={defaultBanner} style={styles.bannerImage} />
+                    <View style={isMobile ? styles.profileContainer : styles.desktopProfileContainer}>
+                        <Image 
+                            source={{ uri: user?.avatar || 'https://ui-avatars.com/api/?name=' + user?.nombre }} 
+                            style={isMobile ? styles.avatar : styles.desktopAvatar} 
+                        />
+                        <View style={styles.profileDetailsContainer}>
+                            <Text style={isMobile ? styles.name : styles.desktopName}>{user?.nombre}</Text>
+                            <View style={styles.detailsRow}>
+                                <Text style={styles.infoText}>Tipo: {capitalizeFirstLetter(user?.descripcion || '')}</Text>
+                                {user?.experiencia !== undefined && (
+                                    <Text style={styles.infoText}>{user.experiencia} años de experiencia</Text>
+                                )}
+                            </View>
                         </View>
                     </View>
                 </View>
-            </View>
-            
+                
                 {isMobile && (
                     <View style={styles.infoContainer}>
                         <View style={styles.infoButton}>
@@ -143,15 +139,15 @@ const UserProfileScreen: React.FC = () => {
                             </View>
                         )}
                     </View>
-                                    )}
+                )}
                 <View style={styles.detailsOuterContainer}>
                     <View style={styles.detailsColumn}>
                         <View style={styles.detailItem}>
                             <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>
                                 <FontAwesome style={styles.envelopeIcon} name="envelope" size={20}/>
-                                 <Text style={styles.linkText}>
+                                <Text style={styles.linkText}>
                                     <Text onPress={() => Linking.openURL(`mailto:${user?.email}`)}>{user?.email}</Text>
-                                    </Text>  
+                                </Text>  
                             </Text>
                         </View>
                         {user?.licencias && (
@@ -175,7 +171,6 @@ const UserProfileScreen: React.FC = () => {
                         </View>
                     </View>
                 </View>
-                
                 {/* <FlatList
                     data={reviews}
                     horizontal
@@ -200,14 +195,16 @@ const UserProfileScreen: React.FC = () => {
                 
                     contentContainerStyle={isMobile ? styles.reviewsContainer : styles.desktopReviewsContainer}
                 /> */}
-
                 <View style={styles.offersContainer}>
-                                <View style={styles.offersButtonContainer}>
-                        <TouchableOpacity style={styles.offersButton}>
-                            <Text style={styles.offersButtonText}>Ofertas nuevas</Text>
+                    <View style={styles.offersButtonContainer}>
+                        <TouchableOpacity style={styles.offersButton} onPress={() => setOfferStatus('ACEPTADA')}>
+                            <Text style={styles.offersButtonText}>Ofertas aceptadas</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.offersButton}>
-                            <Text style={styles.offersButtonText}>Ofertas aplicadas</Text>
+                        <TouchableOpacity style={styles.offersButton} onPress={() => setOfferStatus('PENDIENTE')}>
+                            <Text style={styles.offersButtonText}>Ofertas pendientes</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.offersButton} onPress={() => setOfferStatus('RECHAZADA')}>
+                            <Text style={styles.offersButtonText}>Ofertas rechazadas</Text>
                         </TouchableOpacity>
                     </View>
                     <ScrollView style={styles.scrollview} showsVerticalScrollIndicator={false}>
@@ -235,7 +232,6 @@ const UserProfileScreen: React.FC = () => {
                 </View>
             </ScrollView>
         </>
-        
     );
 };
 

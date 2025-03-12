@@ -42,6 +42,7 @@ export default function RootLayout() {
           <Stack.Screen name="oferta/[ofertaId]" />
 
           <Stack.Screen name="ejemplo"/>
+          <Stack.Screen name="oferta/[ofertaid]" />
         </Stack>
         {isMobile && <BottomBar />}
       </>

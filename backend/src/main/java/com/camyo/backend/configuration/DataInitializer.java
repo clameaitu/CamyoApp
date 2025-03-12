@@ -136,7 +136,10 @@ public class DataInitializer {
                                 + "(201, 204),"
                                 + "(206, 203),"
                                 + "(210, 202),"
-                                + "(210, 204)");
+                                + "(210, 204),"
+                                + "(203, 205),"
+                                + "(206, 205),"
+                                + "(208, 205)");
 
                         // Execute batch
                         statement.executeBatch();
