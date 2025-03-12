@@ -10,7 +10,7 @@ import defaultProfileImage from "../../assets/images/defaultAvatar.png";
 import axios from 'axios';
 import { useAuth } from "../../contexts/AuthContext";
 import { useRouter } from "expo-router";
-import { pickImageAsync } from "../../utils/imageUtils";
+import * as ImagePicker from 'expo-image-picker';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 const licencias = ["AM", "A1", "A2", "A", "B", "C1", "C", "C1+E", "C+E", "D1", "D+E","D1+E","D"];
@@ -32,6 +32,7 @@ const CamioneroScreen = () => {
     localizacion: "",
     descripcion: "",
     foto: null,
+    fotoUri: null,
 
     // Camionero
     dni: "",
@@ -49,11 +50,37 @@ const CamioneroScreen = () => {
   };
 
   const handlePickImage = async () => {
-    const base64Image = await pickImageAsync();
-    if (base64Image) {
-      setFormData((prevState) => ({ ...prevState, foto: base64Image }));
-    }
-  };
+      const base64Image = await pickImageAsync();
+      if (base64Image) {
+        setFormData((prevState) => ({ 
+          ...prevState, 
+          foto: base64Image.base64,
+          fotoUri: base64Image.uri
+        }));
+      }
+    };
+    
+    const pickImageAsync = async (): Promise<{ uri: string; base64: string } | null> => {
+      try {
+        const result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 1,
+          base64: true,
+        });
+    
+        if (!result.canceled && result.assets && result.assets.length > 0) {
+          const image = result.assets[0]; 
+          return { uri: image.uri, base64: image.base64 }; 
+        } else {
+          return null;
+        }
+      } catch (error) {
+        console.error("Error picking image: ", error);
+        return null;
+      }
+    };
 
   const handleRegister = async () => {
     const licenciasBackend = formData.licencias.map((licencia) => licencias_backend[licencias.indexOf(licencia)]);
@@ -163,7 +190,7 @@ const CamioneroScreen = () => {
           {/* Foto de perfil */}
           <View style={{ alignItems: "center", marginBottom: 20, marginTop: 10 }}>
             <Image 
-              source={formData.foto ? { uri: formData.foto } : defaultProfileImage}  
+              source={formData.fotoUri ? { uri: formData.fotoUri } : defaultProfileImage}  
               style={{ width: 100, height: 100, borderRadius: 50, marginBottom: 8, borderWidth: 1, borderColor: colors.mediumGray }} 
             />
 
@@ -179,7 +206,7 @@ const CamioneroScreen = () => {
                   <Text style={globalStyles.buttonText}>Cambiar</Text>
                 </TouchableOpacity>
                 
-                <TouchableOpacity onPress={() => setFormData({ ...formData, foto: null })} style={[globalStyles.button, { backgroundColor: colors.red, flexDirection: "row", alignItems: "center", justifyContent: "center", width: 120, paddingHorizontal: 15 }]}>
+                <TouchableOpacity onPress={() => setFormData({ ...formData, fotoUri: null })} style={[globalStyles.button, { backgroundColor: colors.red, flexDirection: "row", alignItems: "center", justifyContent: "center", width: 120, paddingHorizontal: 15 }]}>
                   <FontAwesome5 name="trash" size={18} color={colors.white} style={{ marginRight: 8 }} />
                   <Text style={globalStyles.buttonText}>Borrar</Text>
                 </TouchableOpacity>

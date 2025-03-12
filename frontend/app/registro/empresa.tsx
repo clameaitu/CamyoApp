@@ -5,9 +5,9 @@ import colors from "../../assets/styles/colors";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import axios from "axios";
 import { useRouter } from "expo-router";
-import { pickImageAsync } from "../../utils/imageUtils";
 import defaultProfileImage from "../../assets/images/defaultAvatar.png";
 import { useAuth } from "../../contexts/AuthContext";
+import * as ImagePicker from 'expo-image-picker';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
@@ -27,6 +27,7 @@ const EmpresaScreen = () => {
     localizacion: "",
     descripcion: "",
     foto: null,
+    fotoUri: null,
 
     // Empresa
     web: "",
@@ -40,9 +41,36 @@ const EmpresaScreen = () => {
   const handlePickImage = async () => {
     const base64Image = await pickImageAsync();
     if (base64Image) {
-      setFormData((prevState) => ({ ...prevState, foto: base64Image }));
+      setFormData((prevState) => ({ 
+        ...prevState, 
+        foto: base64Image.base64,
+        fotoUri: base64Image.uri
+      }));
     }
   };
+  
+  const pickImageAsync = async (): Promise<{ uri: string; base64: string } | null> => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+        base64: true,
+      });
+  
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const image = result.assets[0]; 
+        return { uri: image.uri, base64: image.base64 }; 
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error("Error picking image: ", error);
+      return null;
+    }
+  };
+  
 
   const handleRegister = async () => {
     // Validación y corrección de la URL
@@ -151,7 +179,7 @@ const EmpresaScreen = () => {
           {/* Foto de perfil */}
           <View style={{ alignItems: "center", marginBottom: 20, marginTop: 10 }}>
             <Image 
-              source={formData.foto ? { uri: formData.foto } : defaultProfileImage}  
+              source={formData.fotoUri ? { uri: formData.fotoUri } : defaultProfileImage}  
               style={{ width: 100, height: 100, borderRadius: 50, marginBottom: 8, borderWidth: 1, borderColor: colors.mediumGray }} 
             />
 
@@ -167,7 +195,7 @@ const EmpresaScreen = () => {
                   <Text style={globalStyles.buttonText}>Cambiar</Text>
                 </TouchableOpacity>
                 
-                <TouchableOpacity onPress={() => setFormData({ ...formData, foto: null })} style={[globalStyles.button, { backgroundColor: colors.red, flexDirection: "row", alignItems: "center", justifyContent: "center", width: 120, paddingHorizontal: 15 }]}>
+                <TouchableOpacity onPress={() => setFormData({ ...formData, fotoUri: null })} style={[globalStyles.button, { backgroundColor: colors.red, flexDirection: "row", alignItems: "center", justifyContent: "center", width: 120, paddingHorizontal: 15 }]}>
                   <FontAwesome5 name="trash" size={18} color={colors.white} style={{ marginRight: 8 }} />
                   <Text style={globalStyles.buttonText}>Borrar</Text>
                 </TouchableOpacity>
@@ -186,7 +214,7 @@ const EmpresaScreen = () => {
 
           {/* Campos del formulario específicos de la empresa */}
           {renderInput("Página web", "web", <FontAwesome5 name="globe" size={20} color={colors.primary} />, "url")}
-          {renderInput("Número de Identificación", "nif", <FontAwesome5 name="id-card" size={20} color={colors.primary} />, "default")}
+          {renderInput("Número de Identificación (A12345678)", "nif", <FontAwesome5 name="id-card" size={20} color={colors.primary} />, "default")}
             
           {errorMessage ? (
             <Text style={{ color: "red", fontSize: 18, marginBottom: 10, justifyContent: "center", textAlign: "center" }}>
