@@ -12,7 +12,7 @@ import { useRouter } from "expo-router";
 
 const CrearOfertaScreen = () => {
   const [tipoOferta, setTipoOferta] = useState("TRABAJO");
-  const BACKEND_URL = "http://localhost:8080";
+  const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
   const router = useRouter();
 
   const [formData, setFormData] = useState({
