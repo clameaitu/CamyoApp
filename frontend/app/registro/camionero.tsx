@@ -43,10 +43,12 @@ const CamioneroScreen = () => {
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
+      base64: true,  // Poner la imagen en base64
     });
-
+  
     if (!result.canceled) {
-      setFormData({ ...formData, foto: result.assets[0].uri });
+      const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+      setFormData((prevState) => ({ ...prevState, foto: base64Image }));
     }
   };
 
