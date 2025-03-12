@@ -53,8 +53,10 @@ public class Oferta {
     @NotBlank
     String notas;
 
+    @Enumerated(EnumType.STRING)
     @Column(name="estado")
-    OfertaEstado estado;
+    private OfertaEstado estado;
+    
 
     @Column(name="fecha_publicacion")
     @DateTimeFormat(pattern = "yyyy/MM/dd HH/mm")
