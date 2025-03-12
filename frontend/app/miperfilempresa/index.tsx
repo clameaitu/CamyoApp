@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, ScrollView, Platform, Linking, StyleSheet } from "react-native";
+import { View, Text, Image, ScrollView, Platform, Linking, StyleSheet, TouchableOpacity } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import BottomBar from "../_components/BottomBar.jsx";
 import CamyoWebNavBar from "../_components/CamyoNavBar.jsx";
@@ -102,6 +102,12 @@ const EmpresaPerfil = () => {
             <View style={styles.detailItem}>
               <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="phone" size={20} />{empresa?.usuario?.telefono || "Sin número de contacto"}</Text>
             </View>
+            <TouchableOpacity
+              style = {styles.editButton}
+              onPress={() => router.push(`/miperfilempresa/editar`)}
+            >
+              <Text style = {styles.editButtonText}> Editar Perfil</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
@@ -236,6 +242,20 @@ const styles = StyleSheet.create({
     marginLeft: '1%',
     textAlign: 'left', 
     width: '100%',
+  },
+  editButton: {
+    marginTop: 20,
+    backgroundColor: colors.primary,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+  },
+  editButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
