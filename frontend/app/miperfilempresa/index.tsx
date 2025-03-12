@@ -47,7 +47,7 @@ const EmpresaPerfil = () => {
       router.push('/login');
     }
 
-    if (!user || user.rol !== "EMPRESA") {
+    if (!user || user.roles[0] !== "EMPRESA") {
       console.warn("Acceso denegado. Redirigiendo...")
       router.replace("/")
     }
