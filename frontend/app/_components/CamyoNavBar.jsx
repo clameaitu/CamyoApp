@@ -11,7 +11,6 @@ import { useAuth } from "../../contexts/AuthContext";
 export default function CamyoWebNavBar() {
   const { user, userToken, logout } = useAuth();
   const router = useRouter();
-
   const [isSidebar, setIsSidebar] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -23,10 +22,8 @@ export default function CamyoWebNavBar() {
       setIsSidebar(zoomLevel >= 230);
       if (zoomLevel < 230) setIsSidebarOpen(false);
     };
-
     window.addEventListener('resize', handleResize);
     handleResize();
-
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -88,9 +85,9 @@ export default function CamyoWebNavBar() {
         <>
           <View style={styles.headerWeb}>
             <View style={[styles.leftSection, isZoomed && styles.centerSection]}>
-            <TouchableOpacity onPress={() => router.replace("/")}>
-              <Image source={ProyectoLogo} style={styles.logoZoomed} resizeMode="cover" />
-            </TouchableOpacity>
+              <TouchableOpacity onPress={() => router.replace("/")}>
+                <Image source={ProyectoLogo} style={styles.logoZoomed} resizeMode="cover" />
+              </TouchableOpacity>
             </View>
             <View style={styles.rightSection}>
               <TouchableOpacity style={styles.buttonText} onPress={() => router.push(routes.profile)}><Text style={styles.linkText}>Mi Perfil (Cam)</Text></TouchableOpacity>
@@ -180,6 +177,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    height: 60, // Altura fija
   },
   logoZoomed: {
     width: 60,
@@ -289,17 +287,7 @@ const styles = StyleSheet.create({
     color: colors.primary,
     marginRight: 10,
   },
-  shareButton1: {
-    backgroundColor: 'transparent', 
-    borderColor: colors.white,
-    borderWidth: 2, 
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginVertical: 5,
-    margin: 2,
-  },
-  shareButton2: {
+  shareButton: {
     backgroundColor: colors.primary, 
     borderColor: colors.primary, 
     borderWidth: 2, 
