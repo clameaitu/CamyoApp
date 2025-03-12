@@ -1,13 +1,13 @@
 package com.camyo.backend.oferta;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.camyo.backend.camionero.Camionero;
 import com.camyo.backend.empresa.Empresa;
+import com.camyo.backend.camionero.Licencia;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -53,8 +53,10 @@ public class Oferta {
     @NotBlank
     String notas;
 
+    @Enumerated(EnumType.STRING)
     @Column(name="estado")
-    OfertaEstado estado;
+    private OfertaEstado estado;
+    
 
     @Column(name="fecha_publicacion")
     @DateTimeFormat(pattern = "yyyy/MM/dd HH/mm")

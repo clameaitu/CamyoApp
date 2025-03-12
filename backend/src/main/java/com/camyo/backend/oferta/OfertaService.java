@@ -74,6 +74,18 @@ public class OfertaService {
         return ofertaRepository.encontrarAsignadas(camioneroId);
     }
 
+    @Transactional(readOnly = true)
+    public List<Oferta> obtenerAplicadasFiltradas(Integer camioneroId, OfertaEstado estado) {
+        camioneroRepository.findById(camioneroId)
+                .orElseThrow(() -> new ResourceNotFoundException("Camionero", "id", camioneroId));
+        
+        if (estado != null) {
+            return ofertaRepository.encontrarAplicadasPorEstado(camioneroId, estado);
+        } else {
+            return ofertaRepository.encontrarAplicadasOrdenadas(camioneroId);
+        }
+    }
+
     @Transactional
     public Oferta guardarOferta(Oferta oferta) {
         return ofertaRepository.save(oferta);
