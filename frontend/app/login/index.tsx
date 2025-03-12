@@ -6,9 +6,11 @@ import globalStyles from "../../assets/styles/globalStyles";
 import colors from "../../assets/styles/colors";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
-import { BACKEND_URL } from '@env';
 
 const LoginScreen = () => {
+
+  const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+
   const router = useRouter();
   const { login } = useAuth();
   const [username, setUsername] = useState("");
