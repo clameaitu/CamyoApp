@@ -589,7 +589,6 @@ const styles = StyleSheet.create({
         // Add styles for the description box and text
        // Add styles for the description box and text
 descriptionBox: {
-    backgroundColor: '#f0f0f0',
     padding: 10,
     borderRadius: 5,
     width: '100%',
