@@ -2,6 +2,8 @@ package com.camyo.backend.oferta;
 
 import java.time.LocalDateTime;
 
+import com.camyo.backend.camionero.Licencia;
+
 import lombok.Getter;
 import lombok.Setter;
 
