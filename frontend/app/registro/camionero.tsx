@@ -326,7 +326,7 @@ const CamioneroScreen = () => {
                 {/* Icono del tic verde */}
                 <FontAwesome5 name="check-circle" size={50} color="white" style={styles.modalIcon} />
                 
-                <Text style={styles.modalText}>¡Registro Exitoso!</Text>
+                <Text style={styles.modalText}>¡Registro exitoso!</Text>
                 <Text style={styles.modalText}>Redirigiendo...</Text>
               </View>
             </View>
