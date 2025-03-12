@@ -8,14 +8,16 @@ import globalStyles from "../../../assets/styles/globalStyles";
 import Selector from "../../_components/Selector";
 import MultiSelector from "../../_components/MultiSelector";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import { useAuth } from "../../../contexts/AuthContext";
 
 
 const EditarOfertaScreen = () => {
   const [tipoOferta, setTipoOferta] = useState("");
-  const BACKEND_URL = "http://localhost:8080";
+  const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
   const router = useRouter();
   const { ofertaid } = useLocalSearchParams();
-  /****************************************************************/
+  const { user } = useAuth(); // Obtener el usuario logueado desde el contexto de autenticación
+
   const [formData, setFormData] = useState({
     titulo: "",
     experiencia: "",
@@ -23,6 +25,7 @@ const EditarOfertaScreen = () => {
     notas: "",
     estado: "",
     sueldo: "",
+    localizacion: "",
     fechaPublicacion: "",
     empresa: "",
 
@@ -166,6 +169,7 @@ const EditarOfertaScreen = () => {
           notas: string;
           estado: string;
           sueldo: string;
+          localizacion: string;
           fechaPublicacion: string;
           empresa: { id: number };
         };
@@ -192,6 +196,7 @@ const EditarOfertaScreen = () => {
           notas: formData.notas,
           estado: formData.estado || "PENDIENTE",
           sueldo: parseFloat(formData.sueldo).toFixed(2),
+          localizacion: formData.localizacion,
           fechaPublicacion: formatDate(new Date()),
           empresa: { id: 201 },
         },
@@ -372,6 +377,7 @@ const EditarOfertaScreen = () => {
 
           {renderInput("Descripción", "notas", <FontAwesome5 name="align-left" size={20} color={colors.primary} />)}
           {renderInput("Sueldo (€)", "sueldo", <FontAwesome5 name="money-bill-wave" size={20} color={colors.primary} />)}
+          {renderInput("Localización", "localizacion", <FontAwesome5 name="map-marker-alt" size={20} color={colors.primary} />)}
 
           {/* Selector de tipo de oferta */}
           <Text style={styles.title}>¿Qué tipo de oferta quieres publicar?</Text>
