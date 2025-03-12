@@ -18,6 +18,7 @@ export default function RootLayout() {
         miperfil: "Mi Perfil Camionero",
         miperfilempresa: "Mi Perfil Empresa",
         "oferta/crear": "Publicar Nueva Oferta",
+        "oferta/[ofertaId]": "Detalles de la Oferta",
       };
 
       const currentSegment = segments.join("/");
@@ -38,8 +39,10 @@ export default function RootLayout() {
           <Stack.Screen name="miperfil"/>
           <Stack.Screen name="miperfilempresa"/>
           <Stack.Screen name="oferta/crear"/>
+          <Stack.Screen name="oferta/[ofertaId]" />
 
           <Stack.Screen name="ejemplo"/>
+          <Stack.Screen name="oferta/[ofertaid]" />
         </Stack>
         {isMobile && <BottomBar />}
       </>

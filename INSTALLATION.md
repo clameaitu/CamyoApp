@@ -26,6 +26,12 @@ Sigue los pasos a continuación para instalar y ejecutar el proyecto correctamen
      cp backend/.env.example backend/.env
      ```
 
+3. **Configurar el frontend**
+   - Copiar el archivo `.env`:
+     ```sh
+     cp frontend/.env.example frontend/.env
+     ```
+
 ---
 
 ## Ejecución del Proyecto
