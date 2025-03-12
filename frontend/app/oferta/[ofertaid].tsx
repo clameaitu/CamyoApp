@@ -1,24 +1,33 @@
-import { Text, View, ActivityIndicator, StyleSheet, TouchableOpacity, Image, Platform, ScrollView } from "react-native";
+import { Text, View, ActivityIndicator, StyleSheet, TouchableOpacity, Image, Platform, ScrollView, Linking, Alert, Modal } from "react-native";
 import React, { useState, useEffect } from "react";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import colors from "frontend/assets/styles/colors";
+import { useAuth } from "@/contexts/AuthContext";
+import routes from "../_components/routes";
 
 const formatDate = (fecha: string) => {
     const opciones = { day: "numeric", month: "long", year: "numeric" } as const;
     return new Date(fecha).toLocaleDateString("es-ES", opciones);
 };
 
+const handleLoginRedirect = () => {
+    router.push("/login")
+};
+
 export default function OfertaDetalleScreen() {
+
+    const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
     const [offerData, setOfferData] = useState<any>(null);
     const [empresaData, setEmpresaData] = useState<any>(null);
     const [usuarioEmpresaData, setUsuarioEmpresaData] = useState<any>(null);
     const [offerTrabajoData, setOfferTrabajoData] = useState<any>(null);
     const [offerCargaData, setOfferCargaData] = useState<any>(null);
+    const [userHasApplied, setUserHasApplied] = useState(false); 
     const [loading, setLoading] = useState(true);
     const { ofertaid } = useLocalSearchParams();
-
-    const BACKEND_URL = "http://localhost:8080"; //http://ip:8080 para conectar al móvil
+    const { user, userToken, login, logout } = useAuth();
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         if (ofertaid) {
@@ -45,15 +54,26 @@ export default function OfertaDetalleScreen() {
 
                     console.log(cargaData);
                     
-                    const empresaResponse = await fetch(`${BACKEND_URL}/empresas/1`); //http://localhost:8080/empresas/${data.empresaId}
+                    const empresaResponse = await fetch(`${BACKEND_URL}/empresas/${data.empresa.id}`); //http://localhost:8080/empresas/${data.empresaId}
                     const empresaData = await empresaResponse.json();
                     setEmpresaData(empresaData);
                     console.log(empresaData);
 
-                    const usuarioEmpresaResponse = await fetch(`${BACKEND_URL}/usuarios/1`); //http://localhost:8080/usuarios/${empresaData.usuarioId}
+                    const usuarioEmpresaResponse = await fetch(`${BACKEND_URL}/usuarios/${empresaData.usuario.id}`); //http://localhost:8080/usuarios/${empresaData.usuarioId}
                     const usuarioEmpresaData = await usuarioEmpresaResponse.json();
                     setUsuarioEmpresaData(usuarioEmpresaData);
                     console.log(usuarioEmpresaData);
+
+                    if (user !== null) {
+                        const camionerosResponse = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/camioneros`);
+                        const camionerosData = await camionerosResponse.json();
+
+                        const yaAplicado = camionerosData.some((camionero: { id: string }) => camionero.id === user.id);
+                        setUserHasApplied(yaAplicado);
+                    }
+                    
+                    console.log(user);
+
                 } catch (error) {
                     console.error("Error fetching data:", error);
                 } finally {
@@ -71,15 +91,59 @@ export default function OfertaDetalleScreen() {
                 <ActivityIndicator size="large" color="#0000ff" />
             </View>
         );
-    }
-
+    };
+    
     if (!offerData) {
         return (
             <View style={styles.container}>
                 <Text>No data available for this offer</Text>
             </View>
         );
-    }
+    };
+    
+    const handleSolicitarOferta = async () => {
+        if (!user) return handleLoginRedirect();
+        
+        try {
+            const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/aplicar/${user.id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" }
+            });
+
+            if (response.ok) {
+                Alert.alert("Éxito", "Has solicitado correctamente.");
+                setModalVisible(true); // Abre el popup
+                setUserHasApplied(true);
+                setTimeout(() => {
+                    setModalVisible(false); 
+                }, 2500);
+            } else {
+                Alert.alert("Error", "No se pudo solicitar la oferta.");
+            }
+        } catch (error) {
+            Alert.alert("Error", "Hubo un problema con la solicitud.");
+        }
+    };
+
+    const handleDesaplicarOferta = async () => {
+        if (!user) return handleLoginRedirect();
+        
+        try {
+            const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/desaplicar/${user.id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" }
+            });
+
+            if (response.ok) {
+                Alert.alert("Éxito", "Has retirado tu solicitud correctamente.");
+                setUserHasApplied(false);
+            } else {
+                Alert.alert("Error", "No se pudo retirar la solicitud.");
+            }
+        } catch (error) {
+            Alert.alert("Error", "Hubo un problema con la solicitud.");
+        }
+    };
 
     const renderOfferCard = () => {
         return (
@@ -103,10 +167,30 @@ export default function OfertaDetalleScreen() {
                             </View>
                         </View>
                         
+                        
+                        {user && user.rol === 'CAMIONERO' ? (
+                            userHasApplied ? (
+                                <TouchableOpacity style={styles.solicitarButton} onPress={handleDesaplicarOferta}>
+                                    <Text style={styles.solicitarButtonText}>Desaplicar Oferta</Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <TouchableOpacity style={styles.solicitarButton} onPress={handleSolicitarOferta}>
+                                    <Text style={styles.solicitarButtonText}>Solicitar Oferta</Text>
+                                </TouchableOpacity>
+                            )
+                        ) : (
+                            <TouchableOpacity style={styles.solicitarButton} onPress={handleLoginRedirect}>
+                                <Text style={styles.solicitarButtonText}>Inicia sesión para aplicar</Text>
+                            </TouchableOpacity>
+                        )}
 
-                        <TouchableOpacity style={styles.solicitarButton}>
-                            <Text style={styles.solicitarButtonText}>Solicita Carga</Text>
-                        </TouchableOpacity>
+                        <Modal transparent={true} visible={modalVisible} animationType="fade">
+                            <View style={styles.modalContainer}>
+                                <View style={styles.modalContent}>
+                                    <Text style={styles.modalText}>¡Has solicitado correctamente a la carga!</Text>
+                                </View>
+                            </View>
+                        </Modal>
 
                         <View style={styles.separator} />
 
@@ -131,14 +215,14 @@ export default function OfertaDetalleScreen() {
                         <View style={styles.detailRow}>
                             <FontAwesome5 name="truck" size={18} color="#0b4f6c" />
                             <Text style={styles.detalles}>
-                                <Text style={styles.detallesLabel}>Camión Requerido:</Text> Furgoneta/Camión furgón Refrigerado {/*offerData.camionRequerido*/}
+                                <Text style={styles.detallesLabel}>Camión Requerido:</Text> Furgoneta/Camión furgón y Refrigerado {/*offerData.camionRequerido*/}
                             </Text>
                         </View>
 
                         <View style={styles.detailRow}>
                             <MaterialIcons name="location-on" size={20} color="#0b4f6c" />
                             <Text style={styles.detalles}>
-                                <Text style={styles.detallesLabel}>Recogida (Localización):</Text> {offerCargaData.inicio}
+                                <Text style={styles.detallesLabel}>Recogida (Localización):</Text> {offerCargaData.origen}
                             </Text>
                         </View>
 
@@ -173,7 +257,7 @@ export default function OfertaDetalleScreen() {
                         <View style={styles.detailRow}>
                             <FontAwesome5 name="weight" size={18} color="#0b4f6c" />
                             <Text style={styles.detalles}>
-                                <Text style={styles.detallesLabel}>Peso (en kg):</Text> {offerCargaData.peso} kg
+                                <Text style={styles.detallesLabel}>Peso:</Text> {offerCargaData.peso} kg
                             </Text>
                         </View>
 
@@ -203,10 +287,30 @@ export default function OfertaDetalleScreen() {
                             </View>
                         </View>
                         
+                        {user && user.rol === 'CAMIONERO' ? (
+                            userHasApplied ? (
+                                <TouchableOpacity style={styles.solicitarButton} onPress={handleDesaplicarOferta}>
+                                    <Text style={styles.solicitarButtonText}>Desaplicar Oferta</Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <TouchableOpacity style={styles.solicitarButton} onPress={handleSolicitarOferta}>
+                                    <Text style={styles.solicitarButtonText}>Solicitar Oferta</Text>
+                                </TouchableOpacity>
+                            )
+                        ) : (
+                            <TouchableOpacity style={styles.solicitarButton} onPress={handleLoginRedirect}>
+                                <Text style={styles.solicitarButtonText}>Inicia sesión para aplicar</Text>
+                            </TouchableOpacity>
+                        )}
 
-                        <TouchableOpacity style={styles.solicitarButton}>
-                            <Text style={styles.solicitarButtonText}>Solicita Oferta</Text>
-                        </TouchableOpacity>
+                        <Modal transparent={true} visible={modalVisible} animationType="fade">
+                            <View style={styles.modalContainer}>
+                                <View style={styles.modalContent}>
+                                    <Text style={styles.modalText}>¡Has solicitado correctamente a la oferta!</Text>
+                                </View>
+                            </View>
+                        </Modal>
+                        
 
                         <View style={styles.separator} />
 
@@ -278,7 +382,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#e6e8e6',
         paddingVertical: 20,
-        paddingTop: Platform.OS === "web" ? 90 : 0,
+        paddingTop: Platform.OS === "web" ? '5.8%' : '0%',
         
     },
     scrollContainer: {
@@ -382,5 +486,24 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: 'red',
         textAlign: 'center',
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)"
+    },
+    modalContent: {
+        width: 300,
+        backgroundColor: "#fff",
+        padding: 20,
+        borderRadius: 10,
+        alignItems: "center",
+        position: "relative"
+    },
+    modalText: {
+        fontSize: 18,
+        marginBottom: 10,
+        textAlign: "center"
     },
 });
