@@ -53,6 +53,79 @@ const EditarOfertaScreen = () => {
 
   });
 
+  const fetchOferta = async () => {
+    try {
+      console.log("🔍 Obteniendo oferta general...");
+      const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`);
+      const data = await response.json();
+      console.log("📌 Datos obtenidos de la API:", data); // <-- Verifica qué devuelve
+
+      console.log("📌 Usuario autenticado rol:", user.rol);
+      console.log("📌 Usuario autenticado:", user);
+
+      console.log("📌 ID empresa en la oferta:", data.empresa.id);
+      console.log("📌 ID usuario logueado:", user?.id);
+      // VERIFICAR QUE EL USUARIO SEA UNA EMPRESA Y QUE SU ID COINCIDA
+      if (user.rol !== "EMPRESA" || user?.id !== data.empresa.id) {
+        alert("No tienes permisos para editar esta oferta.");
+        setTimeout(() => router.replace("/miperfilempresa"), 0); // 👈 Ahora esperamos que `expo-router` esté listo
+        return;
+      }
+
+      if (!data || Object.keys(data).length === 0) {
+        console.error("❌ Error: La oferta no tiene datos.");
+        return;
+      }
+
+
+      let licencia = data.licencia || ""; // Asegurar que no sea undefined o null
+
+      let tipoOfertaCargado = "";
+      let detallesOferta = {};
+
+      // Intentar obtener datos de carga
+      const cargaResponse = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`);
+      if (cargaResponse.ok) {
+        const text = await cargaResponse.text();
+        if (text) {
+          const cargaData = JSON.parse(text);
+          if (cargaData && Object.keys(cargaData).length > 1) {
+            tipoOfertaCargado = "CARGA";
+            detallesOferta = cargaData;
+          }
+        }
+      }
+
+      // Intentar obtener datos de trabajo
+      const trabajoResponse = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`);
+      if (trabajoResponse.ok) {
+        const text = await trabajoResponse.text();
+        if (text) {
+          const trabajoData = JSON.parse(text);
+          if (trabajoData && Object.keys(trabajoData).length > 1) {
+            tipoOfertaCargado = "TRABAJO";
+            detallesOferta = trabajoData;
+          }
+        }
+      }
+
+      setTipoOferta(tipoOfertaCargado);
+      setFormData(prevState => ({
+        ...prevState,
+        ...data,
+        ...detallesOferta,
+        licencia, // Ahora es siempre un string
+        tipoAnterior: tipoOfertaCargado, // Guardamos el tipo original
+      }));
+      setHasPermission(true); // ✅ Ahora tiene permiso
+      setLoading(false);
+
+    } catch (error) {
+      console.error("❌ Error en fetchOferta:", error);
+    }
+  };
+
+
   useEffect(() => {
     console.log("🔍 Estado de user:", user); // 🔹 Log de depuración
 
@@ -98,76 +171,10 @@ const EditarOfertaScreen = () => {
       console.error("❌ Error: ofertaid no está definido.");
       return;
     }
-
-    const fetchOferta = async () => {
-      try {
-        console.log("🔍 Obteniendo oferta general...");
-        const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`);
-        const data = await response.json();
-        console.log("📌 Usuario autenticado rol:", user.rol);
-        console.log("📌 Usuario autenticado:", user);
-        // VERIFICAR QUE EL USUARIO SEA UNA EMPRESA Y QUE SU ID COINCIDA
-        if (user.rol !== "EMPRESA" || user?.id !== data.empresa.id) {
-          alert("No tienes permisos para editar esta oferta.");
-          setTimeout(() => router.replace("/miperfilempresa"), 0); // 👈 Ahora esperamos que `expo-router` esté listo
-          return;
-        }
-
-        if (!data || Object.keys(data).length === 0) {
-          console.error("❌ Error: La oferta no tiene datos.");
-          return;
-        }
-
-
-        let licencia = data.licencia || ""; // Asegurar que no sea undefined o null
-
-        let tipoOfertaCargado = "";
-        let detallesOferta = {};
-
-        // Intentar obtener datos de carga
-        const cargaResponse = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`);
-        if (cargaResponse.ok) {
-          const text = await cargaResponse.text();
-          if (text) {
-            const cargaData = JSON.parse(text);
-            if (cargaData && Object.keys(cargaData).length > 1) {
-              tipoOfertaCargado = "CARGA";
-              detallesOferta = cargaData;
-            }
-          }
-        }
-
-        // Intentar obtener datos de trabajo
-        const trabajoResponse = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`);
-        if (trabajoResponse.ok) {
-          const text = await trabajoResponse.text();
-          if (text) {
-            const trabajoData = JSON.parse(text);
-            if (trabajoData && Object.keys(trabajoData).length > 1) {
-              tipoOfertaCargado = "TRABAJO";
-              detallesOferta = trabajoData;
-            }
-          }
-        }
-
-        setTipoOferta(tipoOfertaCargado);
-        setFormData(prevState => ({
-          ...prevState,
-          ...data,
-          ...detallesOferta,
-          licencia, // Ahora es siempre un string
-          tipoAnterior: tipoOfertaCargado, // Guardamos el tipo original
-        }));
-        setHasPermission(true); // ✅ Ahora tiene permiso
-        setLoading(false);
-
-      } catch (error) {
-        console.error("❌ Error en fetchOferta:", error);
-      }
-    };
-
     fetchOferta();
   }, [isAuthLoaded]);
+
+    
 
   if (!isAuthLoaded || loading) {
     return (
@@ -267,7 +274,7 @@ const EditarOfertaScreen = () => {
           sueldo: parseFloat(formData.sueldo).toFixed(2),
           localizacion: formData.localizacion,
           fechaPublicacion: formatDate(new Date()),
-          empresa: { id: 201 },
+          empresa: { id: user?.id ?? null },
         },
       };
 
@@ -353,6 +360,8 @@ const EditarOfertaScreen = () => {
       if (!response.ok) throw new Error(`Error al editar la oferta: ${response.statusText}`);
 
       console.log("✅ Oferta editada con éxito.");
+      await fetchOferta();
+
       router.push("/miperfilempresa");
 
     } catch (error) {
