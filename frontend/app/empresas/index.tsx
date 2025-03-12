@@ -19,7 +19,7 @@ interface Empresa {
   usuario: Usuario;
 }
 
-const BACKEND_URL = "http://localhost:8080";
+const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
 const EmpresasLista = () => {
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
