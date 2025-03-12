@@ -1,13 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, useWindowDimensions } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
+import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import globalStyles from "../../assets/styles/globalStyles";
 import colors from "../../assets/styles/colors";
 import BooleanSelector from "../_components/BooleanSelector";
 import Selector from "../_components/Selector";
 import defaultProfileImage from "../../assets/images/react-logo.png";
 import { useAuth } from "../../contexts/AuthContext";
+import axios from "axios";
+
+const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+
+const getUserById = async (userId: number) => {
+  try {
+    const response = await axios.get(`${BACKEND_URL}/usuarios/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener el usuario:", error);
+    return null;
+  }
+};
+
+const getCamioneroById = async (usuarioId: number) => {
+  try {
+    const response = await axios.get(`${BACKEND_URL}/camioneros/por_usuario/${usuarioId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener el camionero:", error);
+    return null;
+  }
+};
 
 const EditProfileScreen = () => {
   const { width } = useWindowDimensions();
@@ -16,7 +39,6 @@ const EditProfileScreen = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [formData, setFormData] = useState({
     nombre: "",
-    apellido: "",
     email: "",
     telefono: "",
     localizacion: "",
@@ -28,33 +50,42 @@ const EditProfileScreen = () => {
     disponibilidad: "",
     tieneCAP: null,
     expiracionCAP: "",
-    vehiculoPropio: null,
   });
 
   useEffect(() => {
-    if (user) {
+    const fetchUserData = async () => {
+      if (!user) return;
+      const usuario = await getUserById(user.userId);
+      if (!usuario) return;
+
+      let camioneroData = null;
+      
+      if (usuario.authority.id === 201) {
+        camioneroData = await getCamioneroById(usuario.id);
+      }
+
       setFormData({
-        nombre: user.nombre || "",
-        apellido: user.apellido || "",
-        email: user.email || "",
-        telefono: user.telefono || "",
-        localizacion: user.localizacion || "",
-        descripcion: user.descripcion || "",
-        foto: user.foto || null,
-        dni: user.dni || "",
-        experiencia: user.experiencia || "",
-        licencias: user.licencias || "",
-        disponibilidad: user.disponibilidad || "",
-        tieneCAP: user.tieneCAP || null,
-        expiracionCAP: user.expiracionCAP || "",
-        vehiculoPropio: user.vehiculoPropio || null,
+        nombre: usuario.nombre || "",
+        email: usuario.email || "",
+        telefono: usuario.telefono || "",
+        localizacion: usuario.localizacion || "",
+        descripcion: usuario.descripcion || "",
+        foto: usuario.foto || null,
+        dni: camioneroData ? camioneroData.dni : "",
+        experiencia: camioneroData ? camioneroData.experiencia.toString() + " años" : "",
+        licencias: camioneroData ? camioneroData.licencias.join(", ") : "",
+        disponibilidad: camioneroData ? camioneroData.disponibilidad : "",
+        tieneCAP: camioneroData ? camioneroData.tieneCAP : null,
+        expiracionCAP: camioneroData ? camioneroData.expiracionCAP : "",
       });
-    }
+    };
+
+    fetchUserData();
   }, [user]);
 
   const handleInputChange = (field, value) => {
     setFormData((prevState) => ({ ...prevState, [field]: value }));
-  };  
+  };
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -75,7 +106,7 @@ const EditProfileScreen = () => {
       <View style={{ flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: colors.mediumGray, borderRadius: 8, paddingHorizontal: 10, backgroundColor: colors.white }}>      
         {icon}
         <TextInput
-          style={{ flex: 1, height: multiline ? 80 : 40, paddingLeft: 8, outline:"none", textAlignVertical: multiline ? 'top' : 'center' }}
+          style={{ flex: 1, height: multiline ? 80 : 40, paddingLeft: 8, outline: "none", textAlignVertical: multiline ? 'top' : 'center' }}
           keyboardType={keyboardType}
           multiline={multiline}
           numberOfLines={multiline ? 3 : 1}
@@ -111,6 +142,18 @@ const EditProfileScreen = () => {
         {renderInput("DNI", "dni", <FontAwesome5 name="address-card" size={20} color={colors.primary} />)}
         {renderInput("Años de experiencia", "experiencia", <FontAwesome5 name="briefcase" size={20} color={colors.primary} />, "phone-pad")}
         {renderInput("Licencia(s)", "licencias", <FontAwesome5 name="id-badge" size={20} color={colors.primary} />)}
+
+        <Text style={{ color: colors.secondary, fontSize: 16, marginBottom: 10 }}>Disponibilidad:</Text>
+        <Selector value={formData.disponibilidad} onChange={(value) => handleInputChange("disponibilidad", value)} options={["Nacional", "Internacional"]} colors={colors} globalStyles={globalStyles} />
+
+        <Text style={{ color: colors.secondary, fontSize: 16, marginBottom: 10 }}>¿Tiene CAP?:</Text>
+        <BooleanSelector value={formData.tieneCAP} onChange={(value) => handleInputChange("tieneCAP", value)} colors={colors} globalStyles={globalStyles} />
+
+        {renderInput("Fecha de expiración del CAP", "expiracionCAP", <FontAwesome5 name="calendar" size={20} color={colors.primary} />)}
+
+        <TouchableOpacity style={[globalStyles.button, { width: "100%", borderRadius: 12, elevation: 5 }]}>
+          <Text style={[globalStyles.buttonText, { fontSize: 30 }]}>Guardar Cambios</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );

@@ -10,7 +10,7 @@ interface AuthContextType {
   login: (userData: any, token: string) => void;
   logout: () => void;
   validateToken: (token: string) => Promise<boolean>;
-  getUserData: (userId: number) => void;
+  getUserData: (userRole: string, userId: number) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -46,6 +46,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (userData: any, token: string) => {
     setUser(userData);
     setUserToken(token);
+    
+    await AsyncStorage.setItem("user", JSON.stringify(userData));
+    await AsyncStorage.setItem("userToken", token);
 
     const rol = userData.roles[0] === "EMPRESA" ? "empresas" : "camioneros";
     getUserData(rol, userData.id);
@@ -57,10 +60,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     await AsyncStorage.removeItem("user");
     await AsyncStorage.removeItem("userToken");
   };
-
   const validateToken = async (token: string) => {
     try {
-      const response = await axios.get("http://localhost:8080/auth/validate", {
+      const response = await axios.get(`${BACKEND_URL}/auth/validate`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -116,7 +118,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const getUserData = async (userRole: string, userId: number) => {
     try {
-      const response = await axios.get(`http://localhost:8080/${userRole}/por_usuario/${userId}`);
+      const response = await axios.get(`${BACKEND_URL}/${userRole}/por_usuario/${userId}`);
 
       const unifiedUser = unifyUserData(response.data);
       setUser(unifiedUser);
