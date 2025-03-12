@@ -376,8 +376,10 @@ public class DataInitializer {
                                 + "(220, 224),"
                                 + "(221, 223),"
                                 + "(221, 224),"
+                                + "(222, 223),"
+                                + "(222, 224),"
                                 + "(223, 223),"
-                                + "(224, 224)");
+                                + "(223, 224)");
 
                         // Execute batch
                         statement.executeBatch();
