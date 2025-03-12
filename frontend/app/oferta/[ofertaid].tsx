@@ -4,6 +4,7 @@ import { router, useLocalSearchParams, useRouter } from "expo-router";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import colors from "frontend/assets/styles/colors";
 import { useAuth } from "@/contexts/AuthContext";
+import { Ionicons } from '@expo/vector-icons';
 
 const formatDate = (fecha: string) => {
     const opciones = { day: "numeric", month: "long", year: "numeric" } as const;
@@ -155,6 +156,10 @@ export default function OfertaDetalleScreen() {
                 {offerTrabajoData == null ? (
                     <>
                         <View style={styles.header}>
+                            {/* Icono de retroceso */}
+                            <TouchableOpacity style={styles.backIcon} onPress={() => router.replace('/')}>
+                                <Ionicons name="arrow-back" size={30} color="#0b4f6c" />
+                            </TouchableOpacity>
                             <Image
                                 source={require('../../assets/images/no-company-logo.png')} 
                                 style={styles.logo}
@@ -288,6 +293,10 @@ export default function OfertaDetalleScreen() {
                 ) : (
                     <>
                         <View style={styles.header}>
+                            {/* Icono de retroceso */}
+                            <TouchableOpacity style={styles.backIcon} onPress={() => router.replace('/')}>
+                                <Ionicons name="arrow-back" size={30} color="#0b4f6c" />
+                            </TouchableOpacity>
                             <Image
                                 source={require('../../assets/images/no-company-logo.png')} 
                                 style={styles.logo}
@@ -559,5 +568,9 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: "white",
         textAlign: "center",
+    },
+    backIcon: {
+        marginLeft: 10,
+        marginTop: Platform.OS === 'ios' ? 30 : 10,
     },
 });
