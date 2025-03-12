@@ -4,7 +4,7 @@ const routes = {
   home: "/",
   login: "/login",
   register: "/registro",
-  profile: "/perfil",
+  profile: "/miperfil",
   profileEmpresa: "/miperfilempresa",
   workinprogress:"/workinprogress",
   listcompanies: "/empresas",
