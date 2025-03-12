@@ -152,7 +152,7 @@ export default function OfertaDetalleScreen() {
                     <>
                         <View style={styles.header}>
                             <Image
-                                source={require('frontend/assets/images/no-company-logo.png')} 
+                                source={require('../../assets/images/no-company-logo.png')} 
                                 style={styles.logo}
                             />
                             <View style={styles.headerText}>
@@ -272,7 +272,7 @@ export default function OfertaDetalleScreen() {
                     <>
                         <View style={styles.header}>
                             <Image
-                                source={require('frontend/assets/images/no-company-logo.png')} 
+                                source={require('../../assets/images/no-company-logo.png')} 
                                 style={styles.logo}
                             />
                             <View style={styles.headerText}>
