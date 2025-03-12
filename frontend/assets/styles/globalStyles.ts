@@ -26,7 +26,7 @@ const globalStyles = StyleSheet.create({
     marginBottom: 12,
   },
   button: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary,
     padding: 14,
     borderRadius: 8,
     alignItems: "center",

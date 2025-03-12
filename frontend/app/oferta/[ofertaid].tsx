@@ -4,7 +4,6 @@ import { router, useLocalSearchParams } from "expo-router";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import colors from "frontend/assets/styles/colors";
 import { useAuth } from "@/contexts/AuthContext";
-import { BACKEND_URL } from '@env';
 import routes from "../_components/routes";
 
 const formatDate = (fecha: string) => {
@@ -21,6 +20,8 @@ const handleEditarOferta = () => {
 }
 
 export default function OfertaDetalleScreen() {
+
+    const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
     const [offerData, setOfferData] = useState<any>(null);
     const [empresaData, setEmpresaData] = useState<any>(null);
     const [usuarioEmpresaData, setUsuarioEmpresaData] = useState<any>(null);
@@ -155,7 +156,7 @@ export default function OfertaDetalleScreen() {
                     <>
                         <View style={styles.header}>
                             <Image
-                                source={require('frontend/assets/images/no-company-logo.png')} 
+                                source={require('../../assets/images/no-company-logo.png')} 
                                 style={styles.logo}
                             />
                             <View style={styles.headerText}>
@@ -281,7 +282,7 @@ export default function OfertaDetalleScreen() {
                     <>
                         <View style={styles.header}>
                             <Image
-                                source={require('frontend/assets/images/no-company-logo.png')} 
+                                source={require('../../assets/images/no-company-logo.png')} 
                                 style={styles.logo}
                             />
                             <View style={styles.headerText}>
