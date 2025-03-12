@@ -58,7 +58,7 @@ public class CamioneroService {
     public Camionero actualizarCamionero(Integer id, Camionero camioneroUpdated) {
         Camionero existingCamionero = obtenerCamioneroPorId(id);
         // Ignoramos "id", "usuario", y además "camiones" y "ofertas" si no queremos sobreescribirlas
-        BeanUtils.copyProperties(camioneroUpdated, existingCamionero, "id", "usuario", "camiones", "ofertas");
+        BeanUtils.copyProperties(camioneroUpdated, existingCamionero, "id", "usuario", "camiones", "asignadas");
         return guardarCamionero(existingCamionero);
     }
     

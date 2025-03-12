@@ -49,11 +49,11 @@ public class EmpresaService {
     }
 
 	@Transactional
-	public Empresa actualizarEmpresa(Empresa empresa, int id) throws DataAccessException {
-		Empresa toUpdate = obtenerEmpresaPorId(id);
-		BeanUtils.copyProperties(empresa, toUpdate, "id", "usuario");
-		return guardarEmpresa(toUpdate);
-	}
+    public Empresa actualizarEmpresa(Empresa empresa, int id) throws DataAccessException {
+        Empresa toUpdate = obtenerEmpresaPorId(id);
+        BeanUtils.copyProperties(empresa, toUpdate, "id", "usuario", "ofertas");
+        return guardarEmpresa(toUpdate);
+    }
 
 	@Transactional
 	public void eliminarEmpresa(int id) throws DataAccessException {
