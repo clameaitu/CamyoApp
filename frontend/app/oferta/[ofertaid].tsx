@@ -362,15 +362,6 @@ export default function OfertaDetalleScreen() {
                     </>
                 )}
 
-                                    {/* Botón de Editar Oferta */}
-                        <TouchableOpacity 
-                            style={styles.editButton} 
-                            onPress={() => router.push(`/oferta/editar/${ofertaid}`)}
-                        >
-                            <Text style={styles.editButtonText}>✏️ Editar Oferta</Text>
-                        </TouchableOpacity>
-                 
-
             </View>
         );
     };

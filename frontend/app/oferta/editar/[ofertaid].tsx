@@ -8,7 +8,7 @@ import colors from "../../../assets/styles/colors";
 import globalStyles from "../../../assets/styles/globalStyles";
 import Selector from "../../_components/Selector";
 import MultiSelector from "../../_components/MultiSelector";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { useRouter, useLocalSearchParams, useRootNavigationState } from "expo-router";
 import { useAuth } from "../../../contexts/AuthContext";
 
 
@@ -20,8 +20,11 @@ const EditarOfertaScreen = () => {
   const { user } = useAuth(); // Obtener el usuario logueado desde el contexto de autenticación
   const [loading, setLoading] = useState(true);  // 🔹 Estado de carga
   const [hasPermission, setHasPermission] = useState(false); // 🔹 Control de acceso
+  const navigationState = useRootNavigationState(); // 👈 Verificar si la navegación está lista
+  const [isUserLoading, setIsUserLoading] = useState(true);
+  const [isAuthLoaded, setIsAuthLoaded] = useState(false); // 🔹 Indica si la autenticación ha finalizado
 
-/************************************************** */
+  /************************************************** */
   const [formData, setFormData] = useState({
     titulo: "",
     experiencia: "",
@@ -50,12 +53,44 @@ const EditarOfertaScreen = () => {
 
   });
 
+  useEffect(() => {
+    console.log("🔍 Estado de user:", user); // 🔹 Log de depuración
+
+    // 1️⃣ **Esperar a que el contexto de autenticación cargue**
+    if (user === undefined) {
+      console.log("⌛ Esperando a que `user` se cargue...");
+      return; 
+    }
+
+    // 🔹 **Confirmar que la autenticación ha terminado de cargar**
+    setIsAuthLoaded(true);
+
+  }, [user]);
 
   useEffect(() => {
+    console.log("🔍 Estado de user useEffect:", user); // 👀 Verificar qué está pasando
+    if (!isAuthLoaded) {
+      console.log("⌛ Esperando a que la autenticación cargue...");
+      return;
+    }
+
+    // Esperar hasta que `user` esté disponible
+    if (user === undefined) {
+      console.log("⌛ Esperando a que `user` se cargue...");
+
+      return; // Espera hasta que `user` tenga un valor
+    }
+    setIsUserLoading(false); // Usuario cargado correctamente
+
+    console.log("🔍 Estado de user:", user);
     if (!user) {
       console.warn("⛔ Usuario no autenticado. Redirigiendo...");
-      alert("Usuario no autenticado. Redirigiendo...");
-      router.replace("/login"); // Redirigir a la página de login
+      setTimeout(() => router.replace("/login"), 0); // 👈 Ahora esperamos que `expo-router` esté listo
+      return;
+    }
+    if (user === null) {
+      console.warn("⛔ Usuario no autenticado. Redirigiendo...");
+      router.replace("/login");
       return;
     }
 
@@ -74,7 +109,7 @@ const EditarOfertaScreen = () => {
         // VERIFICAR QUE EL USUARIO SEA UNA EMPRESA Y QUE SU ID COINCIDA
         if (user.rol !== "EMPRESA" || user?.id !== data.empresa.id) {
           alert("No tienes permisos para editar esta oferta.");
-          router.push("/miperfilempresa"); // Redirigir si no cumple
+          setTimeout(() => router.replace("/miperfilempresa"), 0); // 👈 Ahora esperamos que `expo-router` esté listo
           return;
         }
 
@@ -124,7 +159,7 @@ const EditarOfertaScreen = () => {
           tipoAnterior: tipoOfertaCargado, // Guardamos el tipo original
         }));
         setHasPermission(true); // ✅ Ahora tiene permiso
-        setLoading(false); // ✅ Ya terminó la carga
+        setLoading(false);
 
       } catch (error) {
         console.error("❌ Error en fetchOferta:", error);
@@ -132,10 +167,9 @@ const EditarOfertaScreen = () => {
     };
 
     fetchOferta();
-  }, []);
+  }, [isAuthLoaded]);
 
-  // 🔹 Muestra un loading hasta que la validación termine
-  if (loading) {
+  if (!isAuthLoaded || loading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={colors.primary} />
@@ -143,10 +177,10 @@ const EditarOfertaScreen = () => {
     );
   }
 
-    // 🔹 Si el usuario no tiene permisos, no mostrar nada
-    if (!hasPermission) {
-      return null; 
-    }
+  // 🔹 Si el usuario no tiene permisos, no mostrar nada
+  if (!hasPermission) {
+    return null;
+  }
 
   const handleInputChange = (field, value) => {
     let formattedValue = value;
