@@ -105,6 +105,19 @@ const UserProfileScreen: React.FC = () => {
     console.log("id" + user)
     const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 
+    const getNoOffersMessage = () => {
+        switch (offerStatus) {
+            case 'ACEPTADA':
+                return 'No hay ofertas aceptadas';
+            case 'PENDIENTE':
+                return 'No hay ofertas pendientes';
+            case 'RECHAZADA':
+                return 'No hay ofertas rechazadas';
+            default:
+                return '';
+        }
+    };
+
     return (
         <>
             {isMobile ? <BottomBar /> : <CamyoWebNavBar />}
@@ -209,24 +222,28 @@ const UserProfileScreen: React.FC = () => {
                     </View>
                     <ScrollView style={styles.scrollview} showsVerticalScrollIndicator={false}>
                         <View style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                            {offers && offers.map((item) => (
-                                <View key={item.id} style={styles.card}>
-                                    <Image source={defaultCompanyLogo} style={styles.companyLogo} />
-                                    <View style={{ width: "30%" }}>
-                                        <Text style={styles.offerTitle}>{item.titulo}</Text>
-                                        <View style={{ display: "flex", flexDirection: "row" }}>
-                                            <Text style={styles.offerDetailsTagExperience}>{">"}{item.experiencia} años</Text>
-                                            <Text style={styles.offerDetailsTagLicense}>{item.licencia}</Text>
+                            {offers.length === 0 ? (
+                                <Text style={styles.noOffersText}>{getNoOffersMessage()}</Text>
+                            ) : (
+                                offers.map((item) => (
+                                    <View key={item.id} style={styles.card}>
+                                        <Image source={defaultCompanyLogo} style={styles.companyLogo} />
+                                        <View style={{ width: "30%" }}>
+                                            <Text style={styles.offerTitle}>{item.titulo}</Text>
+                                            <View style={{ display: "flex", flexDirection: "row" }}>
+                                                <Text style={styles.offerDetailsTagExperience}>{">"}{item.experiencia} años</Text>
+                                                <Text style={styles.offerDetailsTagLicense}>{item.licencia}</Text>
+                                            </View>
+                                            <Text style={styles.offerInfo}>{item.notas}</Text>
                                         </View>
-                                        <Text style={styles.offerInfo}>{item.notas}</Text>
+                                        <Text style={styles.offerSueldo}>{item.sueldo}€</Text>
+                                        <TouchableOpacity style={styles.button} onPress={() => router.push(`/oferta/${item.id}`)}>
+                                            <MaterialCommunityIcons name="details" size={15} color="white" style={styles.detailsIcon} />
+                                            <Text style={styles.buttonText}>Ver Detalles</Text>
+                                        </TouchableOpacity>
                                     </View>
-                                    <Text style={styles.offerSueldo}>{item.sueldo}€</Text>
-                                    <TouchableOpacity style={styles.button} onPress={() => router.push(`/oferta/${item.id}`)}>
-                                        <MaterialCommunityIcons name="details" size={15} color="white" style={styles.detailsIcon} />
-                                        <Text style={styles.buttonText}>Ver Detalles</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            ))}
+                                ))
+                            )}
                         </View>
                     </ScrollView>
                 </View>

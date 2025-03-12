@@ -604,6 +604,10 @@ descriptionText: {
     fontSize: 15,
     color: 'dark-gray',
 },
+noOffersText: {
+    fontSize: 20,
+    color: colors.secondary
+},
 });
 
 export default styles;
