@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
-  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet
+  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet,
+  ActivityIndicator
 } from "react-native";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import colors from "../../../assets/styles/colors";
@@ -17,7 +18,10 @@ const EditarOfertaScreen = () => {
   const router = useRouter();
   const { ofertaid } = useLocalSearchParams();
   const { user } = useAuth(); // Obtener el usuario logueado desde el contexto de autenticación
+  const [loading, setLoading] = useState(true);  // 🔹 Estado de carga
+  const [hasPermission, setHasPermission] = useState(false); // 🔹 Control de acceso
 
+/************************************************** */
   const [formData, setFormData] = useState({
     titulo: "",
     experiencia: "",
@@ -48,6 +52,13 @@ const EditarOfertaScreen = () => {
 
 
   useEffect(() => {
+    if (!user) {
+      console.warn("⛔ Usuario no autenticado. Redirigiendo...");
+      alert("Usuario no autenticado. Redirigiendo...");
+      router.replace("/login"); // Redirigir a la página de login
+      return;
+    }
+
     if (!ofertaid) {
       console.error("❌ Error: ofertaid no está definido.");
       return;
@@ -58,11 +69,20 @@ const EditarOfertaScreen = () => {
         console.log("🔍 Obteniendo oferta general...");
         const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`);
         const data = await response.json();
+        console.log("📌 Usuario autenticado rol:", user.rol);
+        console.log("📌 Usuario autenticado:", user);
+        // VERIFICAR QUE EL USUARIO SEA UNA EMPRESA Y QUE SU ID COINCIDA
+        if (user.rol !== "EMPRESA" || user?.id !== data.empresa.id) {
+          alert("No tienes permisos para editar esta oferta.");
+          router.push("/miperfilempresa"); // Redirigir si no cumple
+          return;
+        }
 
         if (!data || Object.keys(data).length === 0) {
           console.error("❌ Error: La oferta no tiene datos.");
           return;
         }
+
 
         let licencia = data.licencia || ""; // Asegurar que no sea undefined o null
 
@@ -103,6 +123,8 @@ const EditarOfertaScreen = () => {
           licencia, // Ahora es siempre un string
           tipoAnterior: tipoOfertaCargado, // Guardamos el tipo original
         }));
+        setHasPermission(true); // ✅ Ahora tiene permiso
+        setLoading(false); // ✅ Ya terminó la carga
 
       } catch (error) {
         console.error("❌ Error en fetchOferta:", error);
@@ -112,6 +134,19 @@ const EditarOfertaScreen = () => {
     fetchOferta();
   }, []);
 
+  // 🔹 Muestra un loading hasta que la validación termine
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
+    // 🔹 Si el usuario no tiene permisos, no mostrar nada
+    if (!hasPermission) {
+      return null; 
+    }
 
   const handleInputChange = (field, value) => {
     let formattedValue = value;
@@ -589,6 +624,11 @@ const styles = StyleSheet.create({
   },
   jornadaTextSelected: {
     color: colors.white,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
