@@ -1,13 +1,17 @@
 
 const routes = {
-    home: "/",
-    login: "/login",
-    register: "/registro",
-    profile: "/perfil",
-    workinprogress:"/workinprogress",
-    listcompanies: "/empresas",
-    createOffer: "/oferta/crear",
-  };
-  
-  export default routes;
-  
+
+  home: "/",
+  login: "/login",
+  register: "/registro",
+  profile: "/perfil",
+  profileEmpresa: "/miperfilempresa",
+  workinprogress:"/workinprogress",
+  listcompanies: "/empresas",
+  createOffer: "/oferta/crear",
+  editProfile: "/miperfil/editar",
+  editProfileEmpresa: "/miperfilempresa/editar"
+};
+
+export default routes;
+
