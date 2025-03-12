@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet
 } from "react-native";
@@ -8,9 +8,11 @@ import globalStyles from "../../assets/styles/globalStyles";
 import Selector from "../_components/Selector";
 import MultiSelector from "../_components/MultiSelector";
 import { useRouter } from "expo-router";
-
+import { useAuth } from "../../contexts/AuthContext";
 
 const CrearOfertaScreen = () => {
+  const { user } = useAuth(); // Obtener el usuario logueado desde el contexto de autenticación
+
   const [tipoOferta, setTipoOferta] = useState("TRABAJO");
   const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
   const router = useRouter();
@@ -22,8 +24,9 @@ const CrearOfertaScreen = () => {
     notas: "",
     estado: "PENDIENTE",
     sueldo: "",
+    localizacion: "",
     fechaPublicacion: new Date().toISOString(), // Fecha actual del sistema
-    empresa: { id: 201 }, // Empresa fija con ID 201
+    empresa: { id: user?.id ?? null },
 
     // Trabajo
     fechaIncorporacion: "",
@@ -39,15 +42,32 @@ const CrearOfertaScreen = () => {
     finMinimo: "",
     finMaximo: "",
   });
+  console.log("ID que se usará para empresa:", user?.id);
+
+  console.log("user", user);
+
+  console.log("formData", formData);
+
+  // Cuando `user` cambie, actualizar `empresa.id`
+  useEffect(() => {
+    if (user?.id) {
+      setFormData((prevState) => ({
+        ...prevState,
+        empresa: { id: user.id },
+      }));
+    }
+  }, [user]);
+  console.log("formData2", formData);
+
 
   const handleInputChange = (field, value) => {
     let formattedValue = value;
-  
+
     // Si el campo es "licencia", reemplazamos "+" por "_"
     if (field === "licencia") {
       formattedValue = value.replace(/\+/g, "_");
     }
-  
+
     setFormData((prevState) => ({ ...prevState, [field]: formattedValue }));
   };
 
@@ -84,8 +104,9 @@ const CrearOfertaScreen = () => {
           notas: formData.notas,
           estado: formData.estado || "PENDIENTE",
           sueldo: parseFloat(formData.sueldo).toFixed(2), // Convertir a float con 2 decimal
+          localizacion: formData.localizacion,
           fechaPublicacion: formatDate(new Date()), // Fecha en formato correcto sin Z y sin decimales
-          empresa: { id: 201 }
+          empresa: { id: user?.id ?? null }
         }
       };
 
@@ -128,6 +149,7 @@ const CrearOfertaScreen = () => {
           },
           body: JSON.stringify(ofertaData),
         });
+
 
         if (!response.ok) {
           throw new Error(`Error al crear la oferta: ${response.statusText}`);
@@ -181,40 +203,37 @@ const CrearOfertaScreen = () => {
             <Text style={{ color: colors.secondary, fontSize: 16, marginBottom: 10 }}>
               Licencia:
             </Text>
-            <View style={styles.inputContainer}>
-  <Text style={{ color: colors.secondary, fontSize: 16, marginBottom: 10 }}>
-    Licencia:
-  </Text>
-  <View style={styles.licenciaContainer}>
-    {["AM", "A1", "A2", "A", "B", "C1", "C", "C1+E", "C+E", "D1", "D+E", "E", "D"].map((licencia) => {
-      const storedValue = licencia.replace(/\+/g, "_"); 
-      const isSelected = formData.licencia === storedValue;
+            <View style={styles.licenciaContainer}>
+              {["AM", "A1", "A2", "A", "B", "C1", "C", "C1+E", "C+E", "D1", "D+E", "E", "D"].map((licencia) => {
+                const storedValue = licencia.replace(/\+/g, "_");
+                const isSelected = formData.licencia === storedValue;
 
-      return (
-        <TouchableOpacity
-          key={licencia}
-          style={[
-            styles.licenciaButton,
-            isSelected && styles.licenciaButtonSelected 
-          ]}
-          onPress={() => handleInputChange("licencia", storedValue)}
-        >
-          <Text style={[
-            styles.licenciaText,
-            isSelected && styles.licenciaTextSelected
-          ]}>
-            {licencia} {/* Mostramos el valor con + en la UI */}
-          </Text>
-        </TouchableOpacity>
-      );
-    })}
-  </View>
-</View>
+                return (
+                  <TouchableOpacity
+                    key={licencia}
+                    style={[
+                      styles.licenciaButton,
+                      isSelected && styles.licenciaButtonSelected
+                    ]}
+                    onPress={() => handleInputChange("licencia", storedValue)}
+                  >
+                    <Text style={[
+                      styles.licenciaText,
+                      isSelected && styles.licenciaTextSelected
+                    ]}>
+                      {licencia} {/* Mostramos el valor con + en la UI */}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
 
           </View>
 
           {renderInput("Descripción", "notas", <FontAwesome5 name="align-left" size={20} color={colors.primary} />)}
           {renderInput("Sueldo (€)", "sueldo", <FontAwesome5 name="money-bill-wave" size={20} color={colors.primary} />)}
+          {renderInput("Localización", "localizacion", <FontAwesome5 name="map-marker-alt" size={20} color={colors.primary} />)}
 
           {/* Selector de tipo de oferta */}
           <Text style={styles.title}>¿Qué tipo de oferta quieres publicar?</Text>
@@ -243,7 +262,7 @@ const CrearOfertaScreen = () => {
           {/* Campos dinámicos según el tipo de oferta */}
           {tipoOferta === "TRABAJO" ? (
             <>
-              {renderInput("Fecha de incorporación", "fechaIncorporacion", <FontAwesome5 name="calendar-check" size={20} color={colors.primary} />,"default", false, false, "YYYY-mm-dd")}
+              {renderInput("Fecha de incorporación", "fechaIncorporacion", <FontAwesome5 name="calendar-check" size={20} color={colors.primary} />, "default", false, false, "YYYY-mm-dd")}
 
               <View style={styles.inputContainer}>
                 <Text style={{ color: colors.secondary, fontSize: 16, marginBottom: 10 }}>
@@ -374,13 +393,13 @@ const styles = StyleSheet.create({
   },
   licenciaContainer: {
     flexDirection: "row",
-    flexWrap: "wrap",  
-    justifyContent: "center", 
-    gap: 10, 
-    width: "100%", 
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 10,
+    width: "100%",
   },
   licenciaButton: {
-    width: "30%", 
+    width: "30%",
     paddingVertical: 10,
     alignItems: "center",
     borderRadius: 10,
@@ -389,7 +408,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   licenciaButtonSelected: {
-    backgroundColor: colors.primary, 
+    backgroundColor: colors.primary,
     borderColor: colors.primary,
   },
   licenciaText: {
@@ -397,17 +416,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   licenciaTextSelected: {
-    color: colors.white, 
+    color: colors.white,
   },
   jornadaContainer: {
     flexDirection: "row",
-    flexWrap: "wrap",  
-    justifyContent: "center", 
-    gap: 10, 
-    width: "100%", 
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 10,
+    width: "100%",
   },
   jornadaButton: {
-    width: "30%", 
+    width: "30%",
     paddingVertical: 10,
     alignItems: "center",
     borderRadius: 10,
@@ -416,7 +435,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   jornadaButtonSelected: {
-    backgroundColor: colors.primary, 
+    backgroundColor: colors.primary,
     borderColor: colors.primary,
   },
   jornadaText: {
@@ -425,7 +444,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   jornadaTextSelected: {
-    color: colors.white, 
+    color: colors.white,
   },
 });
 
