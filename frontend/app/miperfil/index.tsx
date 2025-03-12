@@ -131,7 +131,7 @@ const UserProfileScreen: React.FC = () => {
     }
 
     console.log(userToken)
-    console.log("id" + user.id )
+
     const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 
     const getNoOffersMessage = () => {
