@@ -16,6 +16,10 @@ const handleLoginRedirect = () => {
     router.push("/login")
 };
 
+const handleEditarOferta = () => {
+    router.push("/oferta/editar")
+}
+
 export default function OfertaDetalleScreen() {
     const [offerData, setOfferData] = useState<any>(null);
     const [empresaData, setEmpresaData] = useState<any>(null);
@@ -167,16 +171,22 @@ export default function OfertaDetalleScreen() {
                         </View>
                         
                         
-                        {user && user.rol === 'CAMIONERO' ? (
-                            userHasApplied ? (
-                                <TouchableOpacity style={styles.solicitarButton} onPress={handleDesaplicarOferta}>
-                                    <Text style={styles.solicitarButtonText}>Desaplicar Oferta</Text>
+                        {user ? (
+                            user.rol === 'CAMIONERO' ? (
+                                userHasApplied ? (
+                                    <TouchableOpacity style={styles.solicitarButton} onPress={handleDesaplicarOferta}>
+                                        <Text style={styles.solicitarButtonText}>Desaplicar Oferta</Text>
+                                    </TouchableOpacity>
+                                ) : (
+                                    <TouchableOpacity style={styles.solicitarButton} onPress={handleSolicitarOferta}>
+                                        <Text style={styles.solicitarButtonText}>Solicitar Oferta</Text>
+                                    </TouchableOpacity>
+                                )
+                            ) : user.rol === 'EMPRESA' && user.empresaId === offerData.empresaId ? (
+                                <TouchableOpacity style={styles.solicitarButton} onPress={handleEditarOferta}>
+                                    <Text style={styles.solicitarButtonText}>Editar Oferta</Text>
                                 </TouchableOpacity>
-                            ) : (
-                                <TouchableOpacity style={styles.solicitarButton} onPress={handleSolicitarOferta}>
-                                    <Text style={styles.solicitarButtonText}>Solicitar Oferta</Text>
-                                </TouchableOpacity>
-                            )
+                            ) : null
                         ) : (
                             <TouchableOpacity style={styles.solicitarButton} onPress={handleLoginRedirect}>
                                 <Text style={styles.solicitarButtonText}>Inicia sesión para aplicar</Text>
