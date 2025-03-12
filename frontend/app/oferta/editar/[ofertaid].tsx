@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
   View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet,
-  ActivityIndicator
+  ActivityIndicator,
+  Alert
 } from "react-native";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import colors from "../../../assets/styles/colors";
@@ -369,7 +370,22 @@ const EditarOfertaScreen = () => {
       alert("Hubo un error al editar la oferta.");
     }
   };
+  const handleDeleteOffer = async () => {
+    try {
+        const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`, {
+            method: "DELETE",
+        });
+        if (response.ok) {
+            console.log("Oferta eliminada correctamente");
+            router.push("/miperfilempresa"); // Redirige a /miperfil sin mostrar una alerta
 
+        } else {
+            Alert.alert("Error", "No se pudo eliminar la oferta.");
+        }
+    } catch (error) {
+        console.error("Error al eliminar la oferta:", error);
+    }
+};
   // Función para renderizar cada input del formulario
   const renderInput = (label, field, icon, keyboardType = "default", secureTextEntry = false, multiline = false, placeholder = "") => (
     <View style={{ width: '90%', marginBottom: 15 }}>
@@ -525,9 +541,16 @@ const EditarOfertaScreen = () => {
           )}
 
           {/* Botón de publicación */}
+          <View style={styles.buttonRow}>
+          <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteOffer}>
+            <Text style={styles.deleteButtonText}>Eliminar Oferta</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.publishButton} onPress={handlePublish}>
             <Text style={styles.publishButtonText}>Actualizar oferta</Text>
           </TouchableOpacity>
+
+          </View>
+
         </View>
       </View>
     </ScrollView>
@@ -562,19 +585,6 @@ const styles = StyleSheet.create({
     color: colors.secondary,
     marginBottom: 20,
     textAlign: "center",
-  },
-  publishButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    width: "100%",
-    alignItems: "center",
-  },
-  publishButtonText: {
-    color: colors.white,
-    fontSize: 20,
-    fontWeight: "bold",
   },
   inputContainer: {
     width: "90%",
@@ -672,6 +682,43 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between", // Distribuye los botones
+    width: "100%", 
+    marginTop: 20,
+  },
+
+  deleteButton: {
+    flex: 1, 
+    paddingVertical: 12,
+    marginRight: 10, // Espacio entre los botones
+    borderRadius: 12,
+    alignItems: "center",
+    backgroundColor: "#D14F45",
+  },
+
+  deleteButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+
+  publishButton: {
+    flex: 1, 
+    paddingVertical: 12,
+    marginLeft: 10, // Espacio entre los botones
+    borderRadius: 12,
+    alignItems: "center",
+    backgroundColor: "#4CAF50",
+  },
+
+  publishButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
