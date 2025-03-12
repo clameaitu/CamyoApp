@@ -1,16 +1,18 @@
 package com.camyo.backend.oferta;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import com.camyo.backend.camionero.Licencia;
-
+import com.camyo.backend.camionero.Camionero;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class OfertaConTrabajoDTO {
+public class OfertaCompletaDTO {
+
+    private Integer id;
     private String titulo;
     private Integer experiencia;
     private Licencia licencia;
@@ -18,8 +20,10 @@ public class OfertaConTrabajoDTO {
     private OfertaEstado estado;
     private LocalDateTime fechaPublicacion;
     private Double sueldo;
-
-
-    private LocalDate fechaIncorporacion;
-    private Jornada jornada;
+    private String localizacion;
+    private OfertaPrioridad prioridad;
+    private Camionero camionero;
+    private Set<Camionero> aplicados;
+    private String nombreEmpresa;
+    private String tipoOferta;
 }
