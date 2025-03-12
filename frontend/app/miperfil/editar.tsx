@@ -36,7 +36,7 @@ const EditProfileScreen = () => {
     if (!user) return;
 
     const fetchUserData = async () => {
-      const usuario = await getUserById(user.userId);
+      const usuario = await getUserById(user.id);
       if (!usuario) return;
 
       setFormData({
@@ -73,7 +73,7 @@ const EditProfileScreen = () => {
         "Content-Type": "application/json",
       };
 
-      const userResponse = await axios.put(`${BACKEND_URL}/usuarios/${user.userId}`, usuarioData, { headers });
+      const userResponse = await axios.put(`${BACKEND_URL}/usuarios/${user.id}`, usuarioData, { headers });
 
       if (userResponse.status === 200) {
         console.log("✅ Perfil de usuario actualizado correctamente.");
