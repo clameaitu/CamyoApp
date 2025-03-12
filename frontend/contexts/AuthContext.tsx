@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { router } from "expo-router";
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
@@ -51,6 +52,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     await AsyncStorage.setItem("userToken", token);
 
     const rol = userData.roles[0] === "EMPRESA" ? "empresas" : "camioneros";
+    if(userData.roles[0] === 'ADMIN') {
+      router.replace("/workinprogress");
+    }
     getUserData(rol, userData.id);
   };
 
@@ -59,6 +63,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUserToken(null);
     await AsyncStorage.removeItem("user");
     await AsyncStorage.removeItem("userToken");
+    router.replace("/login");
   };
   const validateToken = async (token: string) => {
     try {
@@ -111,14 +116,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       unifiedData.localizacion = data.usuario.localizacion;
       unifiedData.foto = data.usuario.foto;
     }
+    else if (data.usuario.authority === 'ADMIN') {
+      unifiedData.userId = data.usuario.id;
+      unifiedData.nombre = data.usuario.nombre;
+      unifiedData.telefono = data.usuario.telefono;
+      unifiedData.username = data.usuario.username;
+      unifiedData.email = data.usuario.email;
+      unifiedData.localizacion = data.usuario.localizacion;
+      unifiedData.foto = data.usuario.foto;
+    }
   
     return unifiedData;
   };  
   
 
   const getUserData = async (userRole: string, userId: number) => {
+    
     try {
-      const response = await axios.get(`${BACKEND_URL}/${userRole}/por_usuario/${userId}`);
+      var response;
+      if(user.role === 'ADMIN') {
+        response = await axios.get(`${BACKEND_URL}/usuarios/${userId}`);
+      }
+      response = await axios.get(`${BACKEND_URL}/${userRole}/por_usuario/${userId}`);
 
       const unifiedUser = unifyUserData(response.data);
       setUser(unifiedUser);

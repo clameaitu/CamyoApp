@@ -3,8 +3,8 @@ const routes = {
     home: "/",
     login: "/login",
     register: "/registro",
-    profile: "/miperfil",
-    profileEmpresa: "/miperfilempresa",
+    profile: "/perfil",
+    workinprogress:"/workinprogress",
     listcompanies: "/empresas",
     createOffer: "/oferta/crear",
   };
