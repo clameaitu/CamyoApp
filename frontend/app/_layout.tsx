@@ -42,9 +42,6 @@ export default function RootLayout() {
           <Stack.Screen name="empresas"/> 
           <Stack.Screen name="oferta/crear"/>
           <Stack.Screen name="oferta/[ofertaId]" />
-
-          <Stack.Screen name="ejemplo"/>
-          <Stack.Screen name="oferta/[ofertaid]" />
         </Stack>
         {isMobile && <BottomBar />}
       </>
