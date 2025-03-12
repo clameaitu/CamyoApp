@@ -7,6 +7,9 @@ import defaultBanner from "../../assets/images/empresa.jpg";
 import defaultImage from "../../assets/images/image_perfil_empresa.jpg";
 
 import colors from '@/assets/styles/colors';
+import { useAuth } from '../../contexts/AuthContext';
+import { router, useNavigation } from "expo-router";
+import axios from "axios";
 
 
 // Definir la interfaz para la empresa y usu
@@ -34,22 +37,35 @@ const EmpresaPerfil = () => {
   const [empresa, setEmpresa] = useState<Empresa | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { userToken, user } = useAuth();
+  const navigation = useNavigation();
 
   useEffect(() => {
-    const fetchEmpresaData = async () => {
-      try {
-        const response = await fetch(`${BACKEND_URL}/empresas/202`);
-        if (!response.ok) throw new Error("Error al cargar datos de la empresa");
-        const data: Empresa = await response.json();
-        setEmpresa(data);
-      } catch (err) {
-        setError((err as Error)?.message || "Error desconocido");
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (!userToken) {
+      router.push('/login');
+    }
+
+    if (!user || user.rol !== "EMPRESA") {
+      console.warn("Acceso denegado. Redirigiendo...")
+      router.replace("/")
+    }
     fetchEmpresaData();
-  }, []);
+    // Hide the default header
+    navigation.setOptions({ headerShown: false });
+
+  }, [userToken, user]);
+
+  const fetchEmpresaData = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/empresas/${user.id}`);
+      /*const data: Empresa = await response.json();*/
+      setEmpresa(response.data);
+    } catch (err) {
+      setError((err as Error)?.message || "Error desconocido");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) return <Text style={styles.loadingText}>Cargando...</Text>;
   if (error) return <Text style={styles.errorText}>{error}</Text>;
@@ -62,9 +78,9 @@ const EmpresaPerfil = () => {
       <View style={styles.bannerContainer}>
         <Image source={defaultBanner} style={styles.bannerImage} />
         <View style={isMobile ? styles.profileContainer : styles.desktopProfileContainer}>
-          <Image 
-            source={empresa?.usuario?.foto ? { uri: empresa.usuario.foto } : defaultImage} 
-            style={isMobile ? styles.avatar : styles.desktopAvatar} 
+          <Image
+            source={empresa?.usuario?.foto ? { uri: empresa.usuario.foto } : defaultImage}
+            style={isMobile ? styles.avatar : styles.desktopAvatar}
           />
           <View style={styles.profileDetailsContainer}>
             <Text style={isMobile ? styles.name : styles.desktopName}>{empresa?.usuario?.nombre}</Text>
@@ -72,54 +88,59 @@ const EmpresaPerfil = () => {
         </View>
       </View>
       <ScrollView contentContainerStyle={[isMobile ? styles.container : styles.desktopContainer, { paddingTop: isMobile ? 0 : 100, paddingLeft: 10 }]}>
-          <View style={styles.detailsOuterContainer}>
-            <View style={styles.detailsColumn}>
-              <View style={styles.detailItem}>
-                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="globe" size={20}/>{empresa?.web}</Text>
-              </View>
-              <View style={styles.detailItem}>
-                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="building" size={20}/>{empresa?.nif || "NIF no disponible"}</Text>
-              </View>
-              <View style={styles.detailItem}>
-                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="map-marker" size={20}/>{empresa?.usuario?.localizacion || "Ubicación no especificada"}</Text>
-              </View>
-              <View style={styles.detailItem}>
-                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="phone" size={20}/>{empresa?.usuario?.telefono || "Sin número de contacto"}</Text>
-              </View>
+        <View style={styles.detailsOuterContainer}>
+          <View style={styles.detailsColumn}>
+            <View style={styles.detailItem}>
+              <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="globe" size={20} />{empresa?.web}</Text>
+            </View>
+            <View style={styles.detailItem}>
+              <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="building" size={20} />{empresa?.nif || "NIF no disponible"}</Text>
+            </View>
+            <View style={styles.detailItem}>
+              <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="map-marker" size={20} />{empresa?.usuario?.localizacion || "Ubicación no especificada"}</Text>
+            </View>
+            <View style={styles.detailItem}>
+              <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="phone" size={20} />{empresa?.usuario?.telefono || "Sin número de contacto"}</Text>
             </View>
           </View>
+        </View>
       </ScrollView>
     </>
   );
 };
 
-
-
 const styles = StyleSheet.create({
   bannerContainer: {
-    position: 'relative',
+    position: 'fixed',
+    top: 50, 
     width: '100%',
+    left: 0,
     height: 200,
-  }, 
-  bannerImage: { width: "100%", height: "100%", resizeMode: "cover", position: "absolute" },
+  },
+  bannerImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+    position: 'absolute',
+  },
   profileContainer: {
-      flexDirection: 'row',
-      alignItems: 'flex-start',
-      justifyContent: 'flex-start',
-      marginBottom: 20,
-      marginLeft: '12.5%', 
-      position: 'relative',
-      top: 100, 
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    marginBottom: 20,
+    marginLeft: '12.5%', 
+    position: 'relative', 
+    top: 100,
   },
   desktopProfileContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      width: '45%',
-      alignSelf: 'flex-start', 
-      marginBottom: 20,
-      marginLeft: '12.5%', 
-      position: 'relative', 
-      top: 100, 
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '45%',
+    alignSelf: 'flex-start', 
+    marginBottom: 20,
+    marginLeft: '12.5%', 
+    position: 'relative',
+    top: 100,
   },
   avatar: {
     width: 120,
@@ -128,42 +149,49 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     position: 'relative',
     left: 20, 
-    top: -60, 
+    top: -40,
   },
   desktopAvatar: {
-      width: 200,
-      height: 200,
-      borderRadius: 100,
-      marginBottom: 10,
-      position: 'fixed',
-      left: 420, 
-      top: 100, 
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    marginBottom: 10,
+    position: 'fixed',
+    left: 350, 
+    top: 150, 
   },
-  profileDetailsContainer: { marginLeft: 20 },
+  profileDetailsContainer: {
+    marginLeft: 50, 
+    marginTop: 40, 
+    position: 'fixed',   
+    top: 100, 
+  },
   name: {
     fontSize: 26,
     fontWeight: 'bold',
   },
   desktopName: {
-      fontSize: 32,
-      fontWeight: 'bold',
-      position: 'fixed',
-      left: 700, 
-      top: 210, 
+    fontSize: 32,
+    fontWeight: 'bold',
+    position: 'fixed',
+    left: 600, 
+    top: 260, 
   },
   detailsOuterContainer: {
-    alignItems: 'flex-start',
+    alignItems: 'left',
     position: 'fixed',
-    top: 150,
-    left: 330,
+    top: 370,
+    bottom: 50,
+    left: 350,
     width: '100%',
-  },  
+  },
   detailsColumn: {
     flexDirection: 'column', 
-    justifyContent: 'flex-start', 
-    alignItems: 'flex-start', 
+    justifyContent: 'left', 
+    alignItems: 'left', 
+    position: 'fixed',
 
-  },  
+  },
   detailItem: {
     marginBottom: 10,
     flexDirection: 'row', 
@@ -175,6 +203,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: 'left', 
     width: '100%', 
+
   },
   icon: {
     fontSize: 20,
@@ -197,16 +226,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
     paddingTop: 100,
     paddingLeft: 10,
-  }, 
+  },
   desktopContainer: { flexGrow: 1, padding: 50 },
   infoText: { fontSize: 16, color: "#333" },
   desktopDetailsText: {
     fontSize: 15,
     color: 'black',
     marginBottom: 15,
-    marginLeft: '5%',
-    textAlign: 'left',
-    width: '100%', 
+    marginLeft: '1%',
+    textAlign: 'left', 
+    width: '100%',
   },
 });
 
