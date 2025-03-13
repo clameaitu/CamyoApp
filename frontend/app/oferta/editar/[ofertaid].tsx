@@ -363,7 +363,7 @@ const EditarOfertaScreen = () => {
       console.log("✅ Oferta editada con éxito.");
       await fetchOferta();
 
-      router.push("/miperfilempresa");
+      router.replace("/miperfilempresa");
 
     } catch (error) {
       console.error("❌ Error al enviar la oferta:", error);
@@ -377,7 +377,7 @@ const EditarOfertaScreen = () => {
         });
         if (response.ok) {
             console.log("Oferta eliminada correctamente");
-            router.push("/miperfilempresa"); // Redirige a /miperfil sin mostrar una alerta
+            router.replace("/miperfilempresa"); // Redirige a /miperfil sin mostrar una alerta
 
         } else {
             Alert.alert("Error", "No se pudo eliminar la oferta.");

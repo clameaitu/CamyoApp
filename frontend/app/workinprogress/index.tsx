@@ -8,8 +8,8 @@ const WorkInProgressScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Work In Progress...</Text>
-            <TouchableOpacity style={styles.button} onPress={logout}>
-                <Text style={styles.buttonText}>Log Off</Text>
+            <TouchableOpacity style={styles.button} onPress={() => logout()}>
+                <Text style={styles.buttonText}>Log Out</Text>
             </TouchableOpacity>
         </View>
     );

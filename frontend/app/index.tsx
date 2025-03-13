@@ -22,22 +22,13 @@ export default function Index() {
   const { user, userToken, logout } = useAuth();
   useEffect(() => {
     fetchData();
-    console.log(data); // Elimina las llaves innecesarias
   }, []);
-
-  useEffect(() => {
-    if (user && user.roles[0] === 'ADMIN') {
-      console.log('rol' +user.roles[0]);
-      router.push('/workinprogress');
-    }
-  }, [userToken]);
 
   const [error, setError] = useState(null);
 
   const fetchData = async () => {
     try {
       const response = await axios.get(`${BACKEND_URL}/ofertas`);
-      console.log(response.data);
       setData(response.data);
     } catch (error) {
       console.error('Error al cargar los datos:', error);
@@ -86,7 +77,7 @@ export default function Index() {
                     <View />
                   </View>
                     <Text style={styles.offerSueldo}>{item.sueldo}€</Text>
-                    <TouchableOpacity style={styles.button} onPress={()=>router.push(`/oferta/${item.id}`)}>
+                    <TouchableOpacity style={styles.button} onPress={()=>router.replace(`/oferta/${item.id}`)}>
                     <MaterialCommunityIcons name="details" size={15} color="white" style={styles.detailsIcon} />
                     <Text style={styles.buttonText}>Ver Detalles</Text>
 

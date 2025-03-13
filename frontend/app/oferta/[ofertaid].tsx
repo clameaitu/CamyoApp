@@ -143,11 +143,11 @@ export default function OfertaDetalleScreen() {
     };
 
     const handleLoginRedirect = () => {
-        router.push("/login")
+        router.replace("/login")
     };    
 
     const handleEditarOferta = () => {
-        router.push(`/oferta/editar/${ofertaid}`);
+        router.replace(`/oferta/editar/${ofertaid}`);
     }
 
     const renderOfferCard = () => {

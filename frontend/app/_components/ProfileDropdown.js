@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useAuth } from "../../contexts/AuthContext";
 import { Entypo } from '@expo/vector-icons';
@@ -6,66 +6,11 @@ import colors from "frontend/assets/styles/colors";
 import { router, useRouter } from 'expo-router';
 import axios from 'axios';
 
-const ProfileDropdown = ({ }) => {
+const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+
+const ProfileDropdown = ({ user }) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const { userToken, logout, user } = useAuth();
-  const [userData, setUserData] = useState(null);
-  const [nombre, setNombre] = useState('');
-  const [imagen, setImagen] = useState('');
-  const [email, setEmail] = useState('');
-  console.log(user)
-  const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
-
-const fetchDataBasedOnRole = async (userRole, userId) => {
-  try {
-    let response;
-    if (userRole === 'CAMIONERO') {
-      response = await axios.get(`${BACKEND_URL}/camioneros/${userId}`);
-    } else if (userRole === 'EMPRESA') {
-      response = await axios.get(`${BACKEND_URL}/empresas/${userId}`);
-    } else if (userRole === 'ADMIN') {
-      response = await axios.get(`${BACKEND_URL}/usuarios/${userId}`);
-    } else {
-      throw new Error('Invalid user role');
-    }
-
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    throw error;
-  }
-};
-useEffect(() => {
-  const fetchUserData = async () => {
-    try {
-      const data = await fetchDataBasedOnRole(user.roles[0], user.id);
-      setUserData(data);
-      setImagen(data.usuario.foto);
-      setNombre(data.usuario.nombre);
-      setEmail(data.usuario.email);
-      console.log("imagen" +imagen)
-      console.log("nombre" +nombre)
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
-  };
-
-  if (user) {
-    fetchUserData();
-  }
-}, [user]);
-  
-
-
-  const handleProfileNavigation = () => {
-    if (user.roles[0] === 'CAMIONERO') {
-      router.push('/miperfil');
-    } else if (user.roles[0] === 'EMPRESA') {
-      router.push('/miperfilempresa');
-    }
-  };
-
-  console.log("data" +userData)
+  const { userToken, logout } = useAuth();
 
   return (
     <View style={styles.container}>
@@ -73,7 +18,7 @@ useEffect(() => {
       <TouchableOpacity onPress={() => setDropdownVisible(!dropdownVisible)}>
         <Image
           source={{
-            uri: user?.foto || 'https://ui-avatars.com/api/?name=' + nombre,
+            uri: user?.foto || 'https://ui-avatars.com/api/?name=' + user?.nombre,
           }}
           style={styles.avatar}
         />
@@ -91,13 +36,13 @@ useEffect(() => {
           />
           <Image
             source={{
-              uri: user?.foto || 'https://ui-avatars.com/api/?name=' + nombre,
+              uri: user?.foto || 'https://ui-avatars.com/api/?name=' + user?.nombre,
             }}
             style={styles.avatarDropdown}
           />
-          <Text style={styles.dropdownHeader}>¡Hola, {nombre}!</Text>
-          <Text style={styles.dropdownEmail}>{email}</Text>
-          <TouchableOpacity style={styles.dropdownButton} onPress={() => handleProfileNavigation()}>
+          <Text style={styles.dropdownHeader}>¡Hola, {user.nombre}!</Text>
+          <Text style={styles.dropdownEmail}>{user.email}</Text>
+          <TouchableOpacity style={styles.dropdownButton} onPress={() => router.replace('/miperfil')} >
             <Text style={styles.dropdownButtonText}>Ver Perfil</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.dropdownButton} onPress={() => logout()}>

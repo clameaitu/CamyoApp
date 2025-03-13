@@ -165,7 +165,7 @@ const CrearOfertaScreen = () => {
 
         const data = await response.json();
         console.log("Oferta creada con éxito:", data);
-        router.push("/miperfilempresa");
+        router.replace("/miperfilempresa");
 
       } catch (error) {
         console.error("Error al enviar la oferta:", error);

@@ -31,40 +31,47 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<any | null>(null);
   const [userToken, setUserToken] = useState<string | null>(null);
 
+  /*
   useEffect(() => {
     const loadAuthData = async () => {
       const storedUser = await AsyncStorage.getItem("user");
       const storedToken = await AsyncStorage.getItem("userToken");
-
+  
       if (storedUser && storedToken) {
         setUser(JSON.parse(storedUser));
         setUserToken(storedToken);
       }
     };
-    loadAuthData();
-  }, []);
+  
+    loadAuthData(); 
+  }, []);*/
+  
 
   const login = async (userData: any, token: string) => {
+
     setUser(userData);
     setUserToken(token);
     
     await AsyncStorage.setItem("user", JSON.stringify(userData));
     await AsyncStorage.setItem("userToken", token);
 
-    const rol = userData.roles[0] === "EMPRESA" ? "empresas" : "camioneros";
-    if(userData.roles[0] === 'ADMIN') {
-      router.replace("/workinprogress");
-    }
+    const rol = userData.roles[0] === "EMPRESA" ? "empresas" : 
+            userData.roles[0] === "ADMIN" ? "admin" : 
+            "camioneros";
+
     getUserData(rol, userData.id);
   };
 
   const logout = async () => {
     setUser(null);
     setUserToken(null);
+
     await AsyncStorage.removeItem("user");
     await AsyncStorage.removeItem("userToken");
+
     router.replace("/login");
   };
+
   const validateToken = async (token: string) => {
     try {
       const response = await axios.get(`${BACKEND_URL}/auth/validate`, {
@@ -115,8 +122,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       unifiedData.email = data.usuario.email;
       unifiedData.localizacion = data.usuario.localizacion;
       unifiedData.foto = data.usuario.foto;
-    }
-    else if (data.usuario.authority === 'ADMIN') {
+    } 
+
+    // Si el usuario es un ADMIN
+    else if (data.usuario.authority.authority === 'ADMIN') {
       unifiedData.userId = data.usuario.id;
       unifiedData.nombre = data.usuario.nombre;
       unifiedData.telefono = data.usuario.telefono;
@@ -131,13 +140,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   
 
   const getUserData = async (userRole: string, userId: number) => {
-    
     try {
-      var response;
-      if(user.role === 'ADMIN') {
-        response = await axios.get(`${BACKEND_URL}/usuarios/${userId}`);
-      }
-      response = await axios.get(`${BACKEND_URL}/${userRole}/por_usuario/${userId}`);
+      const response = await axios.get(`${BACKEND_URL}/${userRole}/por_usuario/${userId}`);
 
       const unifiedUser = unifyUserData(response.data);
       setUser(unifiedUser);

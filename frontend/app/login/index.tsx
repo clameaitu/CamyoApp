@@ -34,7 +34,7 @@ const LoginScreen = () => {
       });
       const { token, userData } = response.data;
       login(response.data, token);
-      
+
       // Redirigir al usuario a la pantalla principal de ofertas
       router.replace("/");
 
@@ -97,7 +97,7 @@ const LoginScreen = () => {
           <View style={globalStyles.separator} />
         </View>
         
-        <TouchableOpacity style={globalStyles.buttonOrange} onPress={() => router.push("/registro")}>
+        <TouchableOpacity style={globalStyles.buttonOrange} onPress={() => router.replace("/registro")}>
           <Text style={globalStyles.buttonText}>Regístrate</Text>
         </TouchableOpacity>
       </View>

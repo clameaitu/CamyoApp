@@ -64,7 +64,7 @@ export default function Ejemplo() {
       {Platform.OS === 'web' && !user ? (
         <View style={styles.greetingContainer}>
           <Text style={styles.greetingText}>Bienvenido, por favor inicia sesión para continuar.</Text>
-          <TouchableOpacity onPress={() => router.push("/login")}>
+          <TouchableOpacity onPress={() => router.replace("/login")}>
             <Text style={styles.loginLink}>Iniciar sesión</Text>
           </TouchableOpacity>
         </View>
