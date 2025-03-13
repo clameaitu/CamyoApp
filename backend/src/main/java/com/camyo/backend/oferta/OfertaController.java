@@ -20,7 +20,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/ofertas")
-@CrossOrigin(origins = "http://localhost:8081")
 @Tag(name = "Ofertas", description = "API para gestión de ofertas")
 public class OfertaController {
 
