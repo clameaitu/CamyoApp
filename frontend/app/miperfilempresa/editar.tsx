@@ -36,7 +36,7 @@ const EditCompanyProfileScreen = () => {
     if (!user) return;
 
     const fetchCompanyData = async () => {
-      const empresa = await getCompanyById(user.userId);
+      const empresa = await getCompanyById(user.id);
       if (!empresa) return;
 
       setFormData({
@@ -73,7 +73,7 @@ const EditCompanyProfileScreen = () => {
         "Content-Type": "application/json",
       };
 
-      const companyResponse = await axios.put(`${BACKEND_URL}/usuarios/${user.userId}`, empresaData, { headers });
+      const companyResponse = await axios.put(`${BACKEND_URL}/usuarios/${user.id}`, empresaData, { headers });
 
       if (companyResponse.status === 200) {
         console.log("✅ Perfil de empresa actualizado correctamente.");

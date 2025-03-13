@@ -35,16 +35,17 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index"/>
           <Stack.Screen name="login"/>
-
           <Stack.Screen name="registro"/>
           <Stack.Screen name="miperfil"/>
+          <Stack.Screen name="miperfilcamionero"/>
           <Stack.Screen name="miperfilempresa"/>
+          <Stack.Screen name="miperfilcamionero/editar"/>
+          <Stack.Screen name="miperfilempresa/editar"/>
           <Stack.Screen name="empresas"/> 
           <Stack.Screen name="oferta/crear"/>
+          <Stack.Screen name="oferta/editar/[ofertaId]"/>
           <Stack.Screen name="oferta/[ofertaId]" />
-
-          <Stack.Screen name="ejemplo"/>
-          <Stack.Screen name="oferta/[ofertaid]" />
+          <Stack.Screen name="workinprogress"/>
         </Stack>
         {isMobile && <BottomBar />}
       </>
