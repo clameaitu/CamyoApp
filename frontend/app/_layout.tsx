@@ -13,6 +13,7 @@ function RootLayout() {
   const pathname = usePathname();
   const { user, userToken } = useAuth(); // Usa useAuth
   const [isLoading, setIsLoading] = useState(true);
+  const [isReady, setIsReady] = useState(false); // Track if the layout is ready
 
   useEffect(() => {
     if (Platform.OS === "web") {
@@ -39,30 +40,36 @@ function RootLayout() {
 
   useEffect(() => {
     const checkAuthAndRedirect = async () => {
-      const authenticated = !!userToken;
-      const inAuthGroup = ["miperfilempresa", "miperfilcamionero", "oferta/crear", "workinprogress","miperfilempresa/editar","oferta/editar/[ofertaId]","miperfilcamionero/editar"].includes(segments[0]);
+      const authenticated = !!userToken; // TODO: revisar si el token está expirado o no.
+      const inAuthGroup = ["miperfilempresa", "miperfilcamionero", "oferta/crear", "workinprogress", "miperfilempresa/editar", "oferta/editar/[ofertaId]", "miperfilcamionero/editar"].includes(segments[0]);
 
       if (inAuthGroup) {
         if (authenticated && user) {
           switch (user.rol) {
             case 'EMPRESA':
-              if (!["miperfilempresa", "oferta/crear","miperfilempresa/editar","oferta/editar/[ofertaId]","oferta/[ofertaId]"].includes(segments[0])) {
+              if (!["miperfilempresa", "oferta/crear", "miperfilempresa/editar", "oferta/editar/[ofertaId]", "oferta/[ofertaId]"].includes(segments[0])) {
                 if (pathname !== '/') {
-                  router.push('/');
+                  setTimeout(() => {
+                    router.replace('/');
+                  }, 100); // Delay navigation slightly
                 }
               }
               break;
             case 'CAMIONERO':
               if (!["miperfilcamionero", "miperfilcamionero/editar"].includes(segments[0])) {
                 if (pathname !== '/') {
-                  router.push('/');
+                  setTimeout(() => {
+                    router.replace('/');
+                  }, 100); // Delay navigation slightly
                 }
               }
               break;
             case 'ADMIN':
               if (!["workinprogress"].includes(segments[0])) {
                 if (pathname !== '/') {
-                  router.push('/');
+                  setTimeout(() => {
+                    router.replace('/');
+                  }, 100); // Delay navigation slightly
                 }
               }
               break;
@@ -70,16 +77,20 @@ function RootLayout() {
               break;
           }
         } else {
-          router.push('/')
-        } 
-    }
+          setTimeout(() => {
+            router.replace('/');
+          }, 100); // Delay navigation slightly
+        }
+      }
       setIsLoading(false);
     };
 
+    // Ensure the layout is ready before checking auth
+    setIsReady(true);
     checkAuthAndRedirect();
   }, [user, segments, userToken, pathname]);
 
-  if (isLoading) {
+  if (isLoading || !isReady) {
     return null; // O un componente de carga
   }
 
