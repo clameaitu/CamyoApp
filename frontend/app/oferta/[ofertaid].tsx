@@ -11,9 +11,9 @@ const formatDate = (fecha: string) => {
     return new Date(fecha).toLocaleDateString("es-ES", opciones);
 };
 
-export default function OfertaDetalleScreen() {
+const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
-    const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+export default function OfertaDetalleScreen() {
     const [offerData, setOfferData] = useState<any>(null);
     const [empresaData, setEmpresaData] = useState<any>(null);
     const [usuarioEmpresaData, setUsuarioEmpresaData] = useState<any>(null);
@@ -27,55 +27,42 @@ export default function OfertaDetalleScreen() {
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     useEffect(() => {
-        if (ofertaid) {
+        if (ofertaid && user) {
             const fetchData = async () => {
                 try {
                     const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`);
-                    
                     const data = await response.json();
                     setOfferData(data);
-
-                    console.log(data);
-                    
                     
                     const trabajoResponse = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`);
                     const trabajoText = await trabajoResponse.text();
                     const trabajoData = trabajoText ? JSON.parse(trabajoText) : null;
                     setOfferTrabajoData(trabajoData);
 
-                    console.log(trabajoData);
-
                     const cargaResponse = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`);
                     const cargaText = await cargaResponse.text();
                     const cargaData = cargaText ? JSON.parse(cargaText) : null;
                     setOfferCargaData(cargaData);
-
-                    console.log(cargaData);
                     
                     const empresaResponse = await fetch(`${BACKEND_URL}/empresas/${data.empresa.id}`); //http://localhost:8080/empresas/${data.empresaId}
                     const empresaData = await empresaResponse.json();
                     setEmpresaData(empresaData);
-                    console.log(empresaData);
 
                     const usuarioEmpresaResponse = await fetch(`${BACKEND_URL}/usuarios/${empresaData.usuario.id}`); //http://localhost:8080/usuarios/${empresaData.usuarioId}
                     const usuarioEmpresaData = await usuarioEmpresaResponse.json();
                     setUsuarioEmpresaData(usuarioEmpresaData);
-                    console.log(usuarioEmpresaData);
 
-                    if (user !== null) {
-                        const camionerosResponse = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/camioneros`, {
-                            method: 'GET',
-                            headers: {
-                              'Authorization': `Bearer ${userToken}`
-                            }
-                          });
-                        const camionerosData = await camionerosResponse.json();
+                   
+                    const camionerosResponse = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/camioneros`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${userToken}`
+                        }
+                        });
+                    const camionerosData = await camionerosResponse.json();
 
-                        const yaAplicado = camionerosData.some((camionero: { id: string }) => camionero.id === user.id);
-                        setUserHasApplied(yaAplicado);
-                    }
-                    
-                    console.log(user);
+                    const yaAplicado = camionerosData.some((camionero: { id: string }) => camionero.id === user.id);
+                    setUserHasApplied(yaAplicado);
 
                 } catch (error) {
                     console.error("Error fetching data:", error);
@@ -86,7 +73,7 @@ export default function OfertaDetalleScreen() {
 
             fetchData();
         }
-    }, [ofertaid]);
+    }, [ofertaid, user]);
 
     if (loading) {
         return (
@@ -192,7 +179,7 @@ export default function OfertaDetalleScreen() {
                         {user ? (
                             user.rol === 'CAMIONERO' ? (
                                 userHasApplied ? (
-                                    <TouchableOpacity style={styles.solicitarButton2} onPress={handleDesaplicarOferta}>
+                                    <TouchableOpacity style={styles.solicitarButton} onPress={handleDesaplicarOferta}>
                                         <Text style={styles.solicitarButtonText}>Cancelar Solicitud</Text>
                                     </TouchableOpacity>
                                 ) : (
