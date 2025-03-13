@@ -31,6 +31,7 @@ function RootLayout() {
         "miperfilempresa/editar": "Editar Perfil Empresa",
         "oferta/editar/[ofertaId]": "Editar Oferta",
         workinprogress: "Trabajo en Progreso",
+        forbidden: "Acceso Denegado",
       };
 
       const currentSegment = segments.join("/");
@@ -50,7 +51,7 @@ function RootLayout() {
               if (!["miperfilempresa", "oferta/crear", "miperfilempresa/editar", "oferta/editar/[ofertaId]", "oferta/[ofertaId]"].includes(segments[0])) {
                 if (pathname !== '/') {
                   setTimeout(() => {
-                    router.replace('/');
+                    router.replace('/forbidden');
                   }, 100); // Delay navigation slightly
                 }
               }
@@ -59,7 +60,7 @@ function RootLayout() {
               if (!["miperfilcamionero", "miperfilcamionero/editar"].includes(segments[0])) {
                 if (pathname !== '/') {
                   setTimeout(() => {
-                    router.replace('/');
+                    router.replace('/forbidden');
                   }, 100); // Delay navigation slightly
                 }
               }
@@ -68,7 +69,7 @@ function RootLayout() {
               if (!["workinprogress"].includes(segments[0])) {
                 if (pathname !== '/') {
                   setTimeout(() => {
-                    router.replace('/');
+                    router.replace('/forbidden');
                   }, 100); // Delay navigation slightly
                 }
               }
@@ -78,7 +79,7 @@ function RootLayout() {
           }
         } else {
           setTimeout(() => {
-            router.replace('/');
+            router.replace('/forbidden');
           }, 100); // Delay navigation slightly
         }
       }
@@ -111,6 +112,7 @@ function RootLayout() {
         <Stack.Screen name="oferta/editar/[ofertaId]" />
         <Stack.Screen name="oferta/[ofertaId]" />
         <Stack.Screen name="workinprogress" />
+        <Stack.Screen name="forbidden" />
       </Stack>
       {isMobile && <BottomBar />}
     </>
