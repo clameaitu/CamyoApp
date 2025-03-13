@@ -34,7 +34,7 @@ const LoginScreen = () => {
       });
       const { token, userData } = response.data;
       login(response.data, token);
-
+      
       // Redirigir al usuario a la pantalla principal de ofertas
       router.replace("/");
 
