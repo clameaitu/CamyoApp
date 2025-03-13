@@ -64,7 +64,7 @@ const EditProfileScreen = () => {
       if (userResponse.status === 200) {
         console.log("✅ Perfil de usuario actualizado correctamente.");
         updateUser(usuarioData);
-        router.replace("/miperfil");
+        router.replace("/miperfilcamionero");
       }
     } catch (error) {
       if (error.response) {
