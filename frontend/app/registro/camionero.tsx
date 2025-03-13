@@ -279,7 +279,7 @@ const CamioneroScreen = () => {
           {formData.tieneCAP && (
             <>
               {/* Expiración del CAP */}
-              {renderInput("Fecha de expiración del CAP (DD-MM-YYYY)", "expiracionCAP", <FontAwesome5 name="calendar" size={20} color={colors.primary} />, "default")}
+              {renderInput("Fecha de expiración del CAP (dd-mm-AAAA)", "expiracionCAP", <FontAwesome5 name="calendar" size={20} color={colors.primary} />, "default")}
             </>
           )}
 
