@@ -18,7 +18,7 @@ const EditarOfertaScreen = () => {
   const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
   const router = useRouter();
   const { ofertaid } = useLocalSearchParams();
-  const { user } = useAuth(); // Obtener el usuario logueado desde el contexto de autenticación
+  const { user, userToken } = useAuth(); // Obtener el usuario logueado desde el contexto de autenticación
   const [loading, setLoading] = useState(true);  // 🔹 Estado de carga
   const [hasPermission, setHasPermission] = useState(false); // 🔹 Control de acceso
   const navigationState = useRootNavigationState(); // 👈 Verificar si la navegación está lista
