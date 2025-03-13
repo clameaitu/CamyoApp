@@ -13,6 +13,7 @@ interface AuthContextType {
   validateToken: (token: string) => Promise<boolean>;
   getUserData: (userRole: string, userId: number) => void;
   updateUser: (updatedUserData: any) => void;
+  isAuthenticated: () => Promise<boolean>; // Nueva función
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -23,6 +24,7 @@ const AuthContext = createContext<AuthContextType>({
   validateToken: async () => false,
   getUserData: () => {},
   updateUser: () => {},
+  isAuthenticated: async () => false, // Valor por defecto
 });
 
 interface AuthProviderProps {
@@ -57,7 +59,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = async (userData: any, token: string) => {
-
     setUser(userData);
     setUserToken(token);
     
@@ -151,7 +152,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   
     return unifiedData;
   };  
-  
 
   const getUserData = async (userRole: string, userId: number) => {
     try {
@@ -166,8 +166,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const isAuthenticated = async () => {
+    const token = await AsyncStorage.getItem("userToken");
+    if (!token) {
+      return false;
+    }
+    return await validateToken(token);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, userToken, login, logout, validateToken, getUserData, updateUser }}>
+    <AuthContext.Provider value={{ user, userToken, login, logout, validateToken, getUserData, updateUser, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

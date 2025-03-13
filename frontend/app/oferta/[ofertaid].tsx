@@ -92,7 +92,6 @@ export default function OfertaDetalleScreen() {
     };
     
     const handleSolicitarOferta = async () => {
-        if (!user) return handleLoginRedirect();
         
         try {
             const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/aplicar/${user.id}`, {
@@ -119,7 +118,6 @@ export default function OfertaDetalleScreen() {
     };
 
     const handleDesaplicarOferta = async () => {
-        if (!user) return handleLoginRedirect();
         
         try {
             const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/desaplicar/${user.id}`, {

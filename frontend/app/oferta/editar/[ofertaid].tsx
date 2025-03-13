@@ -59,14 +59,7 @@ const EditarOfertaScreen = () => {
       console.log("🔍 Obteniendo oferta general...");
       const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`);
       const data = await response.json();
-      
-      // VERIFICAR QUE EL USUARIO SEA UNA EMPRESA Y QUE SU ID COINCIDA
-      if (user.rol !== "EMPRESA" || user?.id !== data.empresa.id) {
-        alert("No tienes permisos para editar esta oferta.");
-        setTimeout(() => router.replace("/miperfilempresa"), 0); // 👈 Ahora esperamos que `expo-router` esté listo
-        return;
-      }
-
+    
       if (!data || Object.keys(data).length === 0) {
         console.error("❌ Error: La oferta no tiene datos.");
         return;
@@ -145,18 +138,6 @@ const EditarOfertaScreen = () => {
       return; // Espera hasta que `user` tenga un valor
     }
     setIsUserLoading(false); // Usuario cargado correctamente
-
-    console.log("🔍 Estado de user:", user);
-    if (!user) {
-      console.warn("⛔ Usuario no autenticado. Redirigiendo...");
-      setTimeout(() => router.replace("/login"), 0); // 👈 Ahora esperamos que `expo-router` esté listo
-      return;
-    }
-    if (user === null) {
-      console.warn("⛔ Usuario no autenticado. Redirigiendo...");
-      router.replace("/login");
-      return;
-    }
 
     if (!ofertaid) {
       console.error("❌ Error: ofertaid no está definido.");

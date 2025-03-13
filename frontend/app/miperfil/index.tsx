@@ -1,27 +1,40 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { router, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 
 const MyProfile = () => {
     const { userToken, user } = useAuth();
-    const route = useRouter();
+    const router = useRouter();
 
     useEffect(() => {
+        /*
         if (!userToken) {
-            route.push('/login');
+            router.replace('/login');
             return;
-        }
+        }*/
 
-        if (user?.rol === 'CAMIONERO') {
-            route.replace('/miperfilcamionero');
-        } else if (user?.rol === 'EMPRESA') {
-            route.replace('/miperfilempresa');
-        } else if (user?.rol === 'ADMIN') {
-            route.replace('/workinprogress');
-        } else {
-            route.push('/');
+        switch (user?.rol) {
+            case 'CAMIONERO':
+                setTimeout(() => {
+                    router.replace('/miperfilcamionero');
+                  }, 100);
+                break;
+            case 'EMPRESA':
+                setTimeout(() => {
+                    router.replace('/miperfilempresa');
+                  }, 100);
+                break;
+            case 'ADMIN':
+                setTimeout(() => {
+                    router.replace('/workinprogress');
+                  }, 100);
+                break;
+            default:
+                setTimeout(() => {
+                    router.replace('/login');
+                  }, 100);
         }
-    }, [userToken, user, route]);
+    }, [userToken, user]);
 
     return null;
 };
