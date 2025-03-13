@@ -59,13 +59,7 @@ const EditarOfertaScreen = () => {
       console.log("🔍 Obteniendo oferta general...");
       const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`);
       const data = await response.json();
-      console.log("📌 Datos obtenidos de la API:", data); // <-- Verifica qué devuelve
-
-      console.log("📌 Usuario autenticado rol:", user.rol);
-      console.log("📌 Usuario autenticado:", user);
-
-      console.log("📌 ID empresa en la oferta:", data.empresa.id);
-      console.log("📌 ID usuario logueado:", user?.id);
+      
       // VERIFICAR QUE EL USUARIO SEA UNA EMPRESA Y QUE SU ID COINCIDA
       if (user.rol !== "EMPRESA" || user?.id !== data.empresa.id) {
         alert("No tienes permisos para editar esta oferta.");
@@ -77,8 +71,6 @@ const EditarOfertaScreen = () => {
         console.error("❌ Error: La oferta no tiene datos.");
         return;
       }
-
-
       let licencia = data.licencia || ""; // Asegurar que no sea undefined o null
 
       let tipoOfertaCargado = "";
@@ -126,9 +118,7 @@ const EditarOfertaScreen = () => {
     }
   };
 
-
   useEffect(() => {
-    console.log("🔍 Estado de user:", user); // 🔹 Log de depuración
 
     // 1️⃣ **Esperar a que el contexto de autenticación cargue**
     if (user === undefined) {
@@ -500,6 +490,65 @@ const EditarOfertaScreen = () => {
           {renderInput("Descripción", "notas", <FontAwesome5 name="align-left" size={20} color={colors.primary} />)}
           {renderInput("Sueldo (€)", "sueldo", <FontAwesome5 name="money-bill-wave" size={20} color={colors.primary} />)}
           {renderInput("Localización", "localizacion", <FontAwesome5 name="map-marker-alt" size={20} color={colors.primary} />)}
+
+          {/* Campos dinámicos según el tipo de oferta */}
+          {tipoOferta === "TRABAJO" ? (
+            <>
+              {renderInput("Fecha de incorporación", "fechaIncorporacion", <FontAwesome5 name="calendar-check" size={20} color={colors.primary} />, "defaul", false, false, "YYYY-mm-dd")}
+
+              <View style={styles.inputContainer}>
+                <Text style={{ color: colors.secondary, fontSize: 16, marginBottom: 10 }}>
+                  Jornada:
+                </Text>
+                <View style={styles.jornadaContainer}>
+                  {["REGULAR", "FLEXIBLE", "COMPLETA", "NOCTURNA", "RELEVOS", "MIXTA"].map((jornada) => (
+                    <TouchableOpacity
+                      key={jornada}
+                      style={[
+                        styles.jornadaButton,
+                        formData.jornada === jornada && styles.jornadaButtonSelected
+                      ]}
+                      onPress={() => handleInputChange("jornada", jornada)}
+                    >
+                      <Text style={[
+                        styles.jornadaText,
+                        formData.jornada === jornada && styles.jornadaTextSelected
+                      ]}>
+                        {jornada}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            </>
+          ) : (
+            <>
+              {renderInput("Mercancía", "mercancia", <FontAwesome5 name="box" size={20} color={colors.primary} />)}
+              {renderInput("Peso (kg)", "peso", <FontAwesome5 name="weight" size={20} color={colors.primary} />)}
+              {renderInput("Origen", "origen", <FontAwesome5 name="map-marker-alt" size={20} color={colors.primary} />)}
+              {renderInput("Destino", "destino", <FontAwesome5 name="map-marker" size={20} color={colors.primary} />)}
+              {renderInput("Distancia (km)", "distancia", <FontAwesome5 name="road" size={20} color={colors.primary} />)}
+              {renderInput("Inicio", "inicio", <FontAwesome5 name="clock" size={20} color={colors.primary} />, "defaul", false, false, "YYYY-mm-dd")}
+              {renderInput("Fin mínimo", "finMinimo", <FontAwesome5 name="calendar-minus" size={20} color={colors.primary} />, "defaul", false, false, "YYYY-mm-dd")}
+              {renderInput("Fin máximo", "finMaximo", <FontAwesome5 name="calendar-plus" size={20} color={colors.primary} />, "defaul", false, false, "YYYY-mm-dd")}
+            </>
+          )}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
           {/* Botón de publicación */}
           <View style={styles.buttonRow}>
