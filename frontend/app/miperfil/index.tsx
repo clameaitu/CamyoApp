@@ -2,18 +2,9 @@ import React, { useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { router, useRouter } from 'expo-router';
 
-const IndexPage = () => {
-    const { userToken, user, loading } = useAuth();
+const MyProfile = () => {
+    const { userToken, user } = useAuth();
     const route = useRouter();
-
-    if (loading) {
-        return (<div>Loading...</div>
-        ); // Mostrar un indicador de carga si aún no se ha cargado el usuario
-      }
-    
-    if (!user) {
-        router.replace("/login");
-    }
 
     useEffect(() => {
         if (!userToken) {
@@ -35,4 +26,4 @@ const IndexPage = () => {
     return null;
 };
 
-export default IndexPage;
+export default MyProfile;

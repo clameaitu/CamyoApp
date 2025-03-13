@@ -39,9 +39,8 @@ const UserProfileScreen: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [camionero, setCamionero] = useState<Camionero | null>(null);
-    const [userData, setUserData] = useState<Camionero | null>(null);
     const navigation = useNavigation();
-    const { userToken, user, getUserData } = useAuth();
+    const { userToken, user } = useAuth();
     const [offers, setOffers] = useState<any[]>([]);
     const [offerStatus, setOfferStatus] = useState<string>('ACEPTADA'); // State to track selected offer status
     const placeholderAvatar = 'https://ui-avatars.com/api/?name=';
@@ -49,7 +48,6 @@ const UserProfileScreen: React.FC = () => {
     const [licencias, setLicencias] = useState<string[]>([]);
     const [disp, setDisp] = useState<string>('');
     const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
-    var data;
     const capitalizeFirstLetter = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
     };
@@ -63,9 +61,9 @@ const UserProfileScreen: React.FC = () => {
             return;
         }
 
-        fetchCamioneroData();
+        //fetchCamioneroData();
         fetchOffers();
-        fetchUserData();
+        //fetchUserData();
         // Hide the default header
         navigation.setOptions({ headerShown: false });
     }, [userToken, user, offerStatus]); // Add offerStatus to dependency array
@@ -84,6 +82,7 @@ const UserProfileScreen: React.FC = () => {
         }
     };
 
+    /*
     const fetchUserData = async () => {
         try {
             const response = await axios.get(`${BACKEND_URL}/usuarios/${user.id}`);
@@ -94,12 +93,11 @@ const UserProfileScreen: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    };*/
 
     const fetchOffers = async () => {
         try {
             const response = await axios.get(`${BACKEND_URL}/ofertas/aplicadas/${user.id}?estado=${offerStatus}`);
-            console.log(response.data);
             setOffers(response.data);
         } catch (error) {
             console.error('Error al cargar los datos:', error);
@@ -116,17 +114,14 @@ const UserProfileScreen: React.FC = () => {
         );
     }
 
+    /*
     if (!userToken || !user || user.rol !== "CAMIONERO") {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <Text>Acceso denegado, inicia sesión con tu cuenta de camionero</Text>
             </View>
         );
-    }
-
-    console.log(userToken);
-    console.log(user);
-
+    }*/
     const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 
     const getNoOffersMessage = () => {
@@ -150,7 +145,7 @@ const UserProfileScreen: React.FC = () => {
                     <Image source={defaultBanner} style={styles.bannerImage} />
                     <View style={isMobile ? styles.profileContainer : styles.desktopProfileContainer}>
                         <Image
-                            source={{ uri: userData?.foto || 'https://ui-avatars.com/api/?name=' + userData?.nombre }}
+                            source={{ uri: user?.foto || 'https://ui-avatars.com/api/?name=' + user?.nombre }}
                             style={isMobile ? styles.avatar : styles.desktopAvatar}
                         />
                         <View style={styles.profileDetailsContainer}>
@@ -161,7 +156,7 @@ const UserProfileScreen: React.FC = () => {
                                 <Text style={styles.editButtonText}> Editar Perfil</Text>
                             </TouchableOpacity>
 
-                            <Text style={isMobile ? styles.name : styles.desktopName}>{userData?.nombre}</Text>
+                            <Text style={isMobile ? styles.name : styles.desktopName}>{user?.nombre}</Text>
                             <View style={styles.detailsRow}>
                                 <Text style={styles.infoText}>Disponibilidad: {normalizeFirstLetter(disp || '')}</Text>
                                 {user?.experiencia !== undefined && (
@@ -190,7 +185,7 @@ const UserProfileScreen: React.FC = () => {
                             <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>
                                 <FontAwesome style={styles.envelopeIcon} name="envelope" size={20} />
                                 <Text style={styles.linkText}>
-                                    <Text onPress={() => Linking.openURL(`mailto:${userData?.email}`)}>{userData?.email}</Text>
+                                    <Text onPress={() => Linking.openURL(`mailto:${user?.email}`)}>{user?.email}</Text>
                                 </Text>
                             </Text>
                         </View>
@@ -205,13 +200,13 @@ const UserProfileScreen: React.FC = () => {
                             </View>
                         )}
                         <View style={styles.detailItem}>
-                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="map" size={20} />{userData?.localizacion}</Text>
+                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="map" size={20} />{user?.localizacion}</Text>
                         </View>
                         <View style={styles.detailItem}>
-                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="phone" size={20} />{userData?.telefono}</Text>
+                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="phone" size={20} />{user?.telefono}</Text>
                         </View>
                         <View style={styles.descriptionBox}>
-                            <Text style={styles.descriptionText}>{capitalizeFirstLetter(userData?.descripcion || '')}</Text>
+                            <Text style={styles.descriptionText}>{capitalizeFirstLetter(user?.descripcion || '')}</Text>
                         </View>
                     </View>
                 </View>

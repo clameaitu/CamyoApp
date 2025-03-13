@@ -3,16 +3,22 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useAuth } from "../../contexts/AuthContext";
 import { Entypo } from '@expo/vector-icons';
 import colors from "frontend/assets/styles/colors";
+import { router, useRouter } from 'expo-router';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+
 const ProfileDropdown = ({ user }) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const { userToken, logout } = useAuth();
+
   return (
     <View style={styles.container}>
       {/* Foto de perfil */}
       <TouchableOpacity onPress={() => setDropdownVisible(!dropdownVisible)}>
         <Image
           source={{
-            uri: user?.avatar || 'https://ui-avatars.com/api/?name=' + user?.nombre,
+            uri: user?.foto || 'https://ui-avatars.com/api/?name=' + user?.nombre,
           }}
           style={styles.avatar}
         />
@@ -30,13 +36,13 @@ const ProfileDropdown = ({ user }) => {
           />
           <Image
             source={{
-              uri: user?.avatar || 'https://ui-avatars.com/api/?name=' + user?.nombre,
+              uri: user?.foto || 'https://ui-avatars.com/api/?name=' + user?.nombre,
             }}
             style={styles.avatarDropdown}
           />
           <Text style={styles.dropdownHeader}>¡Hola, {user.nombre}!</Text>
           <Text style={styles.dropdownEmail}>{user.email}</Text>
-          <TouchableOpacity style={styles.dropdownButton} onPress={() => console.log('Ver Perfil')}>
+          <TouchableOpacity style={styles.dropdownButton} onPress={() => router.push('/miperfil')} >
             <Text style={styles.dropdownButtonText}>Ver Perfil</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.dropdownButton} onPress={() => logout()}>

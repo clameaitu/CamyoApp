@@ -83,13 +83,14 @@ const EmpresaPerfil = () => {
     );
   }
 
+  /*
   if (!userToken || !user || user.rol !== "EMPRESA") {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text>Acceso denegado, inicia sesión con tu cuenta de empresa</Text>
       </View>
     );
-  }
+  }*/
 
   const isMobile = Platform.OS === "ios" || Platform.OS === "android";
 
