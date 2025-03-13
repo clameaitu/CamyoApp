@@ -3,17 +3,16 @@ import { Platform } from "react-native";
 import { useState, useEffect } from 'react';
 import CamyoWebNavBar from "./_components/CamyoNavBar";
 import BottomBar from "./_components/BottomBar";
-import { useAuth } from "../contexts/AuthContext";
-import { AuthProvider } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/AuthContext"; // Importa useAuth
+import withAuthProvider from './withAuthProvider'; // Importa el HOC
 
-
-export default function RootLayout() {
+function RootLayout() {
   const segments = useSegments();
   const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
   const router = useRouter();
   const pathname = usePathname();
-  const { user, isAuthenticated } = useAuth(); // Obtén la función isAuthenticated del contexto
-  const [isLoading, setIsLoading] = useState(true); // Estado para manejar la carga
+  const { user, isAuthenticated } = useAuth(); // Usa useAuth
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (Platform.OS === "web") {
@@ -42,14 +41,12 @@ export default function RootLayout() {
     const checkAuthAndRedirect = async () => {
       const authenticated = await isAuthenticated(); // Verifica si el usuario está autenticado
       const inAuthGroup = ["miperfilempresa", "miperfilcamionero", "oferta/crear"].includes(segments[0]);
-      console.log(authenticated)
+      console.log(user);
 
       if (!authenticated && inAuthGroup) {
-        // Si el usuario no está autenticado pero intenta acceder a una ruta protegida
         router.push('/');
       } else if (authenticated && user) {
-        // Redirigir según el rol del usuario
-        switch (user.rol) { // Cambia user.role a user.rol según tu estructura de datos
+        switch (user.rol) {
           case 'EMPRESA':
             if (!["miperfilempresa", "oferta/crear", "empresas"].includes(segments[0])) {
               router.push('/');
@@ -66,22 +63,21 @@ export default function RootLayout() {
             }
             break;
           default:
-            router.push('/'); // Rol desconocido o no asignado
+            router.push('/');
             break;
         }
       }
-      setIsLoading(false); // Finaliza la carga
+      setIsLoading(false);
     };
 
     checkAuthAndRedirect();
   }, [user, segments, isAuthenticated]);
 
   if (isLoading) {
-    return null; // O un componente de carga mientras se verifica la autenticación
+    return null; // O un componente de carga
   }
 
   return (
-    <AuthProvider>
     <>
       {!isMobile && <CamyoWebNavBar />}
       <Stack screenOptions={{ headerShown: false }}>
@@ -101,6 +97,8 @@ export default function RootLayout() {
       </Stack>
       {isMobile && <BottomBar />}
     </>
-    </AuthProvider>
   );
 }
+
+// Envuelve RootLayout con withAuthProvider antes de exportarlo
+export default withAuthProvider(RootLayout);
