@@ -12,6 +12,7 @@ interface AuthContextType {
   logout: () => void;
   validateToken: (token: string) => Promise<boolean>;
   getUserData: (userRole: string, userId: number) => void;
+  updateUser: (updatedUserData: any) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -21,6 +22,7 @@ const AuthContext = createContext<AuthContextType>({
   logout: () => {},
   validateToken: async () => false,
   getUserData: () => {},
+  updateUser: () => {},
 });
 
 interface AuthProviderProps {
@@ -31,21 +33,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<any | null>(null);
   const [userToken, setUserToken] = useState<string | null>(null);
 
-  /*
   useEffect(() => {
     const loadAuthData = async () => {
-      const storedUser = await AsyncStorage.getItem("user");
-      const storedToken = await AsyncStorage.getItem("userToken");
+      try {
+        const storedUser = await AsyncStorage.getItem("user");
+        const storedToken = await AsyncStorage.getItem("userToken");
   
-      if (storedUser && storedToken) {
-        setUser(JSON.parse(storedUser));
-        setUserToken(storedToken);
+        if (storedUser && storedToken) {
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
+          setUserToken(storedToken);
+  
+          const rol = parsedUser.roles[0] === "EMPRESA" ? "empresas" :
+            parsedUser.roles[0] === "ADMIN" ? "admin" : "camioneros";
+          getUserData(rol, parsedUser.id);
+        }
+      } catch (error) {
+        console.error("Error cargando la autentificación:", error);
       }
     };
   
-    loadAuthData(); 
-  }, []);*/
-  
+    loadAuthData();
+  }, []);
 
   const login = async (userData: any, token: string) => {
 
@@ -84,6 +93,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.error("Token validation failed:", error);
       return false;
     }
+  };
+
+  const updateUser = (updatedUserData: any) => {
+    setUser((prevUser) => ({ ...prevUser, ...updatedUserData }));
+    AsyncStorage.setItem("user", JSON.stringify(updatedUserData));
   };
 
   const unifyUserData = (data: any) => {
@@ -153,7 +167,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, userToken, login, logout, validateToken, getUserData }}>
+    <AuthContext.Provider value={{ user, userToken, login, logout, validateToken, getUserData, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

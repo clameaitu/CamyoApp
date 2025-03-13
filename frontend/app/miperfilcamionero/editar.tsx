@@ -9,21 +9,11 @@ import { useRouter } from "expo-router";
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
-const getUserById = async (userId) => {
-  try {
-    const response = await axios.get(`${BACKEND_URL}/usuarios/${userId}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error al obtener el usuario:", error);
-    return null;
-  }
-};
-
 const EditProfileScreen = () => {
   const { width } = useWindowDimensions();
   const isWideScreen = width > 1074;
   const router = useRouter();
-  const { user, userToken } = useAuth();
+  const { user, userToken, updateUser } = useAuth();
   const [formData, setFormData] = useState({
     nombre: "",
     email: "",
@@ -34,17 +24,13 @@ const EditProfileScreen = () => {
 
   useEffect(() => {
     if (!user) return;
-
     const fetchUserData = async () => {
-      const usuario = await getUserById(user.id);
-      if (!usuario) return;
-
       setFormData({
-        nombre: usuario.nombre || "",
-        email: usuario.email || "",
-        telefono: usuario.telefono || "",
-        localizacion: usuario.localizacion || "",
-        descripcion: usuario.descripcion || "",
+        nombre: user.nombre || "",
+        email: user.email || "",
+        telefono: user.telefono || "",
+        localizacion: user.localizacion || "",
+        descripcion: user.descripcion || "",
       });
     };
 
@@ -58,7 +44,7 @@ const EditProfileScreen = () => {
   const handleSaveChanges = async (updatedFormData) => {
     try {
       const usuarioData = {
-        id: user.userId,
+        userId: user.userId,
         nombre: updatedFormData.nombre || "",
         email: updatedFormData.email || "",
         telefono: updatedFormData.telefono || "000000000",
@@ -73,11 +59,11 @@ const EditProfileScreen = () => {
         "Content-Type": "application/json",
       };
 
-      const userResponse = await axios.put(`${BACKEND_URL}/usuarios/${user.id}`, usuarioData, { headers });
+      const userResponse = await axios.put(`${BACKEND_URL}/usuarios/${user.userId}`, usuarioData, { headers });
 
       if (userResponse.status === 200) {
         console.log("✅ Perfil de usuario actualizado correctamente.");
-        alert("Perfil actualizado con éxito.");
+        updateUser(usuarioData);
         router.replace("/miperfil");
       }
     } catch (error) {

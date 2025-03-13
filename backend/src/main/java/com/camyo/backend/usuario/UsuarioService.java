@@ -97,15 +97,29 @@ public class UsuarioService {
         }
         return (float) media / list.size();     
     }
+
     public Usuario updateUser(@Valid Usuario usuario, Integer idToUpdate) {
         Usuario toUpdate = obtenerUsuarioPorId(idToUpdate);
-        BeanUtils.copyProperties(usuario, toUpdate, "id", "reseñas", "password");
+
+        System.out.println("TO UPDATE:" + toUpdate.getEmail());
+        System.out.println("UPDATED" + usuario.getEmail());
+    
+        if (!toUpdate.getEmail().equals(usuario.getEmail())) {
+            if (usuarioRepository.existsByEmail(usuario.getEmail())) {
+                throw new IllegalArgumentException("El email ya está en uso por otro usuario.");
+            }
+            toUpdate.setEmail(usuario.getEmail());
+        }
+    
+        BeanUtils.copyProperties(usuario, toUpdate, "id", "reseñas", "password", "email");
+    
         if (usuario.getPassword() != null && !usuario.getPassword().isEmpty()) {
             toUpdate.setPassword(encoder.encode(usuario.getPassword()));
         }
         usuarioRepository.save(toUpdate);
-
+    
         return toUpdate;
     }
+    
     
 }
