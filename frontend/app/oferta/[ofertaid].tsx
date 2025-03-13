@@ -189,7 +189,7 @@ export default function OfertaDetalleScreen() {
                             user.rol === 'CAMIONERO' ? (
                                 userHasApplied ? (
                                     <TouchableOpacity style={styles.solicitarButton} onPress={handleDesaplicarOferta}>
-                                        <Text style={styles.solicitarButtonText}>Desaplicar Oferta</Text>
+                                        <Text style={styles.solicitarButtonText}>Cancelar Solicitud</Text>
                                     </TouchableOpacity>
                                 ) : (
                                     <TouchableOpacity style={styles.solicitarButton} onPress={handleSolicitarOferta}>
@@ -203,7 +203,7 @@ export default function OfertaDetalleScreen() {
                             ) : null
                         ) : (
                             <TouchableOpacity style={styles.solicitarButton} onPress={handleLoginRedirect}>
-                                <Text style={styles.solicitarButtonText}>Inicia sesión para aplicar</Text>
+                                <Text style={styles.solicitarButtonText}>Inicia sesión para solicitar</Text>
                             </TouchableOpacity>
                         )}
 
@@ -314,7 +314,7 @@ export default function OfertaDetalleScreen() {
                             user.rol === 'CAMIONERO' ? (
                                 userHasApplied ? (
                                     <TouchableOpacity style={styles.solicitarButton} onPress={handleDesaplicarOferta}>
-                                        <Text style={styles.solicitarButtonText}>Desaplicar Oferta</Text>
+                                        <Text style={styles.solicitarButtonText}>Cancelar Solicitud</Text>
                                     </TouchableOpacity>
                                 ) : (
                                     <TouchableOpacity style={styles.solicitarButton} onPress={handleSolicitarOferta}>
@@ -328,7 +328,7 @@ export default function OfertaDetalleScreen() {
                             ) : null
                         ) : (
                             <TouchableOpacity style={styles.solicitarButton} onPress={handleLoginRedirect}>
-                                <Text style={styles.solicitarButtonText}>Inicia sesión para aplicar</Text>
+                                <Text style={styles.solicitarButtonText}>Inicia sesión para solicitar</Text>
                             </TouchableOpacity>
                         )}
 
