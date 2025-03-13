@@ -283,10 +283,24 @@ const EditarOfertaScreen = () => {
       if (tipoCambiado) {
         if (formData.tipoAnterior === "TRABAJO") {
           console.log("🗑 Eliminando datos de TRABAJO...");
-          await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`, { method: "DELETE" });
+          await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`, 
+            { method: "DELETE",
+              headers: { 
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${userToken}`
+            }
+            });
+
         } else if (formData.tipoAnterior === "CARGA") {
           console.log("🗑 Eliminando datos de CARGA...");
-          await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`, { method: "DELETE" });
+          await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`, 
+            { method: "DELETE",
+              headers: { 
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${userToken}`
+            }
+            }
+          );
         }
       }
 
@@ -296,7 +310,9 @@ const EditarOfertaScreen = () => {
           console.log("🚀 Creando nueva oferta de TRABAJO...");
           await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json",
+              'Authorization': `Bearer ${userToken}`
+             },
             body: JSON.stringify({
               fechaIncorporacion: formatDate(formData.fechaIncorporacion),
               jornada: formData.jornada,
@@ -306,7 +322,9 @@ const EditarOfertaScreen = () => {
           console.log("🚀 Creando nueva oferta de CARGA...");
           await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json",
+              'Authorization': `Bearer ${userToken}`
+             },
             body: JSON.stringify({
               mercancia: formData.mercancia,
               peso: Number(formData.peso),
@@ -325,7 +343,9 @@ const EditarOfertaScreen = () => {
           console.log("🔄 Actualizando oferta de TRABAJO...");
           await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json",
+              'Authorization': `Bearer ${userToken}`
+             },
             body: JSON.stringify({
               fechaIncorporacion: formatDate(formData.fechaIncorporacion),
               jornada: formData.jornada,
@@ -335,7 +355,9 @@ const EditarOfertaScreen = () => {
           console.log("🔄 Actualizando oferta de CARGA...");
           await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json",
+              'Authorization': `Bearer ${userToken}`
+             },
             body: JSON.stringify({
               mercancia: formData.mercancia,
               peso: Number(formData.peso),
@@ -354,7 +376,9 @@ const EditarOfertaScreen = () => {
 
       const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+          'Authorization': `Bearer ${userToken}`
+         },
         body: JSON.stringify(ofertaData),
       });
 
@@ -374,7 +398,11 @@ const EditarOfertaScreen = () => {
     try {
         const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`, {
             method: "DELETE",
+            headers: { 
+              'Authorization': `Bearer ${userToken}`
+          }
         });
+
         if (response.ok) {
             console.log("Oferta eliminada correctamente");
             router.replace("/miperfilempresa"); // Redirige a /miperfil sin mostrar una alerta
