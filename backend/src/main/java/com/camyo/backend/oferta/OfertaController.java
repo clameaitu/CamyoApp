@@ -523,7 +523,16 @@ public class OfertaController {
         }
     }
 
-
+    @GetMapping("/empresa/{empresaId}")
+    public ResponseEntity<List<Oferta>> obtenerOfertasPorEmpresa(
+            @PathVariable Integer empresaId) {
+        try {
+            List<Oferta> ofertas = ofertaService.obtenerOfertasPorEmpresa(empresaId);
+            return ResponseEntity.ok(ofertas);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 
 }
