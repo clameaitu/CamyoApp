@@ -95,16 +95,9 @@ function RootLayout() {
               }
               break;
   
-            default:
-              setTimeout(() => {
-                router.replace('/forbidden');
-              }, 100);
-              break;
+          
           }
         } else {
-          setTimeout(() => {
-            router.replace('/forbidden');
-          }, 100);
         }
       }
       setIsLoading(false);
