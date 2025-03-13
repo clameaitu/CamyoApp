@@ -11,8 +11,9 @@ function RootLayout() {
   const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
   const router = useRouter();
   const pathname = usePathname();
-  const { user, isAuthenticated } = useAuth(); // Usa useAuth
+  const { user, userToken } = useAuth(); // Usa useAuth
   const [isLoading, setIsLoading] = useState(true);
+
 
   useEffect(() => {
     if (Platform.OS === "web") {
@@ -39,13 +40,10 @@ function RootLayout() {
 
   useEffect(() => {
     const checkAuthAndRedirect = async () => {
-      const authenticated = await isAuthenticated(); // Verifica si el usuario está autenticado
+      const authenticated = !!userToken
       const inAuthGroup = ["miperfilempresa", "miperfilcamionero", "oferta/crear"].includes(segments[0]);
-      console.log(user);
 
-      if (!authenticated && inAuthGroup) {
-        router.push('/');
-      } else if (authenticated && user) {
+      if (authenticated && user) {
         switch (user.rol) {
           case 'EMPRESA':
             if (!["miperfilempresa", "oferta/crear", "empresas"].includes(segments[0])) {
@@ -63,7 +61,6 @@ function RootLayout() {
             }
             break;
           default:
-            router.push('/');
             break;
         }
       }
@@ -71,7 +68,7 @@ function RootLayout() {
     };
 
     checkAuthAndRedirect();
-  }, [user, segments, isAuthenticated]);
+  }, [user, segments, userToken]);
 
   if (isLoading) {
     return null; // O un componente de carga
