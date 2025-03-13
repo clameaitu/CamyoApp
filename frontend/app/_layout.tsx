@@ -14,7 +14,6 @@ function RootLayout() {
   const { user, userToken } = useAuth(); // Usa useAuth
   const [isLoading, setIsLoading] = useState(true);
 
-
   useEffect(() => {
     if (Platform.OS === "web") {
       const pageTitles: Record<string, string> = {
@@ -40,35 +39,43 @@ function RootLayout() {
 
   useEffect(() => {
     const checkAuthAndRedirect = async () => {
-      const authenticated = !!userToken
-      const inAuthGroup = ["miperfilempresa", "miperfilcamionero", "oferta/crear"].includes(segments[0]);
+      const authenticated = !!userToken;
+      const inAuthGroup = ["miperfilempresa", "miperfilcamionero", "oferta/crear", "workinprogress"].includes(segments[0]);
 
+      if (inAuthGroup) {
       if (authenticated && user) {
         switch (user.rol) {
           case 'EMPRESA':
-            if (!["miperfilempresa", "oferta/crear", "empresas"].includes(segments[0])) {
-              router.push('/');
+            if (!["miperfilempresa", "oferta/crear"].includes(segments[0])) {
+              if (pathname !== '/') {
+                router.push('/');
+              }
             }
             break;
           case 'CAMIONERO':
             if (!["miperfilcamionero", "oferta/[ofertaId]"].includes(segments[0])) {
-              router.push('/');
+              if (pathname !== '/') {
+                router.push('/');
+              }
             }
             break;
           case 'ADMIN':
             if (!["workinprogress"].includes(segments[0])) {
-              router.push('/');
+              if (pathname !== '/') {
+                router.push('/');
+              }
             }
             break;
           default:
             break;
         }
       }
+    }
       setIsLoading(false);
     };
 
     checkAuthAndRedirect();
-  }, [user, segments, userToken]);
+  }, [user, segments, userToken, pathname]);
 
   if (isLoading) {
     return null; // O un componente de carga
