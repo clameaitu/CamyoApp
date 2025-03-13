@@ -27,7 +27,7 @@ export default function OfertaDetalleScreen() {
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     useEffect(() => {
-        if (ofertaid && user) {
+        if (ofertaid) {
             const fetchData = async () => {
                 try {
                     const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`);
@@ -73,7 +73,7 @@ export default function OfertaDetalleScreen() {
 
             fetchData();
         }
-    }, [ofertaid, user]);
+    }, [ofertaid]);
 
     if (loading) {
         return (
