@@ -68,7 +68,7 @@ public class SecurityConfiguration {
 			.requestMatchers(HttpMethod.POST, "/ofertas").hasAuthority("EMPRESA")
 			.requestMatchers(HttpMethod.PUT, "/ofertas/**").hasAuthority("EMPRESA")
 			.requestMatchers(HttpMethod.DELETE, "/ofertas/**").hasAuthority("EMPRESA")
-			.requestMatchers(HttpMethod.GET, "/ofertas/{id}/camioneros").hasAuthority("EMPRESA")
+			.requestMatchers(HttpMethod.GET, "/ofertas/{id}/camioneros").hasAnyAuthority("EMPRESA", "CAMIONERO")
 
 
 			.requestMatchers(HttpMethod.PUT, "/camioneros/**").hasAuthority("CAMIONERO")
