@@ -139,18 +139,6 @@ const EditarOfertaScreen = () => {
     }
     setIsUserLoading(false); // Usuario cargado correctamente
 
-    console.log("🔍 Estado de user:", user);
-    if (!user) {
-      console.warn("⛔ Usuario no autenticado. Redirigiendo...");
-      setTimeout(() => router.replace("/login"), 0); // 👈 Ahora esperamos que `expo-router` esté listo
-      return;
-    }
-    if (user === null) {
-      console.warn("⛔ Usuario no autenticado. Redirigiendo...");
-      router.replace("/login");
-      return;
-    }
-
     if (!ofertaid) {
       console.error("❌ Error: ofertaid no está definido.");
       return;

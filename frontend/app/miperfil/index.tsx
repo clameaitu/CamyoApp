@@ -7,11 +7,6 @@ const MyProfile = () => {
     const route = useRouter();
 
     useEffect(() => {
-        if (!userToken) {
-            route.push('/login');
-            return;
-        }
-
         if (user?.rol === 'CAMIONERO') {
             route.replace('/miperfilcamionero');
         } else if (user?.rol === 'EMPRESA') {

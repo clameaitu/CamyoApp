@@ -42,54 +42,78 @@ function RootLayout() {
   useEffect(() => {
     const checkAuthAndRedirect = async () => {
       const authenticated = !!userToken; // TODO: revisar si el token está expirado o no.
-      const inAuthGroup = ["miperfilempresa", "miperfilcamionero", "oferta/crear", "workinprogress", "miperfilempresa/editar", "oferta/editar/[ofertaId]", "miperfilcamionero/editar"].includes(segments[0]);
+
+      const empresaPaths = [
+        "/miperfilempresa",
+        "/oferta/crear",
+        "/miperfilempresa/editar",
+        "/oferta/editar/",
+      ];
+
+      const camioneroPaths = [
+        "/miperfilcamionero",
+        "/miperfilcamionero/editar"
+      ];
+
+      const adminPaths = [
+        "/workinprogress"
+      ];
+
+      const authGroupPaths = [...empresaPaths, ...camioneroPaths, ...adminPaths];
+      const inAuthGroup = authGroupPaths.some(path => pathname.startsWith(path));
 
       if (inAuthGroup) {
         if (authenticated && user) {
           switch (user.rol) {
             case 'EMPRESA':
-              if (!["miperfilempresa", "oferta/crear", "miperfilempresa/editar", "oferta/editar/[ofertaId]", "oferta/[ofertaId]"].includes(segments[0])) {
+              if (!empresaPaths.some(path => pathname.startsWith(path))) {
                 if (pathname !== '/') {
                   setTimeout(() => {
                     router.replace('/forbidden');
-                  }, 100); // Delay navigation slightly
+                  }, 100);
                 }
               }
               break;
+  
             case 'CAMIONERO':
-              if (!["miperfilcamionero", "miperfilcamionero/editar"].includes(segments[0])) {
+              if (!camioneroPaths.some(path => pathname.startsWith(path))) {
                 if (pathname !== '/') {
                   setTimeout(() => {
                     router.replace('/forbidden');
-                  }, 100); // Delay navigation slightly
+                  }, 100);
                 }
               }
               break;
+  
             case 'ADMIN':
-              if (!["workinprogress"].includes(segments[0])) {
+              if (!adminPaths.some(path => pathname.startsWith(path))) {
                 if (pathname !== '/') {
                   setTimeout(() => {
                     router.replace('/forbidden');
-                  }, 100); // Delay navigation slightly
+                  }, 100);
                 }
               }
               break;
+  
             default:
+              setTimeout(() => {
+                router.replace('/forbidden');
+              }, 100);
               break;
           }
         } else {
           setTimeout(() => {
             router.replace('/forbidden');
-          }, 100); // Delay navigation slightly
+          }, 100);
         }
       }
       setIsLoading(false);
     };
 
-    // Ensure the layout is ready before checking auth
+    // Asegúrate de que el layout esté listo antes de verificar la autenticación
     setIsReady(true);
     checkAuthAndRedirect();
-  }, [user, segments, userToken, pathname]);
+  }, [user, userToken, pathname]);
 
   if (isLoading || !isReady) {
     return null; // O un componente de carga
