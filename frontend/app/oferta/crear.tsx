@@ -11,7 +11,7 @@ import { useRouter } from "expo-router";
 import { useAuth } from "../../contexts/AuthContext";
 
 const CrearOfertaScreen = () => {
-  const { user } = useAuth(); // Obtener el usuario logueado desde el contexto de autenticación
+  const { user, userToken } = useAuth(); // Obtener el usuario logueado desde el contexto de autenticación
 
   const [tipoOferta, setTipoOferta] = useState("TRABAJO");
   const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
@@ -154,10 +154,10 @@ const CrearOfertaScreen = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            'Authorization': `Bearer ${userToken}`
           },
           body: JSON.stringify(ofertaData),
         });
-
 
         if (!response.ok) {
           throw new Error(`Error al crear la oferta: ${response.statusText}`);
@@ -165,7 +165,7 @@ const CrearOfertaScreen = () => {
 
         const data = await response.json();
         console.log("Oferta creada con éxito:", data);
-        router.push("/miperfilempresa");
+        router.replace("/miperfilempresa");
 
       } catch (error) {
         console.error("Error al enviar la oferta:", error);

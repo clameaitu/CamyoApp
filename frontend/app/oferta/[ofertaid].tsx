@@ -31,6 +31,7 @@ export default function OfertaDetalleScreen() {
             const fetchData = async () => {
                 try {
                     const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`);
+                    
                     const data = await response.json();
                     setOfferData(data);
 
@@ -62,7 +63,12 @@ export default function OfertaDetalleScreen() {
                     console.log(usuarioEmpresaData);
 
                     if (user !== null) {
-                        const camionerosResponse = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/camioneros`);
+                        const camionerosResponse = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/camioneros`, {
+                            method: 'GET',
+                            headers: {
+                              'Authorization': `Bearer ${userToken}`
+                            }
+                          });
                         const camionerosData = await camionerosResponse.json();
 
                         const yaAplicado = camionerosData.some((camionero: { id: string }) => camionero.id === user.id);
@@ -104,7 +110,10 @@ export default function OfertaDetalleScreen() {
         try {
             const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/aplicar/${user.id}`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" }
+                headers: { 
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${userToken}`
+                }
             });
 
             if (response.ok) {
@@ -128,7 +137,10 @@ export default function OfertaDetalleScreen() {
         try {
             const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/desaplicar/${user.id}`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" }
+                headers: { 
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${userToken}`
+                }
             });
 
             if (response.ok) {
@@ -143,11 +155,11 @@ export default function OfertaDetalleScreen() {
     };
 
     const handleLoginRedirect = () => {
-        router.push("/login")
+        router.replace("/login")
     };    
 
     const handleEditarOferta = () => {
-        router.push(`/oferta/editar/${ofertaid}`);
+        router.replace(`/oferta/editar/${ofertaid}`);
     }
 
     const renderOfferCard = () => {
@@ -181,7 +193,7 @@ export default function OfertaDetalleScreen() {
                             user.rol === 'CAMIONERO' ? (
                                 userHasApplied ? (
                                     <TouchableOpacity style={styles.solicitarButton2} onPress={handleDesaplicarOferta}>
-                                        <Text style={styles.solicitarButtonText}>Desaplicar Oferta</Text>
+                                        <Text style={styles.solicitarButtonText}>Cancelar Solicitud</Text>
                                     </TouchableOpacity>
                                 ) : (
                                     <TouchableOpacity style={styles.solicitarButton} onPress={handleSolicitarOferta}>
@@ -195,7 +207,7 @@ export default function OfertaDetalleScreen() {
                             ) : null
                         ) : (
                             <TouchableOpacity style={styles.solicitarButton} onPress={handleLoginRedirect}>
-                                <Text style={styles.solicitarButtonText}>Inicia sesión para aplicar</Text>
+                                <Text style={styles.solicitarButtonText}>Inicia sesión para solicitar</Text>
                             </TouchableOpacity>
                         )}
 
@@ -317,7 +329,7 @@ export default function OfertaDetalleScreen() {
                             user.rol === 'CAMIONERO' ? (
                                 userHasApplied ? (
                                     <TouchableOpacity style={styles.solicitarButton2} onPress={handleDesaplicarOferta}>
-                                        <Text style={styles.solicitarButtonText}>Desaplicar Oferta</Text>
+                                        <Text style={styles.solicitarButtonText}>Cancelar Solicitud</Text>
                                     </TouchableOpacity>
                                 ) : (
                                     <TouchableOpacity style={styles.solicitarButton} onPress={handleSolicitarOferta}>
@@ -331,7 +343,7 @@ export default function OfertaDetalleScreen() {
                             ) : null
                         ) : (
                             <TouchableOpacity style={styles.solicitarButton} onPress={handleLoginRedirect}>
-                                <Text style={styles.solicitarButtonText}>Inicia sesión para aplicar</Text>
+                                <Text style={styles.solicitarButtonText}>Inicia sesión para solicitar</Text>
                             </TouchableOpacity>
                         )}
                         

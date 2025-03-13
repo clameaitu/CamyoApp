@@ -99,7 +99,7 @@ const LoginScreen = () => {
           <View style={globalStyles.separator} />
         </View>
         
-        <TouchableOpacity style={globalStyles.buttonOrange} onPress={() => router.push("/registro")}>
+        <TouchableOpacity style={globalStyles.buttonOrange} onPress={() => router.replace("/registro")}>
           <Text style={globalStyles.buttonTextRegister}>Regístrate</Text>
         </TouchableOpacity>
 

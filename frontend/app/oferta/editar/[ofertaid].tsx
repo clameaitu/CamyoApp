@@ -18,7 +18,7 @@ const EditarOfertaScreen = () => {
   const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
   const router = useRouter();
   const { ofertaid } = useLocalSearchParams();
-  const { user } = useAuth(); // Obtener el usuario logueado desde el contexto de autenticación
+  const { user, userToken } = useAuth(); // Obtener el usuario logueado desde el contexto de autenticación
   const [loading, setLoading] = useState(true);  // 🔹 Estado de carga
   const [hasPermission, setHasPermission] = useState(false); // 🔹 Control de acceso
   const navigationState = useRootNavigationState(); // 👈 Verificar si la navegación está lista
@@ -283,10 +283,24 @@ const EditarOfertaScreen = () => {
       if (tipoCambiado) {
         if (formData.tipoAnterior === "TRABAJO") {
           console.log("🗑 Eliminando datos de TRABAJO...");
-          await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`, { method: "DELETE" });
+          await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`, 
+            { method: "DELETE",
+              headers: { 
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${userToken}`
+            }
+            });
+
         } else if (formData.tipoAnterior === "CARGA") {
           console.log("🗑 Eliminando datos de CARGA...");
-          await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`, { method: "DELETE" });
+          await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`, 
+            { method: "DELETE",
+              headers: { 
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${userToken}`
+            }
+            }
+          );
         }
       }
 
@@ -296,7 +310,9 @@ const EditarOfertaScreen = () => {
           console.log("🚀 Creando nueva oferta de TRABAJO...");
           await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json",
+              'Authorization': `Bearer ${userToken}`
+             },
             body: JSON.stringify({
               fechaIncorporacion: formatDate(formData.fechaIncorporacion),
               jornada: formData.jornada,
@@ -306,7 +322,9 @@ const EditarOfertaScreen = () => {
           console.log("🚀 Creando nueva oferta de CARGA...");
           await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json",
+              'Authorization': `Bearer ${userToken}`
+             },
             body: JSON.stringify({
               mercancia: formData.mercancia,
               peso: Number(formData.peso),
@@ -325,7 +343,9 @@ const EditarOfertaScreen = () => {
           console.log("🔄 Actualizando oferta de TRABAJO...");
           await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/trabajo`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json",
+              'Authorization': `Bearer ${userToken}`
+             },
             body: JSON.stringify({
               fechaIncorporacion: formatDate(formData.fechaIncorporacion),
               jornada: formData.jornada,
@@ -335,7 +355,9 @@ const EditarOfertaScreen = () => {
           console.log("🔄 Actualizando oferta de CARGA...");
           await fetch(`${BACKEND_URL}/ofertas/${ofertaid}/carga`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json",
+              'Authorization': `Bearer ${userToken}`
+             },
             body: JSON.stringify({
               mercancia: formData.mercancia,
               peso: Number(formData.peso),
@@ -354,7 +376,9 @@ const EditarOfertaScreen = () => {
 
       const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+          'Authorization': `Bearer ${userToken}`
+         },
         body: JSON.stringify(ofertaData),
       });
 
@@ -363,7 +387,7 @@ const EditarOfertaScreen = () => {
       console.log("✅ Oferta editada con éxito.");
       await fetchOferta();
 
-      router.push("/miperfilempresa");
+      router.replace("/miperfilempresa");
 
     } catch (error) {
       console.error("❌ Error al enviar la oferta:", error);
@@ -374,10 +398,14 @@ const EditarOfertaScreen = () => {
     try {
         const response = await fetch(`${BACKEND_URL}/ofertas/${ofertaid}`, {
             method: "DELETE",
+            headers: { 
+              'Authorization': `Bearer ${userToken}`
+          }
         });
+
         if (response.ok) {
             console.log("Oferta eliminada correctamente");
-            router.push("/miperfilempresa"); // Redirige a /miperfil sin mostrar una alerta
+            router.replace("/miperfilempresa"); // Redirige a /miperfil sin mostrar una alerta
 
         } else {
             Alert.alert("Error", "No se pudo eliminar la oferta.");
@@ -472,73 +500,6 @@ const EditarOfertaScreen = () => {
           {renderInput("Descripción", "notas", <FontAwesome5 name="align-left" size={20} color={colors.primary} />)}
           {renderInput("Sueldo (€)", "sueldo", <FontAwesome5 name="money-bill-wave" size={20} color={colors.primary} />)}
           {renderInput("Localización", "localizacion", <FontAwesome5 name="map-marker-alt" size={20} color={colors.primary} />)}
-
-          {/* Selector de tipo de oferta */}
-          <Text style={styles.title}>¿Qué tipo de oferta quieres publicar?</Text>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[styles.userTypeButton, tipoOferta === "TRABAJO" ? styles.selectedButton : styles.unselectedButton]}
-              onPress={() => handleTipoOfertaChange("TRABAJO")}
-            >
-              <FontAwesome5 size={24} color={tipoOferta === "TRABAJO" ? colors.white : colors.secondary} />
-              <Text style={[styles.userTypeText, tipoOferta === "TRABAJO" ? styles.selectedText : styles.unselectedText]}>
-                TRABAJO
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.userTypeButton, tipoOferta === "CARGA" ? styles.selectedButton : styles.unselectedButton]}
-              onPress={() => handleTipoOfertaChange("CARGA")}
-            >
-              <FontAwesome5 size={24} color={tipoOferta === "CARGA" ? colors.white : colors.secondary} />
-              <Text style={[styles.userTypeText, tipoOferta === "CARGA" ? styles.selectedText : styles.unselectedText]}>
-                CARGA
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Campos dinámicos según el tipo de oferta */}
-          {tipoOferta === "TRABAJO" ? (
-            <>
-              {renderInput("Fecha de incorporación", "fechaIncorporacion", <FontAwesome5 name="calendar-check" size={20} color={colors.primary} />, "defaul", false, false, "YYYY-mm-dd")}
-
-              <View style={styles.inputContainer}>
-                <Text style={{ color: colors.secondary, fontSize: 16, marginBottom: 10 }}>
-                  Jornada:
-                </Text>
-                <View style={styles.jornadaContainer}>
-                  {["REGULAR", "FLEXIBLE", "COMPLETA", "NOCTURNA", "RELEVOS", "MIXTA"].map((jornada) => (
-                    <TouchableOpacity
-                      key={jornada}
-                      style={[
-                        styles.jornadaButton,
-                        formData.jornada === jornada && styles.jornadaButtonSelected
-                      ]}
-                      onPress={() => handleInputChange("jornada", jornada)}
-                    >
-                      <Text style={[
-                        styles.jornadaText,
-                        formData.jornada === jornada && styles.jornadaTextSelected
-                      ]}>
-                        {jornada}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-            </>
-          ) : (
-            <>
-              {renderInput("Mercancía", "mercancia", <FontAwesome5 name="box" size={20} color={colors.primary} />)}
-              {renderInput("Peso (kg)", "peso", <FontAwesome5 name="weight" size={20} color={colors.primary} />)}
-              {renderInput("Origen", "origen", <FontAwesome5 name="map-marker-alt" size={20} color={colors.primary} />)}
-              {renderInput("Destino", "destino", <FontAwesome5 name="map-marker" size={20} color={colors.primary} />)}
-              {renderInput("Distancia (km)", "distancia", <FontAwesome5 name="road" size={20} color={colors.primary} />)}
-              {renderInput("Inicio", "inicio", <FontAwesome5 name="clock" size={20} color={colors.primary} />, "defaul", false, false, "YYYY-mm-dd")}
-              {renderInput("Fin mínimo", "finMinimo", <FontAwesome5 name="calendar-minus" size={20} color={colors.primary} />, "defaul", false, false, "YYYY-mm-dd")}
-              {renderInput("Fin máximo", "finMaximo", <FontAwesome5 name="calendar-plus" size={20} color={colors.primary} />, "defaul", false, false, "YYYY-mm-dd")}
-            </>
-          )}
 
           {/* Botón de publicación */}
           <View style={styles.buttonRow}>
