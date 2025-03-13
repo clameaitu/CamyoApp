@@ -73,7 +73,7 @@ export default function CamyoWebNavBar() {
                 <TouchableOpacity style={styles.shareButtonZoomed2} onPress={() => logout()}><Text style={styles.shareTextZoom1}>Cerrar Sesión</Text></TouchableOpacity>
               ) : (
                 <>
-                  <TouchableOpacity style={styles.shareButtonZoomed1} onPress={() => router.push(routes.login)}><Text style={styles.shareTextZoom1}>Iniciar Sesión</Text></TouchableOpacity>
+                  <TouchableOpacity style={styles.shareButtonZoomed1} onPress={() => router.replace(routes.login)}><Text style={styles.shareTextZoom1}>Iniciar Sesión</Text></TouchableOpacity>
     
                 </>
               )}
@@ -91,7 +91,7 @@ export default function CamyoWebNavBar() {
               </TouchableOpacity>
             </View>
             <View style={styles.rightSection}>
-               <TouchableOpacity style={styles.buttonText} onPress={() => router.push(routes.listcompanies)} ><Text style={styles.linkText}>Empresas</Text></TouchableOpacity>
+               <TouchableOpacity style={styles.buttonText} onPress={() => router.replace(routes.listcompanies)} ><Text style={styles.linkText}>Empresas</Text></TouchableOpacity>
               <View style={styles.searchWeb}>
                 <TextInput
                   style={styles.searchInputWeb}
@@ -108,7 +108,7 @@ export default function CamyoWebNavBar() {
                 </>
               ) : (
                 <>
-                  <TouchableOpacity style={styles.shareButton} onPress={() => router.push(routes.login)}><Text style={styles.shareText}>Iniciar Sesión</Text></TouchableOpacity>
+                  <TouchableOpacity style={styles.shareButton} onPress={() => router.replace(routes.login)}><Text style={styles.shareText}>Iniciar Sesión</Text></TouchableOpacity>
                 
                 </>
               )}

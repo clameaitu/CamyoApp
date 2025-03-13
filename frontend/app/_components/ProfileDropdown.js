@@ -42,7 +42,7 @@ const ProfileDropdown = ({ user }) => {
           />
           <Text style={styles.dropdownHeader}>¡Hola, {user.nombre}!</Text>
           <Text style={styles.dropdownEmail}>{user.email}</Text>
-          <TouchableOpacity style={styles.dropdownButton} onPress={() => router.push('/miperfil')} >
+          <TouchableOpacity style={styles.dropdownButton} onPress={() => router.replace('/miperfil')} >
             <Text style={styles.dropdownButtonText}>Ver Perfil</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.dropdownButton} onPress={() => logout()}>

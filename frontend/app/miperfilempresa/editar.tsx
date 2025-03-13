@@ -78,7 +78,7 @@ const EditCompanyProfileScreen = () => {
       if (companyResponse.status === 200) {
         console.log("✅ Perfil de empresa actualizado correctamente.");
         alert("Perfil actualizado con éxito.");
-        router.push("/miperfilempresa");
+        router.replace("/miperfilempresa");
       }
     } catch (error) {
       if (error.response) {

@@ -18,12 +18,17 @@ export default function RootLayout() {
     const pageTitles: Record<string, string> = {
       index: "Inicio",
       login: "Iniciar Sesión",
-      registro: "Registro",
-      miperfil: "Mi Perfil Camionero",
+      registro: "Registro", 
+      miperfil: "Mi Perfil",
       miperfilempresa: "Mi Perfil Empresa",
+      miperfilcamionero: "Mi Perfil Camionero",
       "oferta/crear": "Publicar Nueva Oferta",
-      "empresas": "Lista de Empresas",
+      empresas: "Lista de Empresas",
       "oferta/[ofertaId]": "Detalles de la Oferta",
+      "miperfilcamionero/editar": "Editar Perfil Camionero",
+      "miperfilempresa/editar": "Editar Perfil Empresa",
+      "oferta/editar/[ofertaId]": "Editar Oferta",
+      workinprogress: "Trabajo en Progreso",
     };
 
     const currentSegment = segments.join("/");
