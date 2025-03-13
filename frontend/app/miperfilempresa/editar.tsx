@@ -9,21 +9,12 @@ import { useRouter } from "expo-router";
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
-const getCompanyById = async (companyId) => {
-  try {
-    const response = await axios.get(`${BACKEND_URL}/usuarios/${companyId}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error al obtener la empresa:", error);
-    return null;
-  }
-};
-
 const EditCompanyProfileScreen = () => {
   const { width } = useWindowDimensions();
   const isWideScreen = width > 1074;
   const router = useRouter();
   const { user, userToken } = useAuth();
+  console.log(user)
   const [formData, setFormData] = useState({
     nombre: "",
     email: "",
@@ -36,15 +27,13 @@ const EditCompanyProfileScreen = () => {
     if (!user) return;
 
     const fetchCompanyData = async () => {
-      const empresa = await getCompanyById(user.id);
-      if (!empresa) return;
 
       setFormData({
-        nombre: empresa.nombre || "",
-        email: empresa.email || "",
-        telefono: empresa.telefono || "",
-        localizacion: empresa.localizacion || "",
-        descripcion: empresa.descripcion || "",
+        nombre: user.nombre || "",
+        email: user.email || "",
+        telefono: user.telefono || "",
+        localizacion: user.localizacion || "",
+        descripcion: user.descripcion || "",
       });
     };
 

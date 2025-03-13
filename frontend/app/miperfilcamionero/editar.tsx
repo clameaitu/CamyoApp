@@ -9,16 +9,6 @@ import { useRouter } from "expo-router";
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
-const getUserById = async (userId) => {
-  try {
-    const response = await axios.get(`${BACKEND_URL}/usuarios/${userId}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error al obtener el usuario:", error);
-    return null;
-  }
-};
-
 const EditProfileScreen = () => {
   const { width } = useWindowDimensions();
   const isWideScreen = width > 1074;
@@ -34,17 +24,13 @@ const EditProfileScreen = () => {
 
   useEffect(() => {
     if (!user) return;
-
     const fetchUserData = async () => {
-      const usuario = await getUserById(user.id);
-      if (!usuario) return;
-
       setFormData({
-        nombre: usuario.nombre || "",
-        email: usuario.email || "",
-        telefono: usuario.telefono || "",
-        localizacion: usuario.localizacion || "",
-        descripcion: usuario.descripcion || "",
+        nombre: user.nombre || "",
+        email: user.email || "",
+        telefono: user.telefono || "",
+        localizacion: user.localizacion || "",
+        descripcion: user.descripcion || "",
       });
     };
 
