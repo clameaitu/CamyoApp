@@ -40,20 +40,20 @@ function RootLayout() {
   useEffect(() => {
     const checkAuthAndRedirect = async () => {
       const authenticated = !!userToken;
-      const inAuthGroup = ["miperfilempresa", "miperfilcamionero", "oferta/crear", "workinprogress"].includes(segments[0]);
+      const inAuthGroup = ["miperfilempresa", "miperfilcamionero", "oferta/crear", "workinprogress","miperfilempresa/editar","oferta/editar/[ofertaId]","miperfilcamionero/editar"].includes(segments[0]);
 
       if (inAuthGroup) {
       if (authenticated && user) {
         switch (user.rol) {
           case 'EMPRESA':
-            if (!["miperfilempresa", "oferta/crear"].includes(segments[0])) {
+            if (!["miperfilempresa", "oferta/crear","miperfilempresa/editar","oferta/editar/[ofertaId]","oferta/[ofertaId]"].includes(segments[0])) {
               if (pathname !== '/') {
                 router.push('/');
               }
             }
             break;
           case 'CAMIONERO':
-            if (!["miperfilcamionero", "oferta/[ofertaId]"].includes(segments[0])) {
+            if (!["miperfilcamionero", "miperfilcamionero/editar"].includes(segments[0])) {
               if (pathname !== '/') {
                 router.push('/');
               }
