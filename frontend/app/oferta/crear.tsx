@@ -48,13 +48,6 @@ const CrearOfertaScreen = () => {
 
   console.log("formData", formData);
 
-  useEffect(() => {
-    if (!user || user.rol !== "EMPRESA") {
-      console.warn("⛔ Acceso denegado. Redirigiendo...");
-      alert("No tienes permisos para acceder a esta página.");
-      router.replace("/miperfilempresa"); // Redirigir a la página de perfil de empresa
-    }
-  }, [user]);
   
   // Cuando `user` cambie, actualizar `empresa.id`
   useEffect(() => {
