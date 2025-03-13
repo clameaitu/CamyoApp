@@ -535,21 +535,6 @@ const EditarOfertaScreen = () => {
           )}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
           {/* Botón de publicación */}
           <View style={styles.buttonRow}>
           <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteOffer}>

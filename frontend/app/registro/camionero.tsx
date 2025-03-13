@@ -132,7 +132,7 @@ const CamioneroScreen = () => {
       setIsModalVisible(true);
         setTimeout(() => {
           router.replace("/");
-        }, 3000);
+        }, 1500);
       
     } catch (error) {
       console.error('Error en la solicitud', error);

@@ -127,7 +127,7 @@ const EmpresaScreen = () => {
         setIsModalVisible(true);
         setTimeout(() => {
           router.replace("/");
-        }, 3000);
+        }, 1500);
       }     
       
     } catch (error) {

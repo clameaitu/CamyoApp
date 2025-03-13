@@ -38,7 +38,7 @@ const LoginScreen = () => {
       setIsModalVisible(true);
         setTimeout(() => {
           router.replace("/");
-        }, 2000);
+        }, 1000);
 
     } catch (error) {
       if (axios.isAxiosError(error)) {
