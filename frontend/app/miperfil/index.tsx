@@ -1,54 +1,36 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useRouter, usePathname } from 'expo-router';
+import { router, useRouter } from 'expo-router';
 
 const IndexPage = () => {
-    const { userToken, user } = useAuth();
+    const { userToken, user, loading } = useAuth();
     const route = useRouter();
-    const pathname = usePathname();
+
+    if (loading) {
+        return (<div>Loading...</div>
+        ); // Mostrar un indicador de carga si aún no se ha cargado el usuario
+      }
+    
+    if (!user) {
+        router.replace("/login");
+    }
 
     useEffect(() => {
-        console.log('Ruta actual:', pathname);
-        console.log('Token de usuario:', userToken);
-        console.log('Datos de usuario:', user);
-
         if (!userToken) {
-            console.log('No hay token de usuario, redirigiendo a /login');
             route.push('/login');
             return;
         }
 
-        if (pathname.includes('/editar')) {
-            console.log('Ruta incluye /editar');
-
-            if (user?.rol === 'CAMIONERO') {
-                console.log('Rol CAMIONERO, redirigiendo a /miperfilcamionero/editar');
-                route.replace('/miperfilcamionero/editar');
-            } else if (user?.rol === 'EMPRESA') {
-                console.log('Rol EMPRESA, redirigiendo a /miperfilempresa/editar');
-                route.replace('/miperfilempresa/editar');
-            } else {
-                console.log('Rol no válido, redirigiendo a la página de inicio');
-                route.push('/');
-            }
+        if (user?.rol === 'CAMIONERO') {
+            route.replace('/miperfilcamionero');
+        } else if (user?.rol === 'EMPRESA') {
+            route.replace('/miperfilempresa');
+        } else if (user?.rol === 'ADMIN') {
+            route.replace('/workinprogress');
         } else {
-            console.log('Ruta no incluye /editar');
-
-            if (user?.rol === 'CAMIONERO') {
-                console.log('Rol CAMIONERO, redirigiendo a /miperfilcamionero');
-                route.replace('/miperfilcamionero');
-            } else if (user?.rol === 'EMPRESA') {
-                console.log('Rol EMPRESA, redirigiendo a /miperfilempresa');
-                route.replace('/miperfilempresa');
-            } else if (user?.rol === 'ADMIN') {
-                console.log('Rol ADMIN, redirigiendo a /workinprogress');
-                route.replace('/workinprogress');
-            } else {
-                console.log('Rol no válido, redirigiendo a la página de inicio');
-                route.push('/');
-            }
+            route.push('/');
         }
-    }, [userToken, user, pathname]);
+    }, [userToken, user, route]);
 
     return null;
 };

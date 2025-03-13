@@ -156,7 +156,7 @@ const UserProfileScreen: React.FC = () => {
                         <View style={styles.profileDetailsContainer}>
                             <TouchableOpacity
                                 style={styles.editButton}
-                                onPress={() => router.push(`/miperfil/editar`)}
+                                onPress={() => router.replace(`/miperfilcamionero/editar`)}
                             >
                                 <Text style={styles.editButtonText}> Editar Perfil</Text>
                             </TouchableOpacity>
@@ -268,7 +268,7 @@ const UserProfileScreen: React.FC = () => {
                                             <Text style={styles.offerInfo}>{item.notas}</Text>
                                         </View>
                                         <Text style={styles.offerSueldo}>{item.sueldo}€</Text>
-                                        <TouchableOpacity style={styles.button} onPress={() => router.push(`/oferta/${item.id}`)}>
+                                        <TouchableOpacity style={styles.button} onPress={() => router.replace(`/oferta/${item.id}`)}>
                                             <MaterialCommunityIcons name="details" size={15} color="white" style={styles.detailsIcon} />
                                             <Text style={styles.buttonText}>Ver Detalles</Text>
                                         </TouchableOpacity>

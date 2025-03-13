@@ -139,13 +139,14 @@ const EmpresaPerfil = () => {
             </View>
             <TouchableOpacity
               style={styles.editButton}
-              onPress={() => router.push(`/miperfilempresa/editar`)}
+              onPress={() => router.replace('/miperfilempresa/editar')}
             >
               <Text style={styles.editButtonText}> Editar Perfil</Text>
             </TouchableOpacity>
+            
             <TouchableOpacity
               style={styles.editButton}
-              onPress={() => router.push(`/oferta/crear`)}
+              onPress={() => router.replace('/oferta/crear')}
             >
               <Text style={styles.editButtonText}>Publicar nueva oferta</Text>
             </TouchableOpacity>
@@ -180,7 +181,7 @@ const EmpresaPerfil = () => {
                       <Text style={styles.offerInfo}>{item.notas}</Text>
                     </View>
                     <Text style={styles.offerSueldo}>{item.sueldo}€</Text>
-                    <TouchableOpacity style={styles.button} onPress={() => router.push(`/oferta/${item.id}`)}>
+                    <TouchableOpacity style={styles.button} onPress={() => router.replace(`/oferta/${item.id}`)}>
                       <MaterialCommunityIcons name="details" size={15} color="white" style={styles.detailsIcon} />
                       <Text style={styles.buttonText}>Ver Detalles</Text>
                     </TouchableOpacity>

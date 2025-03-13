@@ -22,7 +22,6 @@ export default function Index() {
   const { user, userToken, logout } = useAuth();
   useEffect(() => {
     fetchData();
-    console.log(data); // Elimina las llaves innecesarias
   }, []);
 
   const [error, setError] = useState(null);
@@ -30,7 +29,6 @@ export default function Index() {
   const fetchData = async () => {
     try {
       const response = await axios.get(`${BACKEND_URL}/ofertas`);
-      console.log(response.data);
       setData(response.data);
     } catch (error) {
       console.error('Error al cargar los datos:', error);
