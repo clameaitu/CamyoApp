@@ -13,19 +13,16 @@ import { useAuth } from '../../contexts/AuthContext';
 import axios from 'axios';
 import { router } from 'expo-router';
 
-interface Camionero {
+interface UserProfile {
     id: number;
     nombre: string;
     email: string;
-    disponibilidad: string;
+    tipo: string;
     experiencia?: number;
     licencias?: string[];
     vehiculo_propio?: boolean;
-    localizacion: string;
+    ubicacion: string;
     avatar: string;
-    telefono: string;
-    foto: string;
-    descripcion: string;
 }
 
 interface Review {
@@ -37,7 +34,7 @@ interface Review {
 }
 
 // Get the first user from the JSON data
-const placeholderUser: Camionero = {
+const placeholderUser: UserProfile = {
     id: frontendData.usuarios[0].id,
     nombre: frontendData.usuarios[0].nombre,
     email: frontendData.usuarios[0].email,
@@ -61,63 +58,28 @@ const reviews: Review[] = [
 const UserProfileScreen: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    const [camionero, setCamionero] = useState<Camionero | null>(null);
-    const [userData, setUserData] = useState<Camionero | null>(null);
     const navigation = useNavigation();
-    const { userToken, user, getUserData } = useAuth();
+    const { userToken, user } = useAuth();
     const [offers, setOffers] = useState<any[]>([]);
     const [offerStatus, setOfferStatus] = useState<string>('ACEPTADA'); // State to track selected offer status
-    const placeholderAvatar = 'https://ui-avatars.com/api/?name=';
-    const PlaceHolderLicencias = 'No tiene licencias';
-    const [licencias, setLicencias] = useState<string[]>([]);
-    const [disp, setDisp] = useState<string>('');
+    const placeholderAvatar = 'https://ui-avatars.com/api/?name='
+    const PlaceHolderLicencias = 'No tiene licencias'
     const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
-    var data;
+
     const capitalizeFirstLetter = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
     };
-    const normalizeFirstLetter = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-    };
 
     useEffect(() => {
-        if (!userToken || !user || user.roles[0] !== "CAMIONERO") {
-            setLoading(false);
-            return;
+        if (!userToken) {
+            router.push('/login');
         }
-
-        fetchCamioneroData();
+            
         fetchOffers();
-        fetchUserData();
         // Hide the default header
         navigation.setOptions({ headerShown: false });
+
     }, [userToken, user, offerStatus]); // Add offerStatus to dependency array
-
-    const fetchCamioneroData = async () => {
-        try {
-            const response = await axios.get(`${BACKEND_URL}/camioneros/${user.id}`);
-            setCamionero(response.data.usuario);
-            setLicencias(response.data.licencias);
-            setDisp(response.data.disponibilidad);
-            console.log(response.data.licencias);
-        } catch (err) {
-            setError((err as Error)?.message || "Error desconocido");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchUserData = async () => {
-        try {
-            const response = await axios.get(`${BACKEND_URL}/usuarios/${user.id}`);
-            setUserData(response.data);
-            console.log("userdata`   " + response.data.nombre);
-        } catch (err) {
-            setError((err as Error)?.message || "Error desconocido");
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const fetchOffers = async () => {
         try {
@@ -139,17 +101,8 @@ const UserProfileScreen: React.FC = () => {
         );
     }
 
-    if (!userToken || !user || user.roles[0] !== "CAMIONERO") {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text>Acceso denegado, inicia sesión con tu cuenta de camionero</Text>
-            </View>
-        );
-    }
-
-    console.log(userToken);
-    console.log(user);
-
+    console.log(userToken)
+    console.log("id" + user)
     const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 
     const getNoOffersMessage = () => {
@@ -172,29 +125,22 @@ const UserProfileScreen: React.FC = () => {
                 <View style={styles.bannerContainer}>
                     <Image source={defaultBanner} style={styles.bannerImage} />
                     <View style={isMobile ? styles.profileContainer : styles.desktopProfileContainer}>
-                        <Image
-                            source={{ uri: userData?.foto || 'https://ui-avatars.com/api/?name=' + userData?.nombre }}
-                            style={isMobile ? styles.avatar : styles.desktopAvatar}
+                        <Image 
+                            source={{ uri: user?.avatar || 'https://ui-avatars.com/api/?name=' + user?.nombre }} 
+                            style={isMobile ? styles.avatar : styles.desktopAvatar} 
                         />
                         <View style={styles.profileDetailsContainer}>
-                            <TouchableOpacity
-                                style={styles.editButton}
-                                onPress={() => router.push(`/miperfil/editar`)}
-                            >
-                                <Text style={styles.editButtonText}> Editar Perfil</Text>
-                            </TouchableOpacity>
-
-                            <Text style={isMobile ? styles.name : styles.desktopName}>{userData?.nombre}</Text>
+                            <Text style={isMobile ? styles.name : styles.desktopName}>{user?.nombre}</Text>
                             <View style={styles.detailsRow}>
-                                <Text style={styles.infoText}>Disponibilidad: {normalizeFirstLetter(disp || '')}</Text>
+                                <Text style={styles.infoText}>Tipo: {capitalizeFirstLetter(user?.descripcion || '')}</Text>
                                 {user?.experiencia !== undefined && (
-                                    <Text style={styles.infoText}>{camionero.experiencia} años de experiencia</Text>
+                                    <Text style={styles.infoText}>{user.experiencia} años de experiencia</Text>
                                 )}
                             </View>
                         </View>
                     </View>
                 </View>
-
+                
                 {isMobile && (
                     <View style={styles.infoContainer}>
                         <View style={styles.infoButton}>
@@ -211,30 +157,30 @@ const UserProfileScreen: React.FC = () => {
                     <View style={styles.detailsColumn}>
                         <View style={styles.detailItem}>
                             <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}>
-                                <FontAwesome style={styles.envelopeIcon} name="envelope" size={20} />
+                                <FontAwesome style={styles.envelopeIcon} name="envelope" size={20}/>
                                 <Text style={styles.linkText}>
-                                    <Text onPress={() => Linking.openURL(`mailto:${userData?.email}`)}>{userData?.email}</Text>
-                                </Text>
+                                    <Text onPress={() => Linking.openURL(`mailto:${user?.email}`)}>{user?.email}</Text>
+                                </Text>  
                             </Text>
                         </View>
-
-                        <View style={styles.detailItem}>
-                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="id-card" size={20} />{licencias.join(', ') || PlaceHolderLicencias}</Text>
-                        </View>
-
+                        {user?.licencias && (
+                            <View style={styles.detailItem}>
+                                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="id-card" size={20}/>{user?.licencias.join(', ') || PlaceHolderLicencias}</Text>
+                            </View>
+                        )}
                         {user?.vehiculo_propio !== undefined && (
                             <View style={styles.detailItem}>
-                                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.truckIcon} name="truck" size={23} />{camionero?.vehiculo_propio ? 'Vehículo propio' : 'Sin vehículo propio'}</Text>
+                                <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.truckIcon} name="truck" size={23}/>{user.vehiculo_propio ? 'Vehículo propio' : 'Sin vehículo propio'}</Text>
                             </View>
                         )}
                         <View style={styles.detailItem}>
-                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="map" size={20} />{userData?.localizacion}</Text>
+                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="map" size={20}/>{user?.localizacion}</Text>
                         </View>
                         <View style={styles.detailItem}>
-                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="phone" size={20} />{userData?.telefono}</Text>
+                            <Text style={isMobile ? styles.detailsText : styles.desktopDetailsText}><FontAwesome style={styles.icon} name="phone" size={20}/>{user?.telefono}</Text>
                         </View>
                         <View style={styles.descriptionBox}>
-                            <Text style={styles.descriptionText}>{capitalizeFirstLetter(userData?.descripcion || '')}</Text>
+                            <Text style={styles.descriptionText}>{capitalizeFirstLetter(user?.descripcion || '')}</Text>
                         </View>
                     </View>
                 </View>
@@ -259,7 +205,7 @@ const UserProfileScreen: React.FC = () => {
                             <Text style={styles.reviewText}>{item.text}</Text>
                         </View>
                     )}
-
+                
                     contentContainerStyle={isMobile ? styles.reviewsContainer : styles.desktopReviewsContainer}
                 /> */}
                 <View style={styles.offersContainer}>

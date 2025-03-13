@@ -35,13 +35,14 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index"/>
           <Stack.Screen name="login"/>
+
           <Stack.Screen name="registro"/>
           <Stack.Screen name="miperfil"/>
           <Stack.Screen name="miperfilempresa"/>
           <Stack.Screen name="empresas"/> 
           <Stack.Screen name="oferta/crear"/>
           <Stack.Screen name="oferta/[ofertaId]" />
-          <Stack.Screen name="workinprogress"/>
+
           <Stack.Screen name="ejemplo"/>
           <Stack.Screen name="oferta/[ofertaid]" />
         </Stack>

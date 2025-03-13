@@ -25,13 +25,6 @@ export default function Index() {
     console.log(data); // Elimina las llaves innecesarias
   }, []);
 
-  useEffect(() => {
-    if (user && user.roles[0] === 'ADMIN') {
-      console.log('rol' +user.roles[0]);
-      router.push('/workinprogress');
-    }
-  }, [userToken]);
-
   const [error, setError] = useState(null);
 
   const fetchData = async () => {

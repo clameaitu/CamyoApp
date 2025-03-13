@@ -36,7 +36,7 @@ const BottomBar = () => {
 
           <TouchableOpacity onPress={() => {
             setSelectedIcon('user');
-            router.push('/perfil');
+            router.push('/miperfil');
           }}>
 
             <FontAwesome

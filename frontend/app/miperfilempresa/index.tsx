@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, ScrollView, Platform, Linking, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
-import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import { View, Text, Image, ScrollView, Platform, Linking, StyleSheet, TouchableOpacity } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
 import BottomBar from "../_components/BottomBar.jsx";
 import CamyoWebNavBar from "../_components/CamyoNavBar.jsx";
 import defaultBanner from "../../assets/images/empresa.jpg";
 import defaultImage from "../../assets/images/image_perfil_empresa.jpg";
+
 import colors from '@/assets/styles/colors';
 import { useAuth } from '../../contexts/AuthContext';
 import { router, useNavigation } from "expo-router";
 import axios from "axios";
 
-// Definir la interfaz para la empresa y usuario
+
+// Definir la interfaz para la empresa y usu
 interface Usuario {
   id: number;
   nombre: string;
@@ -41,27 +43,30 @@ const EmpresaPerfil = () => {
   const [offerStatus, setOfferStatus] = useState<string>('ACEPTADA');
 
   useEffect(() => {
-    if (!userToken || !user || user.roles[0] !== "EMPRESA") {
-      setLoading(false);
-      return;
+    if (!userToken) {
+      router.push('/login');
     }
 
+    if (!user || user.rol !== "EMPRESA") {
+      console.warn("Acceso denegado. Redirigiendo...")
+      router.replace("/")
+    }
     fetchEmpresaData();
+    // Hide the default header
+    navigation.setOptions({ headerShown: false });
+
+  }, [userToken, user]);
+
+  useEffect(() => {
+    if (!userToken) {
+      router.push('/login');
+    }
+
     fetchOffers();
     // Hide the default header
     navigation.setOptions({ headerShown: false });
-  }, [userToken, user, offerStatus]);
 
-  const fetchEmpresaData = async () => {
-    try {
-      const response = await axios.get(`${BACKEND_URL}/empresas/${user.id}`);
-      setEmpresa(response.data);
-    } catch (err) {
-      setError((err as Error)?.message || "Error desconocido");
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [userToken, user, offerStatus]); // Add offerStatus to dependency array
 
   const fetchOffers = async () => {
     try {
@@ -75,21 +80,20 @@ const EmpresaPerfil = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
+  const fetchEmpresaData = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/empresas/${user.id}`);
+      /*const data: Empresa = await response.json();*/
+      setEmpresa(response.data);
+    } catch (err) {
+      setError((err as Error)?.message || "Error desconocido");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  if (!userToken || !user || user.roles[0] !== "EMPRESA") {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Acceso denegado, inicia sesión con tu cuenta de empresa</Text>
-      </View>
-    );
-  }
+  if (loading) return <Text style={styles.loadingText}>Cargando...</Text>;
+  if (error) return <Text style={styles.errorText}>{error}</Text>;
 
   const isMobile = Platform.OS === "ios" || Platform.OS === "android";
 
@@ -111,18 +115,18 @@ const EmpresaPerfil = () => {
       {isMobile ? <BottomBar /> : <CamyoWebNavBar />}
 
       <ScrollView contentContainerStyle={[isMobile ? styles.container : styles.desktopContainer, { paddingTop: isMobile ? 0 : 100, paddingLeft: 10 }]}>
-        <View style={styles.bannerContainer}>
-          <Image source={defaultBanner} style={styles.bannerImage} />
-          <View style={isMobile ? styles.profileContainer : styles.desktopProfileContainer}>
-            <Image
-              source={empresa?.usuario?.foto ? { uri: empresa.usuario.foto } : defaultImage}
-              style={isMobile ? styles.avatar : styles.desktopAvatar}
-            />
-            <View style={styles.profileDetailsContainer}>
-              <Text style={isMobile ? styles.name : styles.desktopName}>{empresa?.usuario?.nombre}</Text>
-            </View>
+      <View style={styles.bannerContainer}>
+        <Image source={defaultBanner} style={styles.bannerImage} />
+        <View style={isMobile ? styles.profileContainer : styles.desktopProfileContainer}>
+          <Image
+            source={empresa?.usuario?.foto ? { uri: empresa.usuario.foto } : defaultImage}
+            style={isMobile ? styles.avatar : styles.desktopAvatar}
+          />
+          <View style={styles.profileDetailsContainer}>
+            <Text style={isMobile ? styles.name : styles.desktopName}>{empresa?.usuario?.nombre}</Text>
           </View>
         </View>
+      </View>
         <View style={styles.detailsOuterContainer}>
           <View style={styles.detailsColumn}>
             <View style={styles.detailItem}>
@@ -170,7 +174,7 @@ const EmpresaPerfil = () => {
               ) : (
                 offers.map((item) => (
                   <View key={item.id} style={styles.card}>
-                    <Image source={defaultImage} style={styles.companyLogo} />
+                    <Image source={defaultCompanyLogo} style={styles.companyLogo} />
                     <View style={{ width: "30%" }}>
                       <Text style={styles.offerTitle}>{item.titulo}</Text>
                       <View style={{ display: "flex", flexDirection: "row" }}>
