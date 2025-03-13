@@ -4,7 +4,7 @@ import { router, useLocalSearchParams, useRouter } from "expo-router";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import colors from "frontend/assets/styles/colors";
 import { useAuth } from "@/contexts/AuthContext";
-import routes from "../_components/routes";
+import { Ionicons } from '@expo/vector-icons';
 
 const formatDate = (fecha: string) => {
     const opciones = { day: "numeric", month: "long", year: "numeric" } as const;
@@ -24,7 +24,7 @@ export default function OfertaDetalleScreen() {
     const { ofertaid } = useLocalSearchParams();
     const router = useRouter(); // Para navegar entre pantallas
     const { user, userToken, login, logout } = useAuth();
-    const [modalVisible, setModalVisible] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     useEffect(() => {
         if (ofertaid) {
@@ -118,11 +118,11 @@ export default function OfertaDetalleScreen() {
 
             if (response.ok) {
                 Alert.alert("Éxito", "Has solicitado correctamente.");
-                setModalVisible(true); // Abre el popup
+                setIsModalVisible(true); // Abre el popup
                 setUserHasApplied(true);
                 setTimeout(() => {
-                    setModalVisible(false); 
-                }, 2500);
+                    setIsModalVisible(false); 
+                }, 2000);
             } else {
                 Alert.alert("Error", "No se pudo solicitar la oferta.");
             }
@@ -168,6 +168,10 @@ export default function OfertaDetalleScreen() {
                 {offerTrabajoData == null ? (
                     <>
                         <View style={styles.header}>
+                            {/* Icono de retroceso */}
+                            <TouchableOpacity style={styles.backIcon} onPress={() => router.replace('/')}>
+                                <Ionicons name="arrow-back" size={30} color="#0b4f6c" />
+                            </TouchableOpacity>
                             <Image
                                 source={require('../../assets/images/no-company-logo.png')} 
                                 style={styles.logo}
@@ -188,7 +192,7 @@ export default function OfertaDetalleScreen() {
                         {user ? (
                             user.rol === 'CAMIONERO' ? (
                                 userHasApplied ? (
-                                    <TouchableOpacity style={styles.solicitarButton} onPress={handleDesaplicarOferta}>
+                                    <TouchableOpacity style={styles.solicitarButton2} onPress={handleDesaplicarOferta}>
                                         <Text style={styles.solicitarButtonText}>Cancelar Solicitud</Text>
                                     </TouchableOpacity>
                                 ) : (
@@ -207,12 +211,19 @@ export default function OfertaDetalleScreen() {
                             </TouchableOpacity>
                         )}
 
-                        <Modal transparent={true} visible={modalVisible} animationType="fade">
+                        {/* Modal de éxito */}
+                        <Modal
+                        animationType="fade"
+                        transparent={true}
+                        visible={isModalVisible}
+                        onRequestClose={() => setIsModalVisible(false)}
+                        >
+                        <View style={styles.modalOverlay}>
                             <View style={styles.modalContainer}>
-                                <View style={styles.modalContent}>
-                                    <Text style={styles.modalText}>¡Has solicitado correctamente a la carga!</Text>
-                                </View>
+                            <FontAwesome5 name="check-circle" size={50} color="white" style={styles.modalIcon} />
+                            <Text style={styles.modalText}>¡Has solicitado correctamente a la carga!</Text>
                             </View>
+                        </View>
                         </Modal>
 
                         <View style={styles.separator} />
@@ -294,6 +305,10 @@ export default function OfertaDetalleScreen() {
                 ) : (
                     <>
                         <View style={styles.header}>
+                            {/* Icono de retroceso */}
+                            <TouchableOpacity style={styles.backIcon} onPress={() => router.replace('/')}>
+                                <Ionicons name="arrow-back" size={30} color="#0b4f6c" />
+                            </TouchableOpacity>
                             <Image
                                 source={require('../../assets/images/no-company-logo.png')} 
                                 style={styles.logo}
@@ -313,7 +328,7 @@ export default function OfertaDetalleScreen() {
                         {user ? (
                             user.rol === 'CAMIONERO' ? (
                                 userHasApplied ? (
-                                    <TouchableOpacity style={styles.solicitarButton} onPress={handleDesaplicarOferta}>
+                                    <TouchableOpacity style={styles.solicitarButton2} onPress={handleDesaplicarOferta}>
                                         <Text style={styles.solicitarButtonText}>Cancelar Solicitud</Text>
                                     </TouchableOpacity>
                                 ) : (
@@ -331,13 +346,20 @@ export default function OfertaDetalleScreen() {
                                 <Text style={styles.solicitarButtonText}>Inicia sesión para solicitar</Text>
                             </TouchableOpacity>
                         )}
-
-                        <Modal transparent={true} visible={modalVisible} animationType="fade">
+                        
+                        {/* Modal de éxito */}
+                        <Modal
+                        animationType="fade"
+                        transparent={true}
+                        visible={isModalVisible}
+                        onRequestClose={() => setIsModalVisible(false)}
+                        >
+                        <View style={styles.modalOverlay}>
                             <View style={styles.modalContainer}>
-                                <View style={styles.modalContent}>
-                                    <Text style={styles.modalText}>¡Has solicitado correctamente a la oferta!</Text>
-                                </View>
+                            <FontAwesome5 name="check-circle" size={50} color="white" style={styles.modalIcon} />
+                            <Text style={styles.modalText}>¡Has solicitado correctamente a la oferta!</Text>
                             </View>
+                        </View>
                         </Modal>
                         
 
@@ -464,6 +486,14 @@ const styles = StyleSheet.create({
         backgroundColor: colors.primary, 
         marginVertical: 15,
     },
+    solicitarButton2: {
+        width: '40%', 
+        paddingVertical: 10, 
+        borderRadius: 20, 
+        alignSelf: 'center', 
+        backgroundColor: '#FBC02D', 
+        marginVertical: 15,
+    },
     solicitarButtonText: {
         color: 'white',
         fontSize: 18,
@@ -530,23 +560,29 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
-    modalContainer: {
+    modalOverlay: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.5)"
-    },
-    modalContent: {
-        width: 300,
-        backgroundColor: "#fff",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+      },
+    modalContainer: {
+        backgroundColor: colors.green,
         padding: 20,
         borderRadius: 10,
+        width: 250,
         alignItems: "center",
-        position: "relative"
+    },
+    modalIcon: {
+        marginBottom: 10,
     },
     modalText: {
         fontSize: 18,
-        marginBottom: 10,
-        textAlign: "center"
+        color: "white",
+        textAlign: "center",
+    },
+    backIcon: {
+        marginLeft: 10,
+        marginTop: Platform.OS === 'ios' ? 30 : 10,
     },
 });

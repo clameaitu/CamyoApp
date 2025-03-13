@@ -11,6 +11,7 @@ import axios from 'axios';
 import { useAuth } from "../../contexts/AuthContext";
 import { useRouter } from "expo-router";
 import * as ImagePicker from 'expo-image-picker';
+import { Ionicons } from '@expo/vector-icons';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 const licencias = ["AM", "A1", "A2", "A", "B", "C1", "C", "C1+E", "C+E", "D1", "D+E","D1+E","D"];
@@ -135,8 +136,12 @@ const CamioneroScreen = () => {
       
     } catch (error) {
       console.error('Error en la solicitud', error);
-      if (axios.isAxiosError(error)) {
-        setErrorMessage("Los datos introducidos no son correctos. Por favor, compruébalos e inténtalo de nuevo.");
+      if (axios.isAxiosError(error) && error.response && error.response.data && error.response.data.message) {
+        if (error.response.data.message.includes("ya está")) {
+          setErrorMessage(error.response.data.message);
+        } else {
+          setErrorMessage("Los datos introducidos no son correctos. Por favor, compruébalos e inténtalo de nuevo.");
+        }
       } else {
         setErrorMessage('Error desconocido');
       }
@@ -185,6 +190,11 @@ const CamioneroScreen = () => {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <View style={styles.cardContainer}>
+
+          <TouchableOpacity style={styles.backButton} onPress={() => router.replace('/registro')}>
+              <Ionicons name="arrow-back" size={30} color="#0b4f6c" />
+          </TouchableOpacity>
+
           <Text style={styles.title}>Registro como Camionero</Text>
 
           {/* Foto de perfil */}
@@ -326,7 +336,7 @@ const CamioneroScreen = () => {
                 {/* Icono del tic verde */}
                 <FontAwesome5 name="check-circle" size={50} color="white" style={styles.modalIcon} />
                 
-                <Text style={styles.modalText}>¡Registro Exitoso!</Text>
+                <Text style={styles.modalText}>¡Registro exitoso!</Text>
                 <Text style={styles.modalText}>Redirigiendo...</Text>
               </View>
             </View>
@@ -432,6 +442,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "white",
     textAlign: "center",
+  },
+  backButton: {
+    position: "absolute",
+    top: 20,
+    left: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    zIndex: 10,
   },
 });
 

@@ -5,9 +5,11 @@ import colors from "../../assets/styles/colors";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import axios from "axios";
 import { useRouter } from "expo-router";
-import defaultProfileImage from "../../assets/images/defaultAvatar.png";
+import defaultProfileImage from "../../assets/images/companyDefaultAvatar.png";
 import { useAuth } from "../../contexts/AuthContext";
 import * as ImagePicker from 'expo-image-picker';
+import { Ionicons } from '@expo/vector-icons';
+
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
@@ -73,6 +75,12 @@ const EmpresaScreen = () => {
   
 
   const handleRegister = async () => {
+    // Validación de número de teléfono
+    if (!/^\d{9}$/.test(formData.telefono)) {
+      setErrorMessage("El número de teléfono debe tener 9 dígitos.");
+      return;
+    }
+
     // Validación y corrección de la URL
     if (formData.web && !formData.web.startsWith('http://') && !formData.web.startsWith('https://')) {
       if (!/^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/.test(formData.web)) {
@@ -124,8 +132,12 @@ const EmpresaScreen = () => {
       
     } catch (error) {
       console.error('Error en la solicitud', error);
-      if (axios.isAxiosError(error)) {
-        setErrorMessage("Los datos introducidos no son correctos. Por favor, compruébalos e inténtalo de nuevo.");
+      if (axios.isAxiosError(error) && error.response && error.response.data && error.response.data.message) {
+        if (error.response.data.message.includes("ya está")) {
+          setErrorMessage(error.response.data.message);
+        } else {
+          setErrorMessage("Los datos introducidos no son correctos. Por favor, compruébalos e inténtalo de nuevo.");
+        }
       } else {
         setErrorMessage('Error desconocido');
       }
@@ -174,6 +186,11 @@ const EmpresaScreen = () => {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <View style={styles.cardContainer}>
+
+          <TouchableOpacity style={styles.backButton} onPress={() => router.replace('/registro')}>
+            <Ionicons name="arrow-back" size={30} color="#0b4f6c" />
+          </TouchableOpacity>
+
           <Text style={styles.title}>Registro como Empresa</Text>
 
           {/* Foto de perfil */}
@@ -346,6 +363,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "white",
     textAlign: "center",
+  },
+  backButton: {
+    position: "absolute",
+    top: 20,
+    left: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    zIndex: 10,
   },
 });
 
