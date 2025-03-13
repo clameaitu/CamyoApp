@@ -61,9 +61,8 @@ const UserProfileScreen: React.FC = () => {
             return;
         }
 
-        //fetchCamioneroData();
+        fetchCamioneroData();
         fetchOffers();
-        //fetchUserData();
         // Hide the default header
         navigation.setOptions({ headerShown: false });
     }, [userToken, user, offerStatus]); // Add offerStatus to dependency array
@@ -71,29 +70,15 @@ const UserProfileScreen: React.FC = () => {
     const fetchCamioneroData = async () => {
         try {
             const response = await axios.get(`${BACKEND_URL}/camioneros/${user.id}`);
-            setCamionero(response.data.usuario);
+            setCamionero(response.data);
             setLicencias(response.data.licencias);
             setDisp(response.data.disponibilidad);
-            console.log(response.data.licencias);
         } catch (err) {
             setError((err as Error)?.message || "Error desconocido");
         } finally {
             setLoading(false);
         }
     };
-
-    /*
-    const fetchUserData = async () => {
-        try {
-            const response = await axios.get(`${BACKEND_URL}/usuarios/${user.id}`);
-            setUserData(response.data);
-            console.log("userdata`   " + response.data.nombre);
-        } catch (err) {
-            setError((err as Error)?.message || "Error desconocido");
-        } finally {
-            setLoading(false);
-        }
-    };*/
 
     const fetchOffers = async () => {
         try {

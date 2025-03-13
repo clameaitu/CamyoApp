@@ -13,7 +13,7 @@ const EditProfileScreen = () => {
   const { width } = useWindowDimensions();
   const isWideScreen = width > 1074;
   const router = useRouter();
-  const { user, userToken } = useAuth();
+  const { user, userToken, updateUser } = useAuth();
   const [formData, setFormData] = useState({
     nombre: "",
     email: "",
@@ -44,7 +44,7 @@ const EditProfileScreen = () => {
   const handleSaveChanges = async (updatedFormData) => {
     try {
       const usuarioData = {
-        id: user.userId,
+        userId: user.userId,
         nombre: updatedFormData.nombre || "",
         email: updatedFormData.email || "",
         telefono: updatedFormData.telefono || "000000000",
@@ -59,11 +59,11 @@ const EditProfileScreen = () => {
         "Content-Type": "application/json",
       };
 
-      const userResponse = await axios.put(`${BACKEND_URL}/usuarios/${user.id}`, usuarioData, { headers });
+      const userResponse = await axios.put(`${BACKEND_URL}/usuarios/${user.userId}`, usuarioData, { headers });
 
       if (userResponse.status === 200) {
         console.log("✅ Perfil de usuario actualizado correctamente.");
-        alert("Perfil actualizado con éxito.");
+        updateUser(usuarioData);
         router.replace("/miperfil");
       }
     } catch (error) {

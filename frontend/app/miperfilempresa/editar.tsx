@@ -13,8 +13,8 @@ const EditCompanyProfileScreen = () => {
   const { width } = useWindowDimensions();
   const isWideScreen = width > 1074;
   const router = useRouter();
-  const { user, userToken } = useAuth();
-  console.log(user)
+  const { user, userToken, updateUser } = useAuth();
+
   const [formData, setFormData] = useState({
     nombre: "",
     email: "",
@@ -47,7 +47,7 @@ const EditCompanyProfileScreen = () => {
   const handleSaveChanges = async (updatedFormData) => {
     try {
       const empresaData = {
-        id: user.userId,
+        userId: user.userId,
         nombre: updatedFormData.nombre || "",
         email: updatedFormData.email || "",
         telefono: updatedFormData.telefono || "000000000",
@@ -62,11 +62,11 @@ const EditCompanyProfileScreen = () => {
         "Content-Type": "application/json",
       };
 
-      const companyResponse = await axios.put(`${BACKEND_URL}/usuarios/${user.id}`, empresaData, { headers });
+      const companyResponse = await axios.put(`${BACKEND_URL}/usuarios/${user.userId}`, empresaData, { headers });
 
       if (companyResponse.status === 200) {
         console.log("✅ Perfil de empresa actualizado correctamente.");
-        alert("Perfil actualizado con éxito.");
+        updateUser(empresaData);
         router.replace("/miperfilempresa");
       }
     } catch (error) {
