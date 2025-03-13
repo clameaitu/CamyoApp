@@ -1,6 +1,6 @@
 import { Text, View, ActivityIndicator, StyleSheet, TouchableOpacity, Image, Platform, ScrollView, Linking, Alert, Modal } from "react-native";
 import React, { useState, useEffect } from "react";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, useRouter } from "expo-router";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import colors from "frontend/assets/styles/colors";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,6 +22,7 @@ export default function OfertaDetalleScreen() {
     const [userHasApplied, setUserHasApplied] = useState(false); 
     const [loading, setLoading] = useState(true);
     const { ofertaid } = useLocalSearchParams();
+    const router = useRouter(); // Para navegar entre pantallas
     const { user, userToken, login, logout } = useAuth();
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -376,6 +377,7 @@ export default function OfertaDetalleScreen() {
 
                     </>
                 )}
+
             </View>
         );
     };
@@ -502,6 +504,19 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: 'red',
         textAlign: 'center',
+    },
+    editButton: {
+        backgroundColor: colors.primary,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    editButtonText: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: 'bold',
     },
     modalContainer: {
         flex: 1,
