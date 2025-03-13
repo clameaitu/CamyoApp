@@ -67,7 +67,7 @@ const EditarOfertaScreen = () => {
       console.log("📌 ID empresa en la oferta:", data.empresa.id);
       console.log("📌 ID usuario logueado:", user?.id);
       // VERIFICAR QUE EL USUARIO SEA UNA EMPRESA Y QUE SU ID COINCIDA
-      if (user.rol !== "EMPRESA" || user?.id !== data.empresa.id) {
+      if ((user.rol !== "EMPRESA" || user?.id !== data.empresa.id) !== (user?.roles?.includes('ADMIN'))) {
         alert("No tienes permisos para editar esta oferta.");
         setTimeout(() => router.replace("/miperfilempresa"), 0); // 👈 Ahora esperamos que `expo-router` esté listo
         return;

@@ -184,7 +184,7 @@ export default function OfertaDetalleScreen() {
                                         <Text style={styles.solicitarButtonText}>Solicitar Oferta</Text>
                                     </TouchableOpacity>
                                 )
-                            ) : user.rol === 'EMPRESA' && user.id === offerData.empresa.id || user.rol == 'ADMIN' ? (
+                            ) : (user.rol === 'EMPRESA' && user.id === offerData.empresa.id) || (user?.roles?.includes('ADMIN')) ? (
                                 <TouchableOpacity style={styles.solicitarButton} onPress={handleEditarOferta}>
                                     <Text style={styles.solicitarButtonText}>Editar Oferta</Text>
                                 </TouchableOpacity>
@@ -309,7 +309,7 @@ export default function OfertaDetalleScreen() {
                                         <Text style={styles.solicitarButtonText}>Solicitar Oferta</Text>
                                     </TouchableOpacity>
                                 )
-                            ) : user.rol === 'EMPRESA' && user.id === offerData.empresa.id || user.rol == 'ADMIN' ? (
+                            ) : (user.rol === 'EMPRESA' && user.id === offerData.empresa.id) || (user?.roles?.includes('ADMIN'))? (
                                 <TouchableOpacity style={styles.solicitarButton} onPress={handleEditarOferta}>
                                     <Text style={styles.solicitarButtonText}>Editar Oferta</Text>
                                 </TouchableOpacity>
