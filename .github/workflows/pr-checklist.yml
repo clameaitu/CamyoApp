@@ -1,48 +1,21 @@
-name: PR Checklist for Frontend
+name: PR Comment Example
 
-on:
+on: 
   pull_request:
-    branches: [main]
-    types: [opened, reopened, edited, review_requested, synchronize]
+    branches: [main]  # Adjust if needed
 
 jobs:
-  check:
-    name: Add Checklist to PR
-    runs-on: ubuntu-latest  # Using Ubuntu as specified
+  example_comment_pr:
+    runs-on: ubuntu-latest
+    name: An example job to comment a PR
 
     steps:
-      - name: Add checklist if PR is opened or updated
-        uses: actions/github-script@v7
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v3
         with:
-          script: |
-            console.log("Workflow started...");
-
-            const pr = context.payload.pull_request;
-            if (!pr) {
-              console.log("No PR context found.");
-              return;
-            }
-
-            console.log(`PR found: #${pr.number}, Title: "${pr.title}"`);
-
-            const checklist = `
-            ## ✅ PR Checklist for Frontend  
-            - [ ] Código revisado  
-            - [ ] Pruebas unitarias agregadas  
-            - [ ] Documentación actualizada  
-            - [ ] Aprobación de al menos un revisor  
-            `;
-
-            // Add checklist comment to the PR
-            github.rest.issues.createComment({
-              issue_number: pr.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: checklist
-            }).then(response => {
-              console.log("Checklist comment added successfully!");
-            }).catch(error => {
-              console.log("Error adding checklist comment:", error);
-            });
-
+          message: |
+            Hello world! :wave: found this on the internet
 
