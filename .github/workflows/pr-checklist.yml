@@ -3,11 +3,7 @@ name: PR Checklist for Frontend
 on:
   pull_request:
     branches: [main]
-    types: [opened, reopened, edited, review_requested, synchronize, labeled]
-  push:
-    branches:
-      - "main"
-  workflow_call:
+    types: [opened, reopened, labeled]  # Trigger on PR open, reopen, or label added
 
 jobs:
   check:
@@ -25,8 +21,6 @@ jobs:
               console.log("No PR context found.");
               return;
             }
-
-            console.log(`PR found: #${pr.number}, Title: "${pr.title}"`);
 
             const labels = pr.labels.map(label => label.name);
             console.log(`Labels on PR: ${labels}`);
@@ -46,6 +40,7 @@ jobs:
             - [ ] Aprobación de al menos un revisor  
             `;
 
+            // Add checklist comment to the PR
             github.rest.issues.createComment({
               issue_number: pr.number,
               owner: context.repo.owner,
@@ -56,5 +51,4 @@ jobs:
             }).catch(error => {
               console.log("Error adding checklist comment:", error);
             });
-
 
