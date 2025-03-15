@@ -11,17 +11,14 @@ jobs:
     name: Add Checklist if "frontend" Label is Present
     runs-on: ubuntu-latest
     steps:
-      - name: Check PR labels and add checklist
+      - name: Check PR labels
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const pr = context.payload.pull_request;
-            if (!pr) {
-              console.log("No PR context found.");
-              return;
-            }
-
             const labels = pr.labels.map(label => label.name);
+            
             if (!labels.includes("frontend")) {
               console.log("Skipping checklist: PR does not have 'frontend' label.");
               return;
