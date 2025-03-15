@@ -64,6 +64,9 @@ public class Camionero{
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate expiracionCAP;
 
+    @ElementCollection
+    private List<Tarjetas> tarjetasAutonomo;
+
     @OneToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST })
 	@JoinColumn(name = "usuario_id", referencedColumnName = "id")
 	@OnDelete(action = OnDeleteAction.CASCADE)
