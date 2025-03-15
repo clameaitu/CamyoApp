@@ -17,5 +17,11 @@ jobs:
         uses: thollander/actions-comment-pull-request@v3
         with:
           message: |
+            ## ✅ PR Checklist for Frontend
+            - [ ] Código revisado
+            - [ ] Pruebas unitarias agregadas
+            - [ ] Documentación actualizada
+            - [ ] Aprobación de al menos un revisor
+
             Hello world! :wave: found this on the internet
 
